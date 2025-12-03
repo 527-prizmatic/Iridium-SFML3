@@ -1,5 +1,5 @@
-#ifndef IRIDIUM_HPP_EXCEPTIONS_HPP_
-#define IRIDIUM_HPP_EXCEPTIONS_HPP_
+#ifndef IRIDIUM_EXCEPTIONS_HPP_
+#define IRIDIUM_EXCEPTIONS_HPP_
 
 namespace Ir {
 	namespace Exceptions {
@@ -10,4 +10,4 @@ namespace Ir {
 	}
 }
 
-#endif // IRIDIUM_HPP_EXCEPTIONS_HPP_
+#endif // IRIDIUM_EXCEPTIONS_HPP_

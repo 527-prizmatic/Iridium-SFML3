@@ -1,7 +1,8 @@
-#ifndef IRIDIUM_HPP_APPLICATION_WINDOW
-#define IRIDIUM_HPP_APPLICATION_WINDOW
+#ifndef IRIDIUM_APPWINDOW_HPP_
+#define IRIDIUM_APPWINDOW_HPP_
 
 #include "Iridium/render_target.hpp"
+#include "Iridium/rendering/shapes.hpp"
 
 namespace Ir {
 	class ApplicationWindow: public Ir::RenderTarget {
@@ -24,6 +25,9 @@ namespace Ir {
 		void Render(sf::Drawable& _drawable);
 
 		/// @attention Attempting to call this function while the window is in an invalid state will throw an exception.
+		void Render(Ir::Render::Shape& _shape);
+
+		/// @attention Attempting to call this function while the window is in an invalid state will throw an exception.
 		void Render(Ir::RenderTarget& _render_target);
 
 		/// @brief Flushes the render texture onto the render window.
@@ -37,13 +41,19 @@ namespace Ir {
 			return this->m_renderWindow != nullptr && this->m_renderTexture != nullptr && this->m_rect != nullptr;
 		}
 
+		void SetFPS(unsigned int _fps);
+		unsigned int GetFPS();
+
+
 	private:
 		std::unique_ptr<sf::RenderWindow> m_renderWindow;
 		std::unique_ptr<sf::RenderTexture> m_renderTexture;
 
 		/// @brief Rectangle shape used for rendering the texture onto the window upon calling Flush()
 		std::unique_ptr<sf::RectangleShape> m_rect;
-
+		
+		unsigned int m_fps;
+		
 		/// @brief Reallocates internal resources, deleting the previous ones if they existed.
 		/// @attention This overload reuses the previously-allocated resources' size in pixels.
 		/// Attempting to call this function while the window is in an invalid state will throw an exception.
@@ -54,7 +64,8 @@ namespace Ir {
 		void AllocateResources(sf::Vector2u _size);
 
 		void ConfigureRect();
+
 	};
 }
 
-#endif // IRIDIUM_HPP_APPLICATION_WINDOW
+#endif // IRIDIUM_APPWINDOW_HPP_

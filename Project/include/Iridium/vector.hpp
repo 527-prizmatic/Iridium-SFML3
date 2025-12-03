@@ -61,11 +61,13 @@ namespace Ir {
 		[[nodiscard]] Ir::Vector MirrorY() const;
 		[[nodiscard]] Ir::Vector Negate() const;
 
-		template <typename T> [[nodiscard]] explicit operator sf::Vector2<T>() const {
+		template <typename T> [[nodiscard]] explicit operator sf::Vector2<T>() const
+		{
 			return sf::Vector2<T>{ static_cast<T>(this->x), static_cast<T>(this->y) };
 		}
 		
-		[[nodiscard]] explicit operator std::string() const {
+		[[nodiscard]] operator std::string() const
+		{
 			return '(' + std::to_string(this->x) + ' ' + std::to_string(this->y) + ')';
 		}
 

@@ -32,6 +32,13 @@ namespace Ir {
 		this->m_renderTexture->draw(_drawable);
 	}
 
+	void ApplicationWindow::Render(Ir::Render::Shape& _shape) {
+		if (!this->IsValid())
+			throw Ir::Exceptions::InvalidRenderTarget{};
+		
+		_shape.Render(*this);
+	}
+
 	void ApplicationWindow::Render(Ir::RenderTarget &_render_target) {
 		if (!this->IsValid())
 			throw Ir::Exceptions::InvalidRenderTarget{};
@@ -68,5 +75,15 @@ namespace Ir {
 		this->m_rect->setTexture(&this->m_renderTexture->getTexture(), true);
 		this->m_rect->setScale({1.f, -1.f});
 		this->m_rect->setPosition({0.f, static_cast<float>(this->GetSize().y)});
+	}
+
+	void ApplicationWindow::SetFPS(unsigned int _fps) {
+		this->m_fps = _fps;
+		if (this->IsValid())
+			this->m_renderWindow->setFramerateLimit(this->m_fps);
+	}
+
+	unsigned int ApplicationWindow::GetFPS() {
+		return this->m_fps;
 	}
 }

@@ -1,5 +1,5 @@
-#ifndef IRIDIUM_HPP_DEVUTILS_HPP_
-#define IRIDIUM_HPP_DEVUTILS_HPP_
+#ifndef IRIDIUM_DEVUTILS_HPP_
+#define IRIDIUM_DEVUTILS_HPP_
 
 #include "Iridium/libraries.hpp"
 
@@ -22,4 +22,4 @@ namespace Ir {
 	}
 }
 
-#endif // IRIDIUM_HPP_DEVUTILS_HPP_
+#endif // IRIDIUM_DEVUTILS_HPP_
