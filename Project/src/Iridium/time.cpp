@@ -61,7 +61,7 @@ namespace Ir {
 	}
 
 	void LocalClock::Reset() {
-		this->m_time = 0.f;
+		this->time = 0.f;
 	}
 
 	void LocalClock::Update() {
@@ -69,8 +69,8 @@ namespace Ir {
 			return;
 		
 		if (this->usesUnscaledTime)
-			this->m_time += Ir::Time::DeltaUnscaled();
+			this->time += Ir::Time::DeltaUnscaled();
 		else
-			this->m_time += Ir::Time::Delta();
+			this->time += Ir::Time::Delta();
 	}
 }

@@ -48,4 +48,4 @@ namespace Ir {
 	};
 }
 
-#endif IRIDIUM_TIME_HPP_
+#endif // IRIDIUM_TIME_HPP_
