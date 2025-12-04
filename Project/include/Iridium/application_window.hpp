@@ -1,5 +1,5 @@
-#ifndef IRIDIUM_HPP_APPLICATION_WINDOW
-#define IRIDIUM_HPP_APPLICATION_WINDOW
+#ifndef IRIDIUM_APPWINDOW_HPP_
+#define IRIDIUM_APPWINDOW_HPP_
 
 #include "Iridium/render_target.hpp"
 
@@ -57,4 +57,4 @@ namespace Ir {
 	};
 }
 
-#endif // IRIDIUM_HPP_APPLICATION_WINDOW
+#endif // IRIDIUM_APPWINDOW_HPP_

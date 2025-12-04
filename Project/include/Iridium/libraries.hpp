@@ -1,5 +1,5 @@
-#ifndef IRIDIUM_HPP_LIBRARIES_HPP_
-#define IRIDIUM_HPP_LIBRARIES_HPP_
+#ifndef IRIDIUM_LIBRARIES_HPP_
+#define IRIDIUM_LIBRARIES_HPP_
 
 // C++ core and STL features
 #include <iostream>
@@ -19,4 +19,4 @@
 
 // JSON
 
-#endif // IRIDIUM_HPP_LIBRARIES_HPP_
+#endif // IRIDIUM_LIBRARIES_HPP_
