@@ -13,10 +13,13 @@ namespace Ir {
 			Shape& SetPosition(Ir::Vector _pos);
 			Shape& SetAngle(float _angle);
 			Shape& SetAnchor(Ir::Vector _anchor);
+			Shape& SetAnchor(float _x, float _y);
+			Shape& SetColor(sf::Color _color);
 			
 			inline Ir::Vector GetPosition() const { return this->m_position; }
-			inline float GetAngle() { return this->m_angle; }
-			inline Ir::Vector GetAnchor() { return this->m_anchor; }
+			inline float GetAngle() const { return this->m_angle; }
+			inline Ir::Vector GetAnchor() const { return this->m_anchor; }
+			inline sf::Color GetColor() const { return this->m_color; }
 
 		private:
 			Ir::Vector m_position;
@@ -30,9 +33,10 @@ namespace Ir {
 			virtual void Render(Ir::RenderTarget& _target) const;
 			
 			Rectangle& SetSize(Ir::Vector _size);
+			Rectangle& SetSize(float _x, float _y);
 			Rectangle& SetCorners(Ir::Vector _top_left, Ir::Vector _bottom_right);
 
-			inline Ir::Vector GetSize() { return this->m_size; }
+			inline Ir::Vector GetSize() const { return this->m_size; }
 
 		private:
 			Ir::Vector m_size;
