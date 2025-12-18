@@ -5,12 +5,12 @@
 
 namespace Ir {
 	namespace Math {
-		inline constexpr float pi = 3.14159;
-		inline constexpr float tau = 2.f * pi;
-		inline constexpr float euler = 2.71828;
-		inline constexpr float phi = 1.61803;
-		inline constexpr float degToRadRatio = Math::pi / 180.f;
-		inline constexpr float radToDegRatio = 180.f / Math::pi;
+		inline constexpr float pi = 3.14159; /// @brief Circle constant
+		inline constexpr float tau = 2.f * pi; /// @brief Double the circle constant
+		inline constexpr float euler = 2.71828; /// @brief Exponential constant
+		inline constexpr float phi = 1.61803; /// @brief Golden ratio
+		inline constexpr float degToRadRatio = Math::pi / 180.f; /// @brief Conversion ratio from degrees to radians
+		inline constexpr float radToDegRatio = 180.f / Math::pi; /// @brief Conversion ratio from radians to degrees
 
 	/// @brief Verifies if a variable is an arithmetic type (int, char, short, float, double, etc. and CV-qualified variants).
 		template <typename T> concept Number = std::is_arithmetic<T>::value;
@@ -74,6 +74,16 @@ namespace Ir {
 			return _radians * Ir::Math::radToDegRatio;
 		}
 	}
+}
+		
+/// @brief Converts into radians a number assumed to be an angle in degrees.
+[[nodiscard]] inline constexpr float operator ""_rad(long double _angle) noexcept {
+	return Ir::Math::DegToRad(_angle);
+}
+
+/// @brief Converts into degrees a number assumed to be an angle in radians.
+[[nodiscard]] inline constexpr float operator ""_deg(long double _angle) noexcept {
+	return Ir::Math::RadToDeg(_angle);
 }
 
 #endif // IRIDIUM_MATH_HPP_

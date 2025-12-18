@@ -3,6 +3,7 @@
 
 #include "Iridium/vector.hpp"
 #include "Iridium/render_target.hpp"
+#include "Iridium/math.hpp"
 
 namespace Ir {
 	namespace Render {
@@ -22,10 +23,10 @@ namespace Ir {
 			inline sf::Color GetColor() const { return this->m_color; }
 
 		private:
-			Ir::Vector m_position;
-			float m_angle;
-			Ir::Vector m_anchor;
-			sf::Color m_color;
+			Ir::Vector m_position { 0.f, 0.f };
+			float m_angle { 0.f };
+			Ir::Vector m_anchor { 0.f, 0.f };
+			sf::Color m_color { sf::Color::White };
 		};
 
 		class Rectangle : public Shape {
@@ -39,7 +40,25 @@ namespace Ir {
 			inline Ir::Vector GetSize() const { return this->m_size; }
 
 		private:
-			Ir::Vector m_size;
+			Ir::Vector m_size { 0.f, 0.f };
+		};
+
+		/// @brief All-round vertex-based circle rendering class.
+		/// Also usable for regular polygons, as circles are essentially just polygons with many vertices.
+		class Circle : public Shape {
+		public:
+			virtual void Render(Ir::RenderTarget& _target) const;
+			
+			Circle& SetRadius(float _rds);
+			Circle& SetVertexCount(unsigned int _count);
+
+			inline float GetRadius() const { return this->m_radius; }
+			inline unsigned int GetVertexCount() const { return this->m_vertexCount; }
+
+		private:
+			float m_radius { 0.f };
+			unsigned int m_vertexCount { 32u };
+			float m_vertexAngle { Ir::Math::tau / 32.f };
 		};
 	}
 };

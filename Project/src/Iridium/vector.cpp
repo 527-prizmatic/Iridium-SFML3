@@ -2,6 +2,8 @@
 #include "Iridium/math.hpp"
 
 namespace Ir {
+	const Ir::Vector Ir::Vector::unit = Ir::Vector{ 1.f, 0.f };
+
 	Vector::Vector() {
 		this->x = 0.f;
 		this->y = 0.f;

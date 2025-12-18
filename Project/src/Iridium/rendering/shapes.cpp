@@ -1,4 +1,5 @@
 #include "Iridium/rendering/shapes.hpp"
+#include "Iridium/math.hpp"
 
 namespace Ir {
 	namespace Render {
@@ -78,12 +79,44 @@ namespace Ir {
 			Ir::Render::_priv::TryInitialize();
 			Ir::Render::_priv::Reset();
 
-			Ir::Vector absolutePosition { this->GetPosition() - this->GetAnchor() };
-			Ir::Render::_priv::AddSinglePoint(absolutePosition, this->GetColor());
-			Ir::Render::_priv::AddSinglePoint(absolutePosition + Ir::Vector{ this->m_size.x, 0.f }, this->GetColor());
-			Ir::Render::_priv::AddSinglePoint(absolutePosition + Ir::Vector{ this->m_size.x, this->m_size.y }, this->GetColor());
-			Ir::Render::_priv::AddSinglePoint(absolutePosition + Ir::Vector{ 0.f, this->m_size.y }, this->GetColor());
-			Ir::Render::_priv::AddSinglePoint(absolutePosition, this->GetColor());
+			Ir::Vector point1 { -this->GetAnchor() };
+			Ir::Vector point2 { point1 + Ir::Vector{ this->m_size.x, 0.f } };
+			Ir::Vector point3 { point1 + Ir::Vector{ this->m_size.x, this->m_size.y } };
+			Ir::Vector point4 { point1 + Ir::Vector{ 0.f, this->m_size.y } };
+
+			float angleRad = Ir::Math::DegToRad(this->GetAngle());
+
+			Ir::Render::_priv::AddSinglePoint(this->GetPosition() + point1.Rotate(angleRad), this->GetColor());
+			Ir::Render::_priv::AddSinglePoint(this->GetPosition() + point2.Rotate(angleRad), this->GetColor());
+			Ir::Render::_priv::AddSinglePoint(this->GetPosition() + point3.Rotate(angleRad), this->GetColor());
+			Ir::Render::_priv::AddSinglePoint(this->GetPosition() + point4.Rotate(angleRad), this->GetColor());
+			Ir::Render::_priv::AddSinglePoint(this->GetPosition() + point1.Rotate(angleRad), this->GetColor());
+
+			Ir::Render::_priv::Flush(_target);
+		}
+			
+		Circle& Circle::SetRadius(float _rds) {
+			this->m_radius = _rds;
+			return *this;
+		}
+
+		Circle& Circle::SetVertexCount(unsigned int _count) {
+			this->m_vertexCount = _count;
+			this->m_vertexAngle = Ir::Math::tau / static_cast<float>(this->m_vertexCount);
+			return *this;
+		}
+
+		void Circle::Render(Ir::RenderTarget& _target) const {
+			Ir::Render::_priv::TryInitialize();
+			Ir::Render::_priv::Reset();
+
+			Ir::Vector center = this->GetPosition() - this->GetAnchor();
+			float angleRad = Ir::Math::DegToRad(this->GetAngle());
+
+			for (unsigned int i = 0; i <= this->m_vertexCount; i++) {
+				Ir::Vector vertexPos { Ir::Vector::Polar(this->m_radius, angleRad + this->m_vertexAngle * static_cast<float>(i)) };
+				Ir::Render::_priv::AddSinglePoint(center + vertexPos, this->GetColor());
+			}
 
 			Ir::Render::_priv::Flush(_target);
 		}

@@ -88,7 +88,11 @@ namespace Ir {
 		}
 		
 		[[nodiscard]] inline Ir::Vector operator-(const Ir::Vector& _other) const {
-			return Ir::Vector { this->x - _other.x, this->x - _other.y };
+			return Ir::Vector { this->x - _other.x, this->y - _other.y };
+		}
+		
+		[[nodiscard]] inline Ir::Vector operator-() const {
+			return Ir::Vector { -this->x, -this->y };
 		}
 		
 		[[nodiscard]] inline Ir::Vector operator*(const float _other) const {
@@ -127,6 +131,8 @@ namespace Ir {
 		[[nodiscard]] inline bool operator==(const Ir::Vector& _other) const {
 			return (*this - _other).IsZero();
 		}
+
+		static const Ir::Vector unit;
 	};
 }
 
