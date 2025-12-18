@@ -24,7 +24,7 @@ namespace Ir {
 		void Restart() {
 			Timestamp now = Ir::Time::_priv::g_clock.now();
 			if (!Ir::Time::_priv::g_firstTick) /// Removing this safeguard causes issues as _last is zero-initialized, causing a half-century-long first tick
-				Ir::Time::_priv::g_deltaUnscaled = static_cast<float>((now - Ir::Time::_priv::g_last).count() * 1e-9f); /// Multiplying by one billionth because nanoseconds
+				Ir::Time::_priv::g_deltaUnscaled = static_cast<float>((now - Ir::Time::_priv::g_last).count() * 1e-9f); /// Multiplying by one billionth for nanoseconds
 			Ir::Time::_priv::g_last = now;
 
 			Ir::Time::_priv::g_deltaScaled = Ir::Time::_priv::g_deltaUnscaled * Ir::Time::_priv::g_scale;

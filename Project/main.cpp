@@ -1,6 +1,3 @@
-#include <iostream>
-#include <chrono>
-
 #include "Iridium/application_window.hpp"
 #include "Iridium/vector.hpp"
 #include "Iridium/dev_utils.hpp"

@@ -4,33 +4,33 @@
 namespace Ir {
 	namespace Render {
 		namespace _priv {
-			std::unique_ptr<sf::VertexArray> _vertices;
+			std::unique_ptr<sf::VertexArray> g_vertices;
 
 			/// @brief Tries to initialize the internal vertex array used for rendering.
 			/// Does strictly nothing if it was already initialized.
 			void TryInitialize() {
-				if (!Ir::Render::_priv::_vertices)
-					Ir::Render::_priv::_vertices = std::make_unique<sf::VertexArray>();
+				if (!Ir::Render::_priv::g_vertices)
+					Ir::Render::_priv::g_vertices = std::make_unique<sf::VertexArray>();
 			}
 
 			void Reset(sf::PrimitiveType _type = sf::PrimitiveType::LineStrip) {
-				Ir::Render::_priv::_vertices->setPrimitiveType(_type);
-				Ir::Render::_priv::_vertices->clear();
+				Ir::Render::_priv::g_vertices->setPrimitiveType(_type);
+				Ir::Render::_priv::g_vertices->clear();
 			}
 
 			void Flush(Ir::RenderTarget& _target) {
-				_target.Render(*Ir::Render::_priv::_vertices);
+				_target.Render(*Ir::Render::_priv::g_vertices);
 			}
 
 			void AddSinglePoint(Ir::Vector _position, sf::Color _color = sf::Color::White) {
 				sf::Vertex vertex { static_cast<sf::Vector2f>(_position), _color };
-				Ir::Render::_priv::_vertices->append(vertex);
+				Ir::Render::_priv::g_vertices->append(vertex);
 			}
 
 			void AddDoublePoint(Ir::Vector _position, sf::Color _color = sf::Color::White) {
 				sf::Vertex vertex { static_cast<sf::Vector2f>(_position), _color };
-				Ir::Render::_priv::_vertices->append(vertex);
-				Ir::Render::_priv::_vertices->append(vertex);
+				Ir::Render::_priv::g_vertices->append(vertex);
+				Ir::Render::_priv::g_vertices->append(vertex);
 			}
 		}
 

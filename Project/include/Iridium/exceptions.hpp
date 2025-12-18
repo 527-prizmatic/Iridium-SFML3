@@ -7,6 +7,16 @@ namespace Ir {
 		public:
 			const char * what() { return "Attempted to use invalid render target"; }
 		};
+		
+		class BadResourceID : public std::exception {
+		public:
+			BadResourceID(std::string _id) : m_badID { _id } {}
+
+			const char * what() { return std::string{ "Requested resource ID " + this->m_badID + " does not exist" }.c_str(); }
+
+		private:
+			std::string m_badID {};
+		};
 	}
 }
 

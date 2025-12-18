@@ -4,23 +4,23 @@
 namespace Ir {
 	namespace Random {
 		namespace _priv {
-			std::mt19937 _generator { static_cast<unsigned int>(std::time(nullptr)) };
+			std::mt19937 g_generator { static_cast<unsigned int>(std::time(nullptr)) };
 		}
 
 		int Integer32() {
-			return Ir::Random::_priv::_generator();
+			return Ir::Random::_priv::g_generator();
 		}
 
 		int Range(int _max) {
 			if (_max <= 0)
 				return 0;
-			return Ir::Random::_priv::_generator() % _max;
+			return Ir::Random::_priv::g_generator() % _max;
 		}
 
 		int Range(int _min, int _max) {
 			if (_max <= _min + 1)
 				return _min;
-			return _min + Ir::Random::_priv::_generator() % (_max - _min);
+			return _min + Ir::Random::_priv::g_generator() % (_max - _min);
 		}
 
 		bool Chance(float _chance) {
