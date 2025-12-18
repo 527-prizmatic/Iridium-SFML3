@@ -1,5 +1,6 @@
 #include "Iridium/rendering/shapes.hpp"
 #include "Iridium/math.hpp"
+#include "Iridium/render_target.hpp"
 
 namespace Ir {
 	namespace Render {

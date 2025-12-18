@@ -2,10 +2,11 @@
 #define IRIDIUM_RENDERING_SHAPES_HPP_
 
 #include "Iridium/vector.hpp"
-#include "Iridium/render_target.hpp"
 #include "Iridium/math.hpp"
 
 namespace Ir {
+	class RenderTarget;
+
 	namespace Render {
 		class Shape {
 		public:

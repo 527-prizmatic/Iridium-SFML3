@@ -132,6 +132,7 @@ namespace Ir {
 			return (*this - _other).IsZero();
 		}
 
+		static const Ir::Vector zero;
 		static const Ir::Vector unit;
 	};
 }

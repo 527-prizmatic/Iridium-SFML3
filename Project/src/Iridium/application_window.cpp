@@ -1,5 +1,6 @@
 #include "Iridium/application_window.hpp"
 #include "Iridium/exceptions.hpp"
+#include "Iridium/sub_window.hpp"
 
 namespace Ir {
 	ApplicationWindow::ApplicationWindow(Ir::Vector _size) {
@@ -44,7 +45,11 @@ namespace Ir {
 			throw Ir::Exceptions::InvalidRenderTarget{};
 		
 		/// @todo Placeholder. Extract render target's internal buffer data and draw it onto m_renderTexture
-		_render_target.SetSize(_render_target.GetSize());
+	//	_render_target.SetSize(_render_target.GetSize());
+
+		if (Ir::SubWindow* sub = dynamic_cast<Ir::SubWindow*>(&_render_target)) {
+			sub->FlushToTarget(*this);
+		}
 	}
 
 	void ApplicationWindow::Flush() {

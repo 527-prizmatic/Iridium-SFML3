@@ -1,12 +1,13 @@
-#ifndef IRIDIUM_APPWINDOW_HPP_
-#define IRIDIUM_APPWINDOW_HPP_
+#ifndef IRIDIUM_SUBWINDOW_HPP_
+#define IRIDIUM_SUBWINDOW_HPP_
 
 #include "Iridium/render_target.hpp"
+#include "Iridium/rendering/shapes.hpp"
 
 namespace Ir {
-	class ApplicationWindow: public Ir::RenderTarget {
+	class SubWindow: public Ir::RenderTarget {
 	public:
-		ApplicationWindow(Ir::Vector _size);
+		SubWindow(Ir::Vector _size);
 
 		/// @brief Deletes all internal resources and regenerates them with the provided size in pixels.
 		/// Checking if the window is in an invalid state before calling this function is not necessary, as it will attempt to reallocate them anyway.
@@ -29,43 +30,33 @@ namespace Ir {
 		/// @attention Attempting to call this function while the window is in an invalid state will throw an exception.
 		void Render(Ir::RenderTarget& _render_target);
 
-		/// @brief Flushes the render texture onto the render window.
-		/// This function will most likely be the last one called in the game loop.
-		void Flush();
+		void FlushToTarget(Ir::RenderTarget& _render_target);
 
 		/// @brief An application window contains two dynamically-allocated resources: a sf::renderWindow and a sf::RenderTexture.
 		/// The object is considered valid if and only if both have been correctly allocated.
 		/// @return Whether the application window has been properly initialized and is ready for rendering
 		bool IsValid() {
-			return this->m_renderWindow != nullptr && this->m_renderTexture != nullptr && this->m_rect != nullptr;
+			return this->m_renderTexture != nullptr;
 		}
 
-		void SetFPS(unsigned int _fps);
-		unsigned int GetFPS();
+		void SetRenderFrame(bool _val) { this->m_renderFrame = _val; }
 
-		sf::Vector2i GetMouseCursorPosition() const {
-			if (this->m_renderWindow)
-				return sf::Mouse::getPosition(*this->m_renderWindow);
-			else
-				return sf::Mouse::getPosition();
-		}
-
-		bool HasFocus() const {
-			return this->m_renderWindow->hasFocus();
-		}
+		void SetPosition(Ir::Vector _pos) { this->m_position = _pos; }
+		Ir::Vector GetPosition() const { return this->m_position; }
 
 	private:
-		std::unique_ptr<sf::RenderWindow> m_renderWindow;
 		std::unique_ptr<sf::RenderTexture> m_renderTexture;
 
 		/// @brief Rectangle shape used for rendering the texture onto the window upon calling Flush()
 		std::unique_ptr<sf::RectangleShape> m_rect;
-		
-		unsigned int m_fps;
-		
+
+		bool m_renderFrame { true };
+
+		Ir::Vector m_position;
+
 		/// @brief Reallocates internal resources, deleting the previous ones if they existed.
 		/// @attention This overload reuses the previously-allocated resources' size in pixels.
-		/// Attempting to call this function while the texture is in an invalid state will throw an exception.
+		/// Attempting to call this function while the window is in an invalid state will throw an exception.
 		void AllocateResources();
 
 		/// @brief Reallocates internal resources, deleting the previous ones if they existed.
@@ -73,7 +64,8 @@ namespace Ir {
 		void AllocateResources(sf::Vector2u _size);
 
 		void ConfigureRect();
+
 	};
 }
 
-#endif // IRIDIUM_APPWINDOW_HPP_
+#endif // IRIDIUM_SUBWINDOW_HPP_

@@ -3,6 +3,7 @@
 
 #include "Iridium/libraries.hpp"
 #include "Iridium/vector.hpp"
+#include "Iridium/rendering/shapes.hpp"
 
 namespace Ir {
 	/// @brief Base class for various rendering buffers.
@@ -21,6 +22,9 @@ namespace Ir {
 
 		/// @brief Renders the given object onto the render target.
 		virtual void Render(sf::Drawable& _drawable) = 0;
+
+		/// @attention Renders the given object onto the render target.
+		virtual void Render(Ir::Render::Shape& _shape) = 0;
 
 		/// @brief Renders the contents of the given render target's buffer onto this one.
 		virtual void Render(Ir::RenderTarget& _render_target) = 0;
