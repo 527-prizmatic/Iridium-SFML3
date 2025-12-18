@@ -70,7 +70,7 @@ namespace Ir {
 
 		sf::VideoMode vmode { sf::VideoMode::getDesktopMode() };
 		vmode.size = _size;
-		this->m_renderWindow = std::make_unique<sf::RenderWindow>(vmode, "Window", sf::Style::None);
+		this->m_renderWindow = std::make_shared<sf::RenderWindow>(vmode, "Window", sf::Style::None);
 		this->m_renderTexture = std::make_unique<sf::RenderTexture>(_size);
 		if (this->m_rect == nullptr) this->m_rect = std::make_unique<sf::RectangleShape>(sf::Vector2f{_size});
 		this->ConfigureRect();

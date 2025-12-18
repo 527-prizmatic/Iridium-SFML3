@@ -54,8 +54,12 @@ namespace Ir {
 			return this->m_renderWindow->hasFocus();
 		}
 
+		std::weak_ptr<sf::RenderWindow> GetSFMLWindow() const {
+			return this->m_renderWindow;
+		}
+
 	private:
-		std::unique_ptr<sf::RenderWindow> m_renderWindow;
+		std::shared_ptr<sf::RenderWindow> m_renderWindow;
 		std::unique_ptr<sf::RenderTexture> m_renderTexture;
 
 		/// @brief Rectangle shape used for rendering the texture onto the window upon calling Flush()

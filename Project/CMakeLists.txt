@@ -12,3 +12,4 @@ target_precompile_headers(${PROJECT_NAME} PRIVATE "include/Iridium/libraries.hpp
 # set_target_properties(${PROJECT_NAME} PROPERTIES UNITY_BUILD_MODE BATCH)
 
 add_subdirectory("src/Iridium")
+add_subdirectory("src/Project")
