@@ -6,13 +6,7 @@ int main() {
 	window.SetFPS(60u);
 	Ir::MouseInput::Setup(window);
 
-	DemoState demo;
-	demo.OnInitialize();
-
-
 	Ir::StateMachine sm;
-	sm.RegisterState<DemoState>();
-	sm.RegisterState<TestState>();
 	sm.LoadState<DemoState>();
 
 	while (1) {

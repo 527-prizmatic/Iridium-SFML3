@@ -25,14 +25,10 @@ namespace Ir {
 		[[deprecated]] bool LoadState(std::string _name);
 
 		/// @brief Queues loading of the state with the given type, to be loaded upon the start of the next frame.
-		/// @return Whether the state was successfully queued
-		template <StateClass T> bool LoadState() {
-			if (this->m_availableStates.contains(T::GetStateName())) {
-				this->m_nextState = T::GetStateName();
-				return true;
-			}
-			else
-				return false;
+		/// @brief If the state did not exist already, it is registered, allowing to perform lazy initialization if the user wishes.
+		template <StateClass T> void LoadState() {
+			this->RegisterState<T>();
+			this->m_nextState = T::GetStateName();
 		}
 
 		/// @brief Performs initialization for the currently active state.
@@ -50,15 +46,22 @@ namespace Ir {
 		/// @brief Calls resource destruction functions for the currently active state.
 		void Unload();
 
+		/// @brief Registers a state of the given type into the state machine.
 		template <StateClass T> bool RegisterState() {
 			if (this->m_availableStates.contains(T::GetStateName()))
 				return false;
 
 			this->m_availableStates[T::GetStateName()] = std::make_shared<T>();
 			std::dynamic_pointer_cast<T>(this->m_availableStates[T::GetStateName()])->SetStateMachine(this);
+			std::cout << "Registered state " << T::GetStateName() << std::endl;
 			return true;
 		}
 
+		/// @return type_info name of the currently active state.
+		/// @note A return value of "__none" means the state machine was not initialized yet.
+		/// @attention type_info slightly obfuscates type names, pay attention to this if doing manual type name comparison.
+		///
+		/// Prefer using GetStateName() instead of writing type names manually in such comparisons.
 		std::string GetCurrentStateName() {
 			return this->m_currentState;
 		}

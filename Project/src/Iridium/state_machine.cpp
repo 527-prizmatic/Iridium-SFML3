@@ -3,8 +3,12 @@
 #include "Iridium/exceptions.hpp"
 
 namespace Ir {
+	namespace _priv {
+		const std::string g_nullStateName = "__none";
+	}
+
 	StateMachine::StateMachine() {
-		this->m_currentState = "__none";
+		this->m_currentState = Ir::_priv::g_nullStateName;
 	}
 
 	bool StateMachine::LoadState(std::string _name) {
@@ -18,7 +22,8 @@ namespace Ir {
 
 	void StateMachine::Initialize() {
 		if (this->m_nextState.has_value()) {
-			this->Unload();
+			if (this->m_currentState != Ir::_priv::g_nullStateName)
+				this->Unload();
 			this->m_currentState = this->m_nextState.value();
 			this->m_availableStates[this->m_currentState]->OnInitialize();
 			this->m_nextState.reset();
