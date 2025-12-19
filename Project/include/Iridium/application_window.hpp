@@ -17,15 +17,19 @@ namespace Ir {
 		/// @attention Attempting to call this function while the window is in an invalid state will throw an exception.
 		Ir::Vector GetSize();
 
+		/// @brief Clears the rendering buffer and fills it with the given color.
 		/// @attention Attempting to call this function while the window is in an invalid state will throw an exception.
 		void Clear(sf::Color _fill_color = sf::Color::Transparent);
 
+		/// @brief Draws a SFML drawable object into the rendering buffer.
 		/// @attention Attempting to call this function while the window is in an invalid state will throw an exception.
 		void Render(sf::Drawable& _drawable);
 
+		/// @brief Draws an Iridium drawable object into the rendering buffer.
 		/// @attention Attempting to call this function while the window is in an invalid state will throw an exception.
 		void Render(Ir::Render::Shape& _shape);
 
+		/// @brief Draws the contents of another render target into this one.
 		/// @attention Attempting to call this function while the window is in an invalid state will throw an exception.
 		void Render(Ir::RenderTarget& _render_target);
 
@@ -40,32 +44,28 @@ namespace Ir {
 			return this->m_renderWindow != nullptr && this->m_renderTexture != nullptr && this->m_rect != nullptr;
 		}
 
+		/// @brief Sets target FPS.
+		/// The application window will force its thread to sleep to match the requested framerate,
+		/// so use with caution in time-critical applications.
 		void SetFPS(unsigned int _fps);
-		unsigned int GetFPS();
 
-		sf::Vector2i GetMouseCursorPosition() const {
-			if (this->m_renderWindow)
-				return sf::Mouse::getPosition(*this->m_renderWindow);
-			else
-				return sf::Mouse::getPosition();
-		}
+		/// @return Current target FPS
+		[[nodiscard]] unsigned int GetFPS() { return this->m_fps; }
 
-		bool HasFocus() const {
-			return this->m_renderWindow->hasFocus();
-		}
+		/// @return Whether the application window has system focus
+		[[nodiscard]] bool HasFocus() const { return this->m_renderWindow->hasFocus(); }
 
-		std::weak_ptr<sf::RenderWindow> GetSFMLWindow() const {
-			return this->m_renderWindow;
-		}
+		/// @return Current position of the mouse cursor within the application window
+		[[nodiscard]] sf::Vector2i GetMouseCursorPosition() const;
+
+		/// @return Next queued SFML event
+		[[nodiscard]] const std::optional<sf::Event> PollNextEvent();
 
 	private:
 		std::shared_ptr<sf::RenderWindow> m_renderWindow;
 		std::unique_ptr<sf::RenderTexture> m_renderTexture;
-
-		/// @brief Rectangle shape used for rendering the texture onto the window upon calling Flush()
-		std::unique_ptr<sf::RectangleShape> m_rect;
-		
-		unsigned int m_fps;
+		std::unique_ptr<sf::RectangleShape> m_rect; ///< Rectangle shape used for rendering the texture onto the window upon calling Flush()
+		unsigned int m_fps; ///< Target FPS
 		
 		/// @brief Reallocates internal resources, deleting the previous ones if they existed.
 		/// @attention This overload reuses the previously-allocated resources' size in pixels.

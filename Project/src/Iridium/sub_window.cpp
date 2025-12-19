@@ -49,7 +49,7 @@ namespace Ir {
 	}
 	
 	void SubWindow::FlushToTarget(Ir::RenderTarget& _render_target) {
-		if (!_render_target.IsValid())
+		if (!_render_target.IsValid() || !this->IsValid())
 			throw Ir::Exceptions::InvalidRenderTarget{};
 		
 		this->m_rect->setPosition(sf::Vector2f { this->m_position });

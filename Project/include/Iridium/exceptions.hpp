@@ -12,7 +12,17 @@ namespace Ir {
 		public:
 			BadResourceID(std::string _id) : m_badID { _id } {}
 
-			const char * what() { return std::string{ "Requested resource ID " + this->m_badID + " does not exist" }.c_str(); }
+			const char * what() { return std::string{ "Requested resource ID \"" + this->m_badID + "\" does not exist" }.c_str(); }
+
+		private:
+			std::string m_badID {};
+		};
+		
+		class BadStateID : public std::exception {
+		public:
+			BadStateID(std::string _id) : m_badID { _id } {}
+
+			const char * what() { return std::string{ "State machine attempted to update nonexistent state \"" + this->m_badID + "\"" }.c_str(); }
 
 		private:
 			std::string m_badID {};

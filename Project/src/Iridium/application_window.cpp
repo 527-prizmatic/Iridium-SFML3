@@ -88,7 +88,17 @@ namespace Ir {
 			this->m_renderWindow->setFramerateLimit(this->m_fps);
 	}
 
-	unsigned int ApplicationWindow::GetFPS() {
-		return this->m_fps;
+	[[nodiscard]] sf::Vector2i ApplicationWindow::GetMouseCursorPosition() const {
+		if (this->m_renderWindow)
+			return sf::Mouse::getPosition(*this->m_renderWindow);
+		else
+			return sf::Mouse::getPosition();
+	}
+
+	[[nodiscard]] const std::optional<sf::Event> ApplicationWindow::PollNextEvent() {
+		if (!this->IsValid())
+			return std::optional<sf::Event>();
+			
+		return this->m_renderWindow->pollEvent();
 	}
 }

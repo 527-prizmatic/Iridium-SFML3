@@ -1,5 +1,6 @@
 #include "Iridium/state_machine.hpp"
 #include "Iridium/state.hpp"
+#include "Iridium/exceptions.hpp"
 
 namespace Ir {
 	StateMachine::StateMachine() {
@@ -26,26 +27,23 @@ namespace Ir {
 	
 	void StateMachine::HandleEvents(Ir::ApplicationWindow &_window) {
 		if (!this->m_availableStates[this->m_currentState])
-			return;
+			throw Ir::Exceptions::BadStateID(this->m_currentState);
 
-		auto sfmlWindow = _window.GetSFMLWindow();
-		if (auto lock = sfmlWindow.lock()) {
-			while (const std::optional event = lock->pollEvent()) {
-				this->m_availableStates[this->m_currentState]->OnReceiveEvent(event.value());
-			}
+		while (const std::optional event = _window.PollNextEvent()) {
+			this->m_availableStates[this->m_currentState]->OnReceiveEvent(event.value());
 		}
 	}
 	
 	void StateMachine::Update() {
 		if (!this->m_availableStates[this->m_currentState])
-			return;
+			throw Ir::Exceptions::BadStateID(this->m_currentState);
 
 		this->m_availableStates[this->m_currentState]->OnUpdate();
 	}
 	
 	void StateMachine::Render(Ir::ApplicationWindow &_window) {
 		if (!this->m_availableStates[this->m_currentState])
-			return;
+			throw Ir::Exceptions::BadStateID(this->m_currentState);
 
 		_window.Clear(sf::Color::Black);
 		this->m_availableStates[this->m_currentState]->OnRender(_window);
@@ -54,7 +52,7 @@ namespace Ir {
 	
 	void StateMachine::Unload() {
 		if (!this->m_availableStates[this->m_currentState])
-			return;
+			throw Ir::Exceptions::BadStateID(this->m_currentState);
 
 		this->m_availableStates[this->m_currentState]->OnEnd();
 	}	

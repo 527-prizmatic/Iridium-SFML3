@@ -19,6 +19,9 @@ class TestState;
 IRIDIUM_STATE_CLASS(DemoState)
 public:
 	Ir::Render::Rectangle r;
+	std::unique_ptr<sf::Text> textArea;
+
+	std::unique_ptr<sf::Font> font;
 
 	void OnInitialize() override {
 		r.SetSize(20.f, 20.f);
