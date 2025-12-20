@@ -21,9 +21,9 @@ namespace Ir {
 		virtual void Clear(sf::Color _fill_color = sf::Color::Transparent) = 0;
 
 		/// @brief Renders the given object onto the render target.
-		virtual void Render(sf::Drawable& _drawable) = 0;
-
-		/// @attention Renders the given object onto the render target.
+		virtual void Render(sf::Drawable& _drawable, const sf::Texture* _texture = nullptr) = 0;
+		
+		/// @brief Renders the given object onto the render target.
 		virtual void Render(Ir::Render::Shape& _shape) = 0;
 
 		/// @brief Renders the contents of the given render target's buffer onto this one.

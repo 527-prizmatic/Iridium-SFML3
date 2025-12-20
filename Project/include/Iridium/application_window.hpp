@@ -23,7 +23,7 @@ namespace Ir {
 
 		/// @brief Draws a SFML drawable object into the rendering buffer.
 		/// @attention Attempting to call this function while the window is in an invalid state will throw an exception.
-		void Render(sf::Drawable& _drawable);
+		void Render(sf::Drawable& _drawable, const sf::Texture* _texture = nullptr);
 
 		/// @brief Draws an Iridium drawable object into the rendering buffer.
 		/// @attention Attempting to call this function while the window is in an invalid state will throw an exception.

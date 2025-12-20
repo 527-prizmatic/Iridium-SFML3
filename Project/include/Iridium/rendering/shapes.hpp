@@ -8,8 +8,24 @@ namespace Ir {
 	class RenderTarget;
 
 	namespace Render {
+		/// @brief Data holder for texture UVs, comprising a starting position and a size.
+		struct UV {
+			Ir::Vector topLeft {}; ///< Top-left corner of the UV rectangle
+			Ir::Vector size {}; ///< Size of the UV rectangle
+
+			UV() {}
+
+			UV(Ir::Vector _top_left, Ir::Vector _size) : topLeft { _top_left }, size { _size } {}
+
+			Ir::Vector TopLeftCorner() const { return this->topLeft; }
+			Ir::Vector TopRightCorner() const { return this->topLeft + Ir::Vector { this->size.x, 0.f }; }
+			Ir::Vector BottomLeftCorner() const { return this->topLeft + Ir::Vector { 0.f, this->size.y }; }
+			Ir::Vector BottomRightCorner() const { return this->topLeft + this->size; }
+		};
+
 		/// @brief Generic base class for vertex-based drawable objects.
 		/// Can be freely derived by the user.
+		/// All mutators should return a reference to this, allowing for chaining mutators.
 		class Shape {
 		public:
 			/// @brief Draws the object on the given render target.
@@ -48,6 +64,25 @@ namespace Ir {
 
 		private:
 			Ir::Vector m_size { 0.f, 0.f }; ///< Size
+		};
+
+		/// @brief Utility class for drawing quads (textured objects).
+		/// For rectangles, position is considered to be the top-left corner.
+		/// @todo Integrate this with a future resource manager, when there will be one
+		class Quad : public Rectangle {
+		public:
+			/// @brief Draws the object on the given render target.
+			virtual void Render(Ir::RenderTarget& _target) const override;
+
+			Rectangle& SetUVs(Ir::Vector _top_left, Ir::Vector _size); ///< Sets UVs, in texture pixels
+			Rectangle& SetUVs(Ir::Render::UV _uv); ///< Sets UVs, in texture pixels
+			Rectangle& SetTexture(const sf::Texture& _texture); ///< Sets texture resource
+
+			Ir::Render::UV GetUVs() { return this->m_uv; } ///< @return UVs, in texture pixels
+
+		private:
+			Ir::Render::UV m_uv {}; ///< Texture UVs
+			const sf::Texture* m_texture {}; ///< Texture to use in rendering
 		};
 
 		/// @brief Utility class for drawing wireframe circles.

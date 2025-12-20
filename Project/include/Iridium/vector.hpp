@@ -149,9 +149,4 @@ namespace Ir {
 	};
 }
 
-
-
-
-
-
 #endif // IRIDIUM_VECTOR_HPP_

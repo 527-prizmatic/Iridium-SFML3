@@ -24,7 +24,7 @@ namespace Ir {
 
 		/// @brief Draws a SFML drawable object into the rendering buffer.
 		/// @attention Attempting to call this function while the buffer is in an invalid state will throw an exception.
-		void Render(sf::Drawable& _drawable);
+		void Render(sf::Drawable& _drawable, const sf::Texture* _texture = nullptr);
 
 		/// @brief Draws an Iridium drawable object into the rendering buffer.
 		/// @attention Attempting to call this function while the buffer is in an invalid state will throw an exception.
@@ -57,7 +57,7 @@ namespace Ir {
 
 	private:
 		std::unique_ptr<sf::RenderTexture> m_renderTexture;
-		std::unique_ptr<sf::RectangleShape> m_rect; ///< Rectangle shape used for rendering the subwindow upon calling FlushToTarget()
+		std::unique_ptr<Ir::Render::Quad> m_rect; ///< Rectangle shape used for rendering the subwindow upon calling FlushToTarget()
 		std::unique_ptr<Ir::Render::Rectangle> m_frame; ///< Rectangle shape used to render the frame
 		Ir::Vector m_position; ///< Where to draw the subwindow relative to its parent
 
@@ -70,10 +70,10 @@ namespace Ir {
 
 		/// @brief Reallocates internal resources, deleting the previous ones if they existed.
 		/// @param _size Size of the newly-allocated resources, in pixels.
-		void AllocateResources(sf::Vector2u _size);
+		void AllocateResources(Ir::Vector _size);
 
-		void ConfigureRect(sf::Vector2u _size);
-		void ConfigureFrame(sf::Vector2u _size);
+		void ConfigureRect(Ir::Vector _size);
+		void ConfigureFrame(Ir::Vector _size);
 	};
 }
 

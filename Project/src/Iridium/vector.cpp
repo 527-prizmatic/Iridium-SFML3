@@ -109,11 +109,11 @@ namespace Ir {
 	}
 	
 	Ir::Vector Vector::MirrorX() const {
-		return Ir::Vector{ -this->x, this->y };
+		return Ir::Vector{ this->x, -this->y };
 	}
 	
 	Ir::Vector Vector::MirrorY() const {
-		return Ir::Vector{ this->x, -this->y };
+		return Ir::Vector{ -this->x, this->y };
 	}
 	
 	Ir::Vector Vector::Negate() const {

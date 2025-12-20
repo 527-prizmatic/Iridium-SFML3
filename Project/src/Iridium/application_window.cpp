@@ -26,11 +26,11 @@ namespace Ir {
 		this->m_renderTexture->clear(_fill_color);
 	}
 
-	void ApplicationWindow::Render(sf::Drawable &_drawable) {
+	void ApplicationWindow::Render(sf::Drawable &_drawable, const sf::Texture* _texture) {
 		if (!this->IsValid())
 			throw Ir::Exceptions::InvalidRenderTarget{};
 		
-		this->m_renderTexture->draw(_drawable);
+		this->m_renderTexture->draw(_drawable, _texture);
 	}
 
 	void ApplicationWindow::Render(Ir::Render::Shape& _shape) {

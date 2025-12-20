@@ -4,11 +4,11 @@
 
 namespace Ir {
 	SubWindow::SubWindow(Ir::Vector _size) {
-		this->AllocateResources(sf::Vector2u{ _size });
+		this->AllocateResources(_size);
 	}
 	
 	void SubWindow::SetSize(Ir::Vector _size) {
-		this->AllocateResources(sf::Vector2u{ _size });
+		this->AllocateResources(_size);
 	}
 
 	Ir::Vector SubWindow::GetSize() {
@@ -25,11 +25,12 @@ namespace Ir {
 		this->m_renderTexture->clear(_fill_color);
 	}
 
-	void SubWindow::Render(sf::Drawable &_drawable) {
+	void SubWindow::Render(sf::Drawable &_drawable, const sf::Texture* _texture) {
 		if (!this->IsValid())
 			throw Ir::Exceptions::InvalidRenderTarget{};
 		
-		this->m_renderTexture->draw(_drawable);
+			
+		this->m_renderTexture->draw(_drawable, _texture);
 	}
 
 	void SubWindow::Render(Ir::Render::Shape& _shape) {
@@ -52,7 +53,7 @@ namespace Ir {
 		if (!_render_target.IsValid() || !this->IsValid())
 			throw Ir::Exceptions::InvalidRenderTarget{};
 		
-		this->m_rect->setPosition(sf::Vector2f { this->m_position });
+		this->m_rect->SetPosition(this->m_position + Ir::Vector{0.f, this->GetSize().y});
 		_render_target.Render(*this->m_rect);
 		if (this->m_renderFrame) {
 			this->m_frame->SetPosition(this->m_position + Ir::Vector(1.f, 0.f));
@@ -64,23 +65,26 @@ namespace Ir {
 		if (!this->IsValid())
 			throw Ir::Exceptions::InvalidRenderTarget{};
 
-		this->AllocateResources(this->m_renderTexture->getSize());
+		this->AllocateResources(Ir::Vector::FromSFMLVector(this->m_renderTexture->getSize()));
 	}
 
-	void SubWindow::AllocateResources(sf::Vector2u _size) {
-		if (this->m_renderTexture != nullptr) this->m_renderTexture.reset();
-		this->m_renderTexture = std::make_unique<sf::RenderTexture>(_size);
+	void SubWindow::AllocateResources(Ir::Vector _size) {
+		if (this->m_renderTexture != nullptr)
+			this->m_renderTexture.reset();
+		this->m_renderTexture = std::make_unique<sf::RenderTexture>(sf::Vector2u{_size});
 		this->ConfigureRect(_size);
 		this->ConfigureFrame(_size);
 	}
 
-	void SubWindow::ConfigureRect(sf::Vector2u _size) {
+	void SubWindow::ConfigureRect(Ir::Vector _size) {
 		if (this->m_rect == nullptr)
-			this->m_rect = std::make_unique<sf::RectangleShape>(sf::Vector2f{_size});
-		this->m_rect->setTexture(&this->m_renderTexture->getTexture(), true);
+			this->m_rect = std::make_unique<Ir::Render::Quad>();
+
+		this->m_rect->SetTexture(this->m_renderTexture->getTexture());
+		this->m_rect->SetSize(_size.MirrorX());
 	}
 	
-	void SubWindow::ConfigureFrame(sf::Vector2u _size) {
+	void SubWindow::ConfigureFrame(Ir::Vector _size) {
 		if (this->m_frame == nullptr)
 			this->m_frame = std::make_unique<Ir::Render::Rectangle>();
 		this->m_frame->SetSize(_size.x - 1.f, _size.y - 1.f); /// -1 on each dimension so it precisely lines up with the edges of the subwindow
