@@ -74,7 +74,7 @@ namespace Ir {
 				return false;
 
 			sf::IntRect area {sf::Vector2i{_top_left}, sf::Vector2i{_size}};
-			return area.contains(sf::Mouse::getPosition());
+			return area.contains(sf::Vector2i{Ir::MouseInput::GetPosition()});
 		}
 
 		Ir::Vector GetPosition() {

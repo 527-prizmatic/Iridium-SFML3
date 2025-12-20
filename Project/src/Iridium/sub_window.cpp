@@ -55,11 +55,8 @@ namespace Ir {
 		this->m_rect->setPosition(sf::Vector2f { this->m_position });
 		_render_target.Render(*this->m_rect);
 		if (this->m_renderFrame) {
-			Ir::Render::Rectangle rect;
-			rect.SetSize(this->GetSize() - Ir::Vector(1.f, 1.f));
-			rect.SetPosition(this->m_position + Ir::Vector(1.f, 0.f));
-			rect.SetColor(sf::Color(0, 255, 0, 64));
-			_render_target.Render(rect);
+			this->m_frame->SetPosition(this->m_position + Ir::Vector(1.f, 0.f));
+			_render_target.Render(*this->m_frame);
 		}
 	}
 
@@ -73,13 +70,26 @@ namespace Ir {
 	void SubWindow::AllocateResources(sf::Vector2u _size) {
 		if (this->m_renderTexture != nullptr) this->m_renderTexture.reset();
 		this->m_renderTexture = std::make_unique<sf::RenderTexture>(_size);
-		if (this->m_rect == nullptr) this->m_rect = std::make_unique<sf::RectangleShape>(sf::Vector2f{_size});
-		this->ConfigureRect();
+		this->ConfigureRect(_size);
+		this->ConfigureFrame(_size);
 	}
 
-	void SubWindow::ConfigureRect() {
+	void SubWindow::ConfigureRect(sf::Vector2u _size) {
+		if (this->m_rect == nullptr)
+			this->m_rect = std::make_unique<sf::RectangleShape>(sf::Vector2f{_size});
 		this->m_rect->setTexture(&this->m_renderTexture->getTexture(), true);
-	//	this->m_rect->setScale({1.f, -1.f});
-	//	this->m_rect->setPosition({0.f, static_cast<float>(this->GetSize().y)});
+	}
+	
+	void SubWindow::ConfigureFrame(sf::Vector2u _size) {
+		if (this->m_frame == nullptr)
+			this->m_frame = std::make_unique<Ir::Render::Rectangle>();
+		this->m_frame->SetSize(_size.x - 1.f, _size.y - 1.f); /// -1 on each dimension so it precisely lines up with the edges of the subwindow
+	}
+
+	void SubWindow::SetRenderFrameColor(sf::Color _clr) {
+		if (!this->IsValid())
+			throw Ir::Exceptions::InvalidRenderTarget{};
+		
+		this->m_frame->SetColor(_clr);
 	}
 }

@@ -19,7 +19,7 @@ class DemoState;
 IRIDIUM_STATE_CLASS(TestState)
 public:
 	Ir::Render::Circle c;
-	Ir::SubWindow sub{Ir::Vector{100.f, 200.f}};
+	Ir::SubWindow sub{Ir::Vector{5.f, 5.f}};
 
 	void OnInitialize() override {
 		c.SetRadius(25.f);
@@ -29,10 +29,11 @@ public:
 		c.SetVertexCount(6u);
 
 		sub.SetPosition(Ir::Vector{100.f, 100.f});
+		sub.SetRenderFrameColor(sf::Color(128,128,255,128));
 	}
 
 	void OnUpdate() override {
-		c.SetAngle(c.GetAngle() + 1.f);
+		c.SetAngle(c.GetAngle() + 1.0_rad);
 
 		if (Ir::MouseInput::IsPressed(sf::Mouse::Button::Right))
 			this->LoadState<DemoState>();
@@ -41,7 +42,7 @@ public:
 	void OnReceiveEvent(const sf::Event& _e) override { std::cout << _e.is<sf::Event::KeyPressed>(); }
 
 	void OnRender(Ir::ApplicationWindow& _window) override {
-		sub.Clear(sf::Color::Black);
+		sub.Clear(sf::Color(32,32,32));
 
 		Ir::Vector pos = Ir::MouseInput::GetPosition();
 		if (Ir::MouseInput::IsActive(sf::Mouse::Button::Left))

@@ -24,15 +24,15 @@ public:
 	std::unique_ptr<sf::Font> font;
 
 	void OnInitialize() override {
-		r.SetSize(20.f, 20.f);
-		r.SetPosition(Ir::Vector{30.f, 30.f});
-		r.SetAnchor(10.f, 10.f);
+		r.SetSize(10.f, 10.f);
+		r.SetPosition(Ir::Vector{200.f, 200.f});
+		r.SetAnchor(-25.f, -25.f);
 		r.SetColor(sf::Color::Red);
 	}
 
 	void OnUpdate() override {
 		r.SetSize(r.GetSize() + Ir::Vector(.25f, .5f));
-		r.SetAngle(r.GetAngle() + 1.f);
+		r.SetAngle(r.GetAngle() + 1.0_rad);
 
 		if (Ir::MouseInput::IsPressed(sf::Mouse::Button::Right))
 			this->LoadState<TestState>();

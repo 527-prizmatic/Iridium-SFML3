@@ -23,15 +23,23 @@ namespace Ir {
 				_target.Render(*Ir::Render::_priv::g_vertices);
 			}
 
+			/// @brief Adds a point with given position and color to the internal rendering buffer.
 			void AddSinglePoint(Ir::Vector _position, sf::Color _color = sf::Color::White) {
 				sf::Vertex vertex { static_cast<sf::Vector2f>(_position), _color };
 				Ir::Render::_priv::g_vertices->append(vertex);
 			}
 
+			/// @brief Adds a point with given position and color to the internal rendering buffer.
+			/// This functions adds it twice, for use with sf::PrimitiveType::Lines.
 			void AddDoublePoint(Ir::Vector _position, sf::Color _color = sf::Color::White) {
 				sf::Vertex vertex { static_cast<sf::Vector2f>(_position), _color };
 				Ir::Render::_priv::g_vertices->append(vertex);
 				Ir::Render::_priv::g_vertices->append(vertex);
+			}
+
+			/// @brief Adds the first vertex of the buffer back at the end, for closing shapes.
+			void CloseShape() {
+				Ir::Render::_priv::g_vertices->append(Ir::Render::_priv::g_vertices->operator[](0));
 			}
 		}
 
@@ -85,13 +93,11 @@ namespace Ir {
 			Ir::Vector point3 { point1 + Ir::Vector{ this->m_size.x, this->m_size.y } };
 			Ir::Vector point4 { point1 + Ir::Vector{ 0.f, this->m_size.y } };
 
-			float angleRad = Ir::Math::DegToRad(this->GetAngle());
-
-			Ir::Render::_priv::AddSinglePoint(this->GetPosition() + point1.Rotate(angleRad), this->GetColor());
-			Ir::Render::_priv::AddSinglePoint(this->GetPosition() + point2.Rotate(angleRad), this->GetColor());
-			Ir::Render::_priv::AddSinglePoint(this->GetPosition() + point3.Rotate(angleRad), this->GetColor());
-			Ir::Render::_priv::AddSinglePoint(this->GetPosition() + point4.Rotate(angleRad), this->GetColor());
-			Ir::Render::_priv::AddSinglePoint(this->GetPosition() + point1.Rotate(angleRad), this->GetColor());
+			Ir::Render::_priv::AddSinglePoint(this->GetPosition() + point1.Rotate(this->GetAngle()), this->GetColor());
+			Ir::Render::_priv::AddSinglePoint(this->GetPosition() + point2.Rotate(this->GetAngle()), this->GetColor());
+			Ir::Render::_priv::AddSinglePoint(this->GetPosition() + point3.Rotate(this->GetAngle()), this->GetColor());
+			Ir::Render::_priv::AddSinglePoint(this->GetPosition() + point4.Rotate(this->GetAngle()), this->GetColor());
+			Ir::Render::_priv::CloseShape();
 
 			Ir::Render::_priv::Flush(_target);
 		}
@@ -112,12 +118,12 @@ namespace Ir {
 			Ir::Render::_priv::Reset();
 
 			Ir::Vector center = this->GetPosition() - this->GetAnchor();
-			float angleRad = Ir::Math::DegToRad(this->GetAngle());
 
-			for (unsigned int i = 0; i <= this->m_vertexCount; i++) {
-				Ir::Vector vertexPos { Ir::Vector::Polar(this->m_radius, angleRad + this->m_vertexAngle * static_cast<float>(i)) };
+			for (unsigned int i = 0; i < this->m_vertexCount; i++) {
+				Ir::Vector vertexPos { Ir::Vector::Polar(this->m_radius, this->GetAngle() + this->m_vertexAngle * static_cast<float>(i)) };
 				Ir::Render::_priv::AddSinglePoint(center + vertexPos, this->GetColor());
 			}
+			Ir::Render::_priv::CloseShape();
 
 			Ir::Render::_priv::Flush(_target);
 		}

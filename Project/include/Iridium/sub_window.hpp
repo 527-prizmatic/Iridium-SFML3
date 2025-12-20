@@ -42,11 +42,14 @@ namespace Ir {
 		/// The object is considered valid if it has been correctly allocated.
 		/// @return Whether the subwindow has been properly initialized and is ready for rendering
 		bool IsValid() {
-			return this->m_renderTexture != nullptr;
+			return this->m_renderTexture != nullptr && this->m_frame != nullptr;
 		}
 
-		/// @brief Whether a white frame should be rendered around the subwindow upon calling FlushToTarget().
+		/// @brief Whether a frame should be rendered around the subwindow upon calling FlushToTarget().
 		void SetRenderFrame(bool _val) { this->m_renderFrame = _val; }
+
+		/// @brief Sets the color of the frame to be rendered around the subwindow.
+		void SetRenderFrameColor(sf::Color _clr);
 
 		/// @brief Sets the position where the subwindow should be rendered, relative to the parent.
 		void SetPosition(Ir::Vector _pos) { this->m_position = _pos; }
@@ -55,7 +58,9 @@ namespace Ir {
 	private:
 		std::unique_ptr<sf::RenderTexture> m_renderTexture;
 		std::unique_ptr<sf::RectangleShape> m_rect; ///< Rectangle shape used for rendering the subwindow upon calling FlushToTarget()
+		std::unique_ptr<Ir::Render::Rectangle> m_frame; ///< Rectangle shape used to render the frame
 		Ir::Vector m_position; ///< Where to draw the subwindow relative to its parent
+
 		bool m_renderFrame { true }; ///< Whether to draw a frame around the subwindow
 
 		/// @brief Reallocates internal resources, deleting the previous ones if they existed.
@@ -67,8 +72,8 @@ namespace Ir {
 		/// @param _size Size of the newly-allocated resources, in pixels.
 		void AllocateResources(sf::Vector2u _size);
 
-		void ConfigureRect();
-
+		void ConfigureRect(sf::Vector2u _size);
+		void ConfigureFrame(sf::Vector2u _size);
 	};
 }
 
