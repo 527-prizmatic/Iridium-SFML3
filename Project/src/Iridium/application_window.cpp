@@ -2,6 +2,11 @@
 #include "Iridium/exceptions.hpp"
 #include "Iridium/sub_window.hpp"
 
+/// @todo Add support for other OSes
+#if defined(_WIN32)
+#include <windows.h>
+#endif
+
 namespace Ir {
 	ApplicationWindow::ApplicationWindow(Ir::Vector _size) {
 		this->AllocateResources(sf::Vector2u{ _size });
@@ -57,6 +62,23 @@ namespace Ir {
 		this->m_renderWindow->display();
 	}
 
+	void ApplicationWindow::Minimize() {
+		sf::WindowHandle handle { this->m_renderWindow->getNativeHandle() };
+
+/// @todo Add support for other OSes, probably
+#if defined(_WIN32)
+		PostMessage(handle, WM_SYSCOMMAND, SC_MINIMIZE, 0);
+		std::cout << handle;
+#endif
+	}
+
+	void ApplicationWindow::ReduceBackgroundResourceUsage() {
+		if (this->HasFocus())
+			this->m_renderWindow->setFramerateLimit(this->m_fps);
+		else
+			this->m_renderWindow->setFramerateLimit(10u);
+	}
+
 	void ApplicationWindow::AllocateResources() {
 		if (!this->IsValid())
 			throw Ir::Exceptions::InvalidRenderTarget{};
@@ -100,5 +122,17 @@ namespace Ir {
 			return std::optional<sf::Event>();
 			
 		return this->m_renderWindow->pollEvent();
+	}
+	
+	void ApplicationWindow::SetTitle(std::string _title) {
+		if (!this->IsValid())
+			throw Ir::Exceptions::InvalidRenderTarget{};
+
+		this->m_renderWindow->setTitle(_title);
+		this->m_windowTitle = _title;
+	}
+		
+	std::string ApplicationWindow::GetTitle() {
+		return this->m_windowTitle;
 	}
 }

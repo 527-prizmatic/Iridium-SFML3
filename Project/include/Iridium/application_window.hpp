@@ -37,6 +37,14 @@ namespace Ir {
 		/// This function will most likely be the last one called in the game loop.
 		void Flush();
 
+		/// @brief Minimizes the window.
+		/// Exact implementation differs based on the OS.
+		/// @todo Add support for other OSes, probably
+		void Minimize();
+
+		/// @brief Reduces framerate when running in background to save on resources.
+		void ReduceBackgroundResourceUsage();
+
 		/// @brief An application window contains two dynamically-allocated resources: a sf::renderWindow and a sf::RenderTexture.
 		/// The object is considered valid if and only if both have been correctly allocated.
 		/// @return Whether the application window has been properly initialized and is ready for rendering
@@ -61,11 +69,16 @@ namespace Ir {
 		/// @return Next queued SFML event
 		[[nodiscard]] const std::optional<sf::Event> PollNextEvent();
 
+		void SetTitle(std::string _title);
+
+		std::string GetTitle();
+
 	private:
 		std::shared_ptr<sf::RenderWindow> m_renderWindow;
 		std::unique_ptr<sf::RenderTexture> m_renderTexture;
 		std::unique_ptr<sf::RectangleShape> m_rect; ///< Rectangle shape used for rendering the texture onto the window upon calling Flush()
-		unsigned int m_fps; ///< Target FPS
+		std::string m_windowTitle {};
+		unsigned int m_fps { 60u }; ///< Target FPS
 		
 		/// @brief Reallocates internal resources, deleting the previous ones if they existed.
 		/// @attention This overload reuses the previously-allocated resources' size in pixels.

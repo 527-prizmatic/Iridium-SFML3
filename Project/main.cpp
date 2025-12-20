@@ -10,11 +10,12 @@ int main() {
 	sm.LoadState<DemoState>();
 
 	while (!sm.HasRequestedExit()) {
+		window.ReduceBackgroundResourceUsage();
 		Ir::MouseInput::Update();
 
 		sm.Initialize();
 		sm.HandleEvents(window);
-		sm.Update();
+		sm.Update(window);
 		sm.Render(window);
 	}
 
