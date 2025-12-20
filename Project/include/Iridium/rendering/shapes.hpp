@@ -23,6 +23,11 @@ namespace Ir {
 			Ir::Vector BottomRightCorner() const { return this->topLeft + this->size; }
 		};
 
+		enum Mode : unsigned char {
+			WIREFRAME,
+			SOLID
+		};
+
 		/// @brief Generic base class for vertex-based drawable objects.
 		/// Can be freely derived by the user.
 		/// All mutators should return a reference to this, allowing for chaining mutators.
@@ -36,17 +41,20 @@ namespace Ir {
 			Shape& SetAnchor(Ir::Vector _anchor); ///< @brief Sets anchor point, in pixels
 			Shape& SetAnchor(float _x, float _y); ///< @brief Sets anchor point, in pixels
 			Shape& SetColor(sf::Color _color); ///< @brief Sets object color
-			
+			Shape& SetMode(Ir::Render::Mode _mode); ///< @brief Sets rendering mode
+
 			inline Ir::Vector GetPosition() const { return this->m_position; } ///< @return Screen position, in pixels
 			inline float GetAngle() const { return this->m_angle; } ///< @return Rotation about the anchor point, in radians
 			inline Ir::Vector GetAnchor() const { return this->m_anchor; } ///< @return Anchor point, in pixels
 			inline sf::Color GetColor() const { return this->m_color; } ///< @return Object color
+			inline Ir::Render::Mode GetMode() const { return this->m_mode; } ///< @return Rendering mode
 
 		private:
 			Ir::Vector m_position { 0.f, 0.f }; ///< Screen position
 			float m_angle { 0.f }; ///< Angle, in radians
 			Ir::Vector m_anchor { 0.f, 0.f }; ///< Anchor point
 			sf::Color m_color { sf::Color::White }; ///< Object color
+			Ir::Render::Mode m_mode { Ir::Render::Mode::WIREFRAME }; ///< Rendering mode
 		};
 
 		/// @brief Utility class for drawing wireframe rectangles.

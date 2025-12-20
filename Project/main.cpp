@@ -9,7 +9,7 @@ int main() {
 	Ir::StateMachine sm;
 	sm.LoadState<DemoState>();
 
-	while (1) {
+	while (!sm.HasRequestedExit()) {
 		Ir::MouseInput::Update();
 
 		sm.Initialize();

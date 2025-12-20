@@ -66,10 +66,15 @@ namespace Ir {
 			return this->m_currentState;
 		}
 
+		void RequestExit() { this->m_requestedExit = true; }
+		bool HasRequestedExit() { return this->m_requestedExit; }
+
 	private:
 		std::map<std::string, std::shared_ptr<Ir::State>> m_availableStates; ///< Storage for available states
 		std::string m_currentState; ///< Name of the currently active state
 		std::optional<std::string> m_nextState; ///< Name of the state to be loaded upon starting the next frame
+
+		bool m_requestedExit { false };
 	};
 }
 

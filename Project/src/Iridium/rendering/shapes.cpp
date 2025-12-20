@@ -76,6 +76,11 @@ namespace Ir {
 			return *this;
 		}
 
+		Shape &Shape::SetMode(Ir::Render::Mode _mode) {
+			this->m_mode = _mode;
+			return *this;
+		}
+		
 		/// Rectangle
 
 		Rectangle &Rectangle::SetSize(Ir::Vector _size) {
@@ -96,18 +101,30 @@ namespace Ir {
 
 		void Rectangle::Render(Ir::RenderTarget& _target) const {
 			Ir::Render::_priv::TryInitialize();
-			Ir::Render::_priv::Reset();
-
+			
 			Ir::Vector point1 { -this->GetAnchor() };
 			Ir::Vector point2 { point1 + Ir::Vector{ this->m_size.x, 0.f } };
 			Ir::Vector point3 { point1 + this->m_size };
 			Ir::Vector point4 { point1 + Ir::Vector{ 0.f, this->m_size.y } };
+			
+			if (this->GetMode() == Ir::Render::Mode::WIREFRAME) {
+				Ir::Render::_priv::Reset(sf::PrimitiveType::LineStrip);
 
-			Ir::Render::_priv::AddSinglePoint(this->GetPosition() + point1.Rotate(this->GetAngle()), this->GetColor());
-			Ir::Render::_priv::AddSinglePoint(this->GetPosition() + point2.Rotate(this->GetAngle()), this->GetColor());
-			Ir::Render::_priv::AddSinglePoint(this->GetPosition() + point3.Rotate(this->GetAngle()), this->GetColor());
-			Ir::Render::_priv::AddSinglePoint(this->GetPosition() + point4.Rotate(this->GetAngle()), this->GetColor());
-			Ir::Render::_priv::CloseShape();
+				Ir::Render::_priv::AddSinglePoint(this->GetPosition() + point1.Rotate(this->GetAngle()), this->GetColor());
+				Ir::Render::_priv::AddSinglePoint(this->GetPosition() + point2.Rotate(this->GetAngle()), this->GetColor());
+				Ir::Render::_priv::AddSinglePoint(this->GetPosition() + point3.Rotate(this->GetAngle()), this->GetColor());
+				Ir::Render::_priv::AddSinglePoint(this->GetPosition() + point4.Rotate(this->GetAngle()), this->GetColor());
+				Ir::Render::_priv::CloseShape();
+			}
+			
+			else if (this->GetMode() == Ir::Render::Mode::SOLID) {
+				Ir::Render::_priv::Reset(sf::PrimitiveType::TriangleStrip);
+
+				Ir::Render::_priv::AddSinglePoint(this->GetPosition() + point1.Rotate(this->GetAngle()), this->GetColor());
+				Ir::Render::_priv::AddSinglePoint(this->GetPosition() + point2.Rotate(this->GetAngle()), this->GetColor());
+				Ir::Render::_priv::AddSinglePoint(this->GetPosition() + point4.Rotate(this->GetAngle()), this->GetColor());
+				Ir::Render::_priv::AddSinglePoint(this->GetPosition() + point3.Rotate(this->GetAngle()), this->GetColor());
+			}
 
 			Ir::Render::_priv::Flush(_target);
 		}
