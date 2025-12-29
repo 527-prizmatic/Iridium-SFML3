@@ -39,11 +39,14 @@ public:
 		spr.SetPosition(Ir::Vector{10.f, 10.f});
 	}
 
-	void OnUpdate() override {
+	void OnUpdate(Ir::ApplicationWindow& _window) override {
 		c.SetAngle(c.GetAngle() + 1.0_rad);
 
 		if (Ir::MouseInput::IsPressed(sf::Mouse::Button::Right))
 			this->LoadState<DemoState>();
+		
+		// Placeholder so that GCC does not trigger compilation errors from unused window parameters
+		_window.SetTitle(_window.GetTitle());
 	}
 	
 	void OnReceiveEvent(const sf::Event& _e) override {

@@ -43,7 +43,7 @@ namespace Ir {
 
 		virtual void OnInitialize() = 0; /// Fires upon initializing the state, initialize all resources here
 		virtual void OnReceiveEvent(const sf::Event& _e) = 0; /// Fires first on every frame
-		virtual void OnUpdate() = 0; /// Fires on every frame, after polling system events
+		virtual void OnUpdate(Ir::ApplicationWindow& _window) = 0; /// Fires on every frame, after polling system events
 		virtual void OnRender(Ir::ApplicationWindow& _window) = 0; /// Fires on every frame upon rendering
 		virtual void OnEnd() = 0; /// Fires upon changing states, destroy allocated resources here
 	};

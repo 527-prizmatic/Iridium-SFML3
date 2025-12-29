@@ -38,7 +38,7 @@ namespace Ir {
 		void HandleEvents(Ir::ApplicationWindow& _window);
 
 		/// @brief Performs frame updates for the currently active state.
-		void Update();
+		void Update(Ir::ApplicationWindow& _window);
 
 		/// @brief Performs rendering operations for the currently active state.
 		void Render(Ir::ApplicationWindow& _window);

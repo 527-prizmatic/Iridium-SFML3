@@ -6,6 +6,10 @@ int main() {
 	window.SetFPS(60u);
 	Ir::MouseInput::Setup(window);
 
+#ifdef USING_IMGUI
+	ImGui::SFML::Init(window.GetWindow(), true);
+#endif
+
 	Ir::StateMachine sm;
 	sm.LoadState<DemoState>();
 

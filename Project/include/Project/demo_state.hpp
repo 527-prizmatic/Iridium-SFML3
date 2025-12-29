@@ -30,12 +30,15 @@ public:
 		r.SetColor(sf::Color::Red);
 	}
 
-	void OnUpdate() override {
+	void OnUpdate(Ir::ApplicationWindow& _window) override {
 		r.SetSize(r.GetSize() + Ir::Vector(.25f, .5f));
 		r.SetAngle(r.GetAngle() + 1.0_rad);
 
 		if (Ir::MouseInput::IsPressed(sf::Mouse::Button::Right))
 			this->LoadState<TestState>();
+		
+		// Placeholder so that GCC does not trigger compilation errors from unused window parameters
+		_window.SetTitle(_window.GetTitle());
 	}
 	
 	void OnReceiveEvent(const sf::Event& _e) override { std::cout << _e.is<sf::Event::KeyPressed>(); }

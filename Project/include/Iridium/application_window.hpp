@@ -73,6 +73,8 @@ namespace Ir {
 
 		std::string GetTitle();
 
+		sf::RenderWindow& GetWindow() { return *this->m_renderWindow; }
+
 	private:
 		std::shared_ptr<sf::RenderWindow> m_renderWindow;
 		std::unique_ptr<sf::RenderTexture> m_renderTexture;
