@@ -2,7 +2,6 @@
 #define IRIDIUM_APPWINDOW_HPP_
 
 #include "Iridium/render_target.hpp"
-#include "Iridium/rendering/shapes.hpp"
 
 namespace Ir {
 	class ApplicationWindow: public Ir::RenderTarget {
@@ -27,10 +26,6 @@ namespace Ir {
 		void Render(sf::Drawable& _drawable, const sf::Texture* _texture = nullptr);
 
 		/// @brief Draws an Iridium drawable object into the rendering buffer.
-		/// @attention Attempting to call this function while the window is in an invalid state will throw an exception.
-		void Render(Ir::Render::Shape& _shape);
-
-		/// @brief Draws the contents of another render target into this one.
 		/// @attention Attempting to call this function while the window is in an invalid state will throw an exception.
 		void Render(Ir::Render::Shape& _shape);
 

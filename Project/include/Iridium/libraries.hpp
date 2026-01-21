@@ -1,6 +1,8 @@
 #ifndef IRIDIUM_LIBRARIES_HPP_
 #define IRIDIUM_LIBRARIES_HPP_
 
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+
 // C++ core and STL features
 #include <iostream>
 #include <memory>
@@ -9,6 +11,7 @@
 #include <cmath>
 #include <functional>
 #include <random>
+#include <map>
 
 // SFML
 #include <SFML/Graphics.hpp>

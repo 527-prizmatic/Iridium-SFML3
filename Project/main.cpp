@@ -1,5 +1,5 @@
-#include "Project/demo_state.hpp"
-#include "Project/test_state.hpp"
+#include "Project/core_state.hpp"
+#include "Iridium/input/mouse.hpp"
 
 int main() {
 	Ir::ApplicationWindow window{Ir::Vector{1280.f, 720.f}};
@@ -7,7 +7,7 @@ int main() {
 	Ir::MouseInput::Setup(window);
 
 	Ir::StateMachine sm;
-	sm.LoadState<DemoState>();
+	sm.LoadState<CoreState>();
 
 	while (!sm.HasRequestedExit()) {
 		window.ReduceBackgroundResourceUsage();

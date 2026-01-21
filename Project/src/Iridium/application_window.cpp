@@ -45,13 +45,6 @@ namespace Ir {
 		_shape.Render(*this);
 	}
 
-	void ApplicationWindow::Render(Ir::Render::Shape& _shape) {
-		if (!this->IsValid())
-			throw Ir::Exceptions::InvalidRenderTarget{};
-		
-		_shape.Render(*this);
-	}
-
 	void ApplicationWindow::Render(Ir::RenderTarget &_render_target) {
 		if (!this->IsValid())
 			throw Ir::Exceptions::InvalidRenderTarget{};
