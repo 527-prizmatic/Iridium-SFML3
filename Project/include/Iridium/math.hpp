@@ -5,20 +5,23 @@
 
 namespace Ir {
 	namespace Math {
-		inline constexpr float pi = 3.14159;
-		inline constexpr float tau = 2.f * pi;
-		inline constexpr float euler = 2.71828;
-		inline constexpr float phi = 1.61803;
-		inline constexpr float degToRadRatio = Math::pi / 180.f;
-		inline constexpr float radToDegRatio = 180.f / Math::pi;
+		inline constexpr float pi = 3.14159; /// @brief Circle constant
+		inline constexpr float tau = 2.f * pi; /// @brief Double the circle constant
+		inline constexpr float euler = 2.71828; /// @brief Exponential constant
+		inline constexpr float phi = 1.61803; /// @brief Golden ratio
+		inline constexpr float degToRadRatio = Math::pi / 180.f; /// @brief Conversion ratio from degrees to radians
+		inline constexpr float radToDegRatio = 180.f / Math::pi; /// @brief Conversion ratio from radians to degrees
 
-	/// @brief Verifies if a variable is an arithmetic type (int, char, short, float, double, etc. and CV-qualified variants).
-		template <typename T> concept Number = std::is_arithmetic<T>::value;
+		/// @brief Verifies if a type is an arithmetic type (int, char, short, float, double, etc. and CV-qualified variants).
+		template <typename T>
+		concept Number = std::is_arithmetic<T>::value;
 
+		/// @return Whether this number is equal to zero, accounting for floating-point imprecisions
 		template <Number T> [[nodiscard]] constexpr bool IsZero(T _n) noexcept {
 			return abs(_n) <= std::numeric_limits<T>::epsilon();
 		}
 
+		/// @brief O(log n) power function for integer exponents, based on repeated squaring.
 		template <Number T> [[nodiscard]] constexpr T Powi(T _a, int _exp) noexcept {
 			Expects(_exp >= 0);
 			if (!_exp) [[unlikely]] return { 1 };
@@ -36,9 +39,9 @@ namespace Ir {
 			return result;
 		}
 
-		/// @brief Quick square function, using straightforward multiplications to avoid the more complex operations of Math::powi.
+		/// @brief Shorthand square function, using straightforward multiplications to avoid the more complex operations of Math::powi.
 		template <Number T> [[nodiscard]] constexpr T Pow2(const T _a) { return _a * _a; }
-		/// @brief Quick cube function, using straightforward multiplications to avoid the more complex operations of Math::powi.
+		/// @brief Shorthand cube function, using straightforward multiplications to avoid the more complex operations of Math::powi.
 		template <Number T> [[nodiscard]] constexpr T Pow3(const T _a) { return _a * _a * _a; }
 
 		/// @brief Clamps a value between two bounds.
@@ -58,7 +61,7 @@ namespace Ir {
 		}
 
 		/// @brief Compares two numbers of the same type and returns the greatest one.
-		template <Number T> constexpr T Max(const T _a, const T _b) noexcept { return std::max(_a, _b); }
+		template <Number T> [[nodiscard]] constexpr T Max(const T _a, const T _b) noexcept { return std::max(_a, _b); }
 		/// @brief Compares a set of numbers of the same type and returns the greatest one.
 		template <Number T, typename... Args> [[nodiscard]] constexpr T Max(const T _a, Args... _args) noexcept {
 			return Ir::Math::Max(_a, Ir::Math::Max(_args...));
@@ -74,6 +77,16 @@ namespace Ir {
 			return _radians * Ir::Math::radToDegRatio;
 		}
 	}
+}
+		
+/// @brief Converts into radians a number assumed to be an angle in degrees.
+[[nodiscard]] inline constexpr float operator ""_rad(long double _angle) noexcept {
+	return Ir::Math::DegToRad(_angle);
+}
+
+/// @brief Converts into degrees a number assumed to be an angle in radians.
+[[nodiscard]] inline constexpr float operator ""_deg(long double _angle) noexcept {
+	return Ir::Math::RadToDeg(_angle);
 }
 
 #endif // IRIDIUM_MATH_HPP_

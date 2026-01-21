@@ -1,4 +1,5 @@
-cmake_minimum_required (VERSION 3.15)
+cmake_minimum_required(VERSION 3.31)
+set(CMAKE_POLICY_VERSION_MINIMUM 3.5)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
@@ -15,3 +16,6 @@ set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build SFML as static libraries" FORCE)
 
 project("Iridium")
 add_subdirectory("Project")
+
+file(REMOVE "${CMAKE_CURRENT_BINARY_DIR}/resources")
+file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/resources" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")

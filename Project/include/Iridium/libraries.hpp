@@ -9,6 +9,8 @@
 #include <cmath>
 #include <functional>
 #include <random>
+#include <filesystem>
+#include <map>
 
 // SFML
 #include <SFML/Graphics.hpp>
