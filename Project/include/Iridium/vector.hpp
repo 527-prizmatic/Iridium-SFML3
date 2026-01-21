@@ -48,26 +48,38 @@ namespace Ir {
 		[[nodiscard]] Ir::Vector ClampMagnitude(float _max) const;
 
 		/// @brief Clamps the vector's magnitude between the given thresholds.
-		/// @
 		[[nodiscard]] Ir::Vector ClampMagnitude(float _min, float _max) const;
 
-
+		/// @brief Converts a cartesian-space vector into polar vector space.
 		[[nodiscard]] Ir::Vector RecToPol() const;
+		
+		/// @brief Converts a polar-space vector into cartesian vector space.
 		[[nodiscard]] Ir::Vector PolToRec() const;
+
+		/// @brief Rotates about the given angle.
 		[[nodiscard]] Ir::Vector Rotate(float _angle) const;
+
+		/// @brief Rotates about the given angle, using a point as reference.
 		[[nodiscard]] Ir::Vector Rotate(float _angle, Ir::Vector _reference) const;
+
+		/// @return Axial mirror image of the vector about the given symmetry axis
 		[[nodiscard]] Ir::Vector Mirror(Ir::Vector _axis) const;
+
+		/// @return Axial mirror image of the vector about the X axis
 		[[nodiscard]] Ir::Vector MirrorX() const;
+
+		/// @return Axial mirror image of the vector about the Y axis
 		[[nodiscard]] Ir::Vector MirrorY() const;
+
+		/// @return Opposite of the vector
 		[[nodiscard]] Ir::Vector Negate() const;
 
-		template <typename T> [[nodiscard]] explicit operator sf::Vector2<T>() const
-		{
+		template <typename T>
+		[[nodiscard]] explicit operator sf::Vector2<T>() const {
 			return sf::Vector2<T>{ static_cast<T>(this->x), static_cast<T>(this->y) };
 		}
 		
-		[[nodiscard]] operator std::string() const
-		{
+		[[nodiscard]] operator std::string() const {
 			return '(' + std::to_string(this->x) + ' ' + std::to_string(this->y) + ')';
 		}
 
@@ -88,7 +100,11 @@ namespace Ir {
 		}
 		
 		[[nodiscard]] inline Ir::Vector operator-(const Ir::Vector& _other) const {
-			return Ir::Vector { this->x - _other.x, this->x - _other.y };
+			return Ir::Vector { this->x - _other.x, this->y - _other.y };
+		}
+		
+		[[nodiscard]] inline Ir::Vector operator-() const {
+			return Ir::Vector { -this->x, -this->y };
 		}
 		
 		[[nodiscard]] inline Ir::Vector operator*(const float _other) const {
@@ -127,12 +143,10 @@ namespace Ir {
 		[[nodiscard]] inline bool operator==(const Ir::Vector& _other) const {
 			return (*this - _other).IsZero();
 		}
+
+		static const Ir::Vector zero;
+		static const Ir::Vector unit;
 	};
 }
-
-
-
-
-
 
 #endif // IRIDIUM_VECTOR_HPP_
