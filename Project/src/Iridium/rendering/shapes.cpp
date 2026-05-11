@@ -2,199 +2,199 @@
 #include "Iridium/math.hpp"
 #include "Iridium/render_target.hpp"
 
-namespace Ir {
-	namespace Render {
-		namespace _priv {
+namespace ir {
+	namespace render {
+		namespace detail {
 			std::unique_ptr<sf::VertexArray> g_vertices;
 
 			/// @brief Tries to initialize the internal vertex array used for rendering.
 			/// Does strictly nothing if it was already initialized.
-			void TryInitialize() {
-				if (!Ir::Render::_priv::g_vertices)
-					Ir::Render::_priv::g_vertices = std::make_unique<sf::VertexArray>();
+			void tryInitialize() {
+				if (!ir::render::detail::g_vertices)
+					ir::render::detail::g_vertices = std::make_unique<sf::VertexArray>();
 			}
 
-			void Reset(sf::PrimitiveType _type = sf::PrimitiveType::LineStrip) {
-				Ir::Render::_priv::g_vertices->setPrimitiveType(_type);
-				Ir::Render::_priv::g_vertices->clear();
+			void reset(sf::PrimitiveType type = sf::PrimitiveType::LineStrip) {
+				ir::render::detail::g_vertices->setPrimitiveType(type);
+				ir::render::detail::g_vertices->clear();
 			}
 
-			void Flush(Ir::RenderTarget& _target, const sf::Texture* _texture = nullptr) {
-				_target.Render(*Ir::Render::_priv::g_vertices, _texture);
+			void flush(ir::RenderTarget& target, const sf::Texture* texture = nullptr) {
+				target.render(*ir::render::detail::g_vertices, texture);
 			}
 
 			/// @brief Adds a point with given position and color to the internal rendering buffer.
-			void AddSinglePoint(Ir::Vector _position, sf::Color _color = sf::Color::White) {
-				sf::Vertex vertex { static_cast<sf::Vector2f>(_position), _color };
-				Ir::Render::_priv::g_vertices->append(vertex);
+			void addSinglePoint(ir::Vector position, sf::Color color = sf::Color::White) {
+				sf::Vertex vertex { static_cast<sf::Vector2f>(position), color };
+				ir::render::detail::g_vertices->append(vertex);
 			}
 
 			/// @brief Adds a point with given position and texture coordinate to the internal rendering buffer.
-			void AddSinglePoint(Ir::Vector _position, Ir::Vector _texture_coord) {
-				sf::Vertex vertex { static_cast<sf::Vector2f>(_position), sf::Color::White, sf::Vector2f{ _texture_coord } };
-				Ir::Render::_priv::g_vertices->append(vertex);
+			void addSinglePoint(ir::Vector position, ir::Vector textureCoord) {
+				sf::Vertex vertex { static_cast<sf::Vector2f>(position), sf::Color::White, sf::Vector2f{ textureCoord } };
+				ir::render::detail::g_vertices->append(vertex);
 			}
 
 			/// @brief Adds a point with given position and color to the internal rendering buffer.
 			/// This functions adds it twice, for use with sf::PrimitiveType::Lines.
-			void AddDoublePoint(Ir::Vector _position, sf::Color _color = sf::Color::White) {
-				sf::Vertex vertex { static_cast<sf::Vector2f>(_position), _color };
-				Ir::Render::_priv::g_vertices->append(vertex);
-				Ir::Render::_priv::g_vertices->append(vertex);
+			void addDoublePoint(ir::Vector position, sf::Color color = sf::Color::White) {
+				sf::Vertex vertex { static_cast<sf::Vector2f>(position), color };
+				ir::render::detail::g_vertices->append(vertex);
+				ir::render::detail::g_vertices->append(vertex);
 			}
 
 			/// @brief Adds the first vertex of the buffer back at the end, for closing shapes.
-			void CloseShape() {
-				Ir::Render::_priv::g_vertices->append(Ir::Render::_priv::g_vertices->operator[](0));
+			void closeShape() {
+				ir::render::detail::g_vertices->append(ir::render::detail::g_vertices->operator[](0));
 			}
 		}
 
 		/// Shape
 
-		Shape& Shape::SetPosition(Ir::Vector _pos) {
-			this->m_position = _pos;
+		Shape& Shape::setPosition(ir::Vector pos) {
+			position_ = pos;
 			return *this;
 		}
 
-		Shape& Shape::SetAngle(float _angle) {
-			this->m_angle = _angle;
+		Shape& Shape::setAngle(float angle) {
+			angle_ = angle;
 			return *this;
 		}
 
-		Shape& Shape::SetAnchor(Ir::Vector _anchor) {
-			this->m_anchor = _anchor;
+		Shape& Shape::setAnchor(ir::Vector anchor) {
+			anchor_ = anchor;
 			return *this;
 		}
 
-		Shape& Shape::SetAnchor(float _x, float _y) {
-			this->m_anchor = Ir::Vector { _x, _y };
+		Shape& Shape::setAnchor(float x, float y) {
+			anchor_ = ir::Vector { x, y };
 			return *this;
 		}
 
-		Shape& Shape::SetColor(sf::Color _color) {
-			this->m_color = _color;
+		Shape& Shape::setColor(sf::Color color) {
+			color_ = color;
 			return *this;
 		}
 
-		Shape &Shape::SetMode(Ir::Render::Mode _mode) {
-			this->m_mode = _mode;
+		Shape &Shape::setMode(ir::render::Mode mode) {
+			mode_ = mode;
 			return *this;
 		}
 		
 		/// Rectangle
 
-		Rectangle &Rectangle::SetSize(Ir::Vector _size) {
-			this->m_size = _size;
+		Rectangle &Rectangle::setSize(ir::Vector size) {
+			size_ = size;
 			return *this;
 		}
 
-		Rectangle &Rectangle::SetSize(float _x, float _y) {
-			this->m_size = Ir::Vector { _x, _y };
+		Rectangle &Rectangle::setSize(float x, float y) {
+			size_ = ir::Vector { x, y };
 			return *this;
 		}
 
-		Rectangle& Rectangle::SetCorners(Ir::Vector _top_left, Ir::Vector _bottom_right) {
-			this->SetPosition(_top_left);
-			this->SetSize(_bottom_right - _top_left);
+		Rectangle& Rectangle::setCorners(ir::Vector topLeft, ir::Vector bottomRight) {
+			setPosition(topLeft);
+			setSize(bottomRight - topLeft);
 			return *this;
 		}
 
-		void Rectangle::Render(Ir::RenderTarget& _target) const {
-			Ir::Render::_priv::TryInitialize();
+		void Rectangle::render(ir::RenderTarget& target) const {
+			ir::render::detail::tryInitialize();
 			
-			Ir::Vector point1 { -this->GetAnchor() };
-			Ir::Vector point2 { point1 + Ir::Vector{ this->m_size.x, 0.f } };
-			Ir::Vector point3 { point1 + this->m_size };
-			Ir::Vector point4 { point1 + Ir::Vector{ 0.f, this->m_size.y } };
+			ir::Vector point1 { -getAnchor() };
+			ir::Vector point2 { point1 + ir::Vector{ size_.x, 0.f } };
+			ir::Vector point3 { point1 + size_ };
+			ir::Vector point4 { point1 + ir::Vector{ 0.f, size_.y } };
 			
-			if (this->GetMode() == Ir::Render::Mode::WIREFRAME) {
-				Ir::Render::_priv::Reset(sf::PrimitiveType::LineStrip);
+			if (getMode() == ir::render::Mode::WIREFRAME) {
+				ir::render::detail::reset(sf::PrimitiveType::LineStrip);
 
-				Ir::Render::_priv::AddSinglePoint(this->GetPosition() + point1.Rotate(this->GetAngle()), this->GetColor());
-				Ir::Render::_priv::AddSinglePoint(this->GetPosition() + point2.Rotate(this->GetAngle()), this->GetColor());
-				Ir::Render::_priv::AddSinglePoint(this->GetPosition() + point3.Rotate(this->GetAngle()), this->GetColor());
-				Ir::Render::_priv::AddSinglePoint(this->GetPosition() + point4.Rotate(this->GetAngle()), this->GetColor());
-				Ir::Render::_priv::CloseShape();
+				ir::render::detail::addSinglePoint(getPosition() + point1.rotate(getAngle()), getColor());
+				ir::render::detail::addSinglePoint(getPosition() + point2.rotate(getAngle()), getColor());
+				ir::render::detail::addSinglePoint(getPosition() + point3.rotate(getAngle()), getColor());
+				ir::render::detail::addSinglePoint(getPosition() + point4.rotate(getAngle()), getColor());
+				ir::render::detail::closeShape();
 			}
 			
-			else if (this->GetMode() == Ir::Render::Mode::SOLID) {
-				Ir::Render::_priv::Reset(sf::PrimitiveType::TriangleStrip);
+			else if (getMode() == ir::render::Mode::SOLID) {
+				ir::render::detail::reset(sf::PrimitiveType::TriangleStrip);
 
-				Ir::Render::_priv::AddSinglePoint(this->GetPosition() + point1.Rotate(this->GetAngle()), this->GetColor());
-				Ir::Render::_priv::AddSinglePoint(this->GetPosition() + point2.Rotate(this->GetAngle()), this->GetColor());
-				Ir::Render::_priv::AddSinglePoint(this->GetPosition() + point4.Rotate(this->GetAngle()), this->GetColor());
-				Ir::Render::_priv::AddSinglePoint(this->GetPosition() + point3.Rotate(this->GetAngle()), this->GetColor());
+				ir::render::detail::addSinglePoint(getPosition() + point1.rotate(getAngle()), getColor());
+				ir::render::detail::addSinglePoint(getPosition() + point2.rotate(getAngle()), getColor());
+				ir::render::detail::addSinglePoint(getPosition() + point4.rotate(getAngle()), getColor());
+				ir::render::detail::addSinglePoint(getPosition() + point3.rotate(getAngle()), getColor());
 			}
 
-			Ir::Render::_priv::Flush(_target);
+			ir::render::detail::flush(target);
 		}
 
 		/// Quad
 
-		Rectangle& Quad::SetUVs(Ir::Vector _top_left, Ir::Vector _size) {
-			this->m_uv = Ir::Render::UV(_top_left, _size);
+		Rectangle& Quad::setUVs(ir::Vector topLeft, ir::Vector size) {
+			uv_ = ir::render::UV(topLeft, size);
 			return *this;
 		}
 
-		Rectangle& Quad::SetUVs(Ir::Render::UV _uv) {
-			this->m_uv = _uv;
+		Rectangle& Quad::setUVs(ir::render::UV uv) {
+			uv_ = uv;
 			return *this;
 		}
 
-		Rectangle& Quad::SetTexture(const sf::Texture& _texture) {
-			this->m_texture = &_texture;
-			this->SetSize(Ir::Vector::FromSFMLVector(_texture.getSize()));
-			this->m_uv = Ir::Render::UV{ Ir::Vector::zero, this->GetSize() };
+		Rectangle& Quad::setTexture(const sf::Texture& texture) {
+			texture_ = &texture;
+			setSize(ir::Vector::fromSFMLVector(texture.getSize()));
+			uv_ = ir::render::UV{ ir::Vector::kZero, getSize() };
 
 			return *this;
 		}
 
-		void Quad::Render(Ir::RenderTarget& _target) const {
-			if (!this->m_texture)
+		void Quad::render(ir::RenderTarget& target) const {
+			if (!texture_)
 				return;
 			
-			Ir::Render::_priv::TryInitialize();
-			Ir::Render::_priv::Reset(sf::PrimitiveType::TriangleStrip);
+			ir::render::detail::tryInitialize();
+			ir::render::detail::reset(sf::PrimitiveType::TriangleStrip);
 
-			Ir::Vector pointTL { -this->GetAnchor() };
-			Ir::Vector pointTR { pointTL + Ir::Vector{ this->GetSize().x, 0.f } };
-			Ir::Vector pointBR { pointTL + Ir::Vector{ this->GetSize().x, this->GetSize().y } };
-			Ir::Vector pointBL { pointTL + Ir::Vector{ 0.f, this->GetSize().y } };
+			ir::Vector pointTL { -getAnchor() };
+			ir::Vector pointTR { pointTL + ir::Vector{ getSize().x, 0.f } };
+			ir::Vector pointBR { pointTL + ir::Vector{ getSize().x, getSize().y } };
+			ir::Vector pointBL { pointTL + ir::Vector{ 0.f, getSize().y } };
 
-			Ir::Render::_priv::AddSinglePoint(this->GetPosition() + pointTL.Rotate(this->GetAngle()), this->m_uv.TopLeftCorner());
-			Ir::Render::_priv::AddSinglePoint(this->GetPosition() + pointTR.Rotate(this->GetAngle()), this->m_uv.TopRightCorner());
-			Ir::Render::_priv::AddSinglePoint(this->GetPosition() + pointBL.Rotate(this->GetAngle()), this->m_uv.BottomLeftCorner());
-			Ir::Render::_priv::AddSinglePoint(this->GetPosition() + pointBR.Rotate(this->GetAngle()), this->m_uv.BottomRightCorner());
+			ir::render::detail::addSinglePoint(getPosition() + pointTL.rotate(getAngle()), uv_.topLeftCorner());
+			ir::render::detail::addSinglePoint(getPosition() + pointTR.rotate(getAngle()), uv_.topRightCorner());
+			ir::render::detail::addSinglePoint(getPosition() + pointBL.rotate(getAngle()), uv_.bottomLeftCorner());
+			ir::render::detail::addSinglePoint(getPosition() + pointBR.rotate(getAngle()), uv_.bottomRightCorner());
 
-			Ir::Render::_priv::Flush(_target, this->m_texture);
+			ir::render::detail::flush(target, texture_);
 		}
 
 		/// Circle
 			
-		Circle& Circle::SetRadius(float _rds) {
-			this->m_radius = _rds;
+		Circle& Circle::setRadius(float rds) {
+			radius_ = rds;
 			return *this;
 		}
 
-		Circle& Circle::SetVertexCount(unsigned int _count) {
-			this->m_vertexCount = _count;
-			this->m_vertexAngle = Ir::Math::tau / static_cast<float>(this->m_vertexCount);
+		Circle& Circle::setVertexCount(unsigned int count) {
+			vertexCount_ = count;
+			vertexAngle_ = ir::math::tau / static_cast<float>(vertexCount_);
 			return *this;
 		}
 
-		void Circle::Render(Ir::RenderTarget& _target) const {
-			Ir::Render::_priv::TryInitialize();
-			Ir::Render::_priv::Reset();
+		void Circle::render(ir::RenderTarget& target) const {
+			ir::render::detail::tryInitialize();
+			ir::render::detail::reset();
 
-			Ir::Vector center = this->GetPosition() - this->GetAnchor();
+			ir::Vector center = getPosition() - getAnchor();
 
-			for (unsigned int i = 0; i < this->m_vertexCount; i++) {
-				Ir::Vector vertexPos { Ir::Vector::Polar(this->m_radius, this->GetAngle() + this->m_vertexAngle * static_cast<float>(i)) };
-				Ir::Render::_priv::AddSinglePoint(center + vertexPos, this->GetColor());
+			for (unsigned int i = 0; i < vertexCount_; i++) {
+				ir::Vector vertexPos { ir::Vector::polar(radius_, getAngle() + vertexAngle_ * static_cast<float>(i)) };
+				ir::render::detail::addSinglePoint(center + vertexPos, getColor());
 			}
-			Ir::Render::_priv::CloseShape();
+			ir::render::detail::closeShape();
 
-			Ir::Render::_priv::Flush(_target);
+			ir::render::detail::flush(target);
 		}
 	}
 }

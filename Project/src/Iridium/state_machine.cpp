@@ -2,63 +2,63 @@
 #include "Iridium/state.hpp"
 #include "Iridium/exceptions.hpp"
 
-namespace Ir {
-	namespace _priv {
+namespace ir {
+	namespace detail {
 		const std::string g_nullStateName = "__none";
 	}
 
 	StateMachine::StateMachine() {
-		this->m_currentState = Ir::_priv::g_nullStateName;
+		currentState_ = ir::detail::g_nullStateName;
 	}
 
-	bool StateMachine::LoadState(std::string _name) {
-		if (this->m_availableStates.contains(_name)) {
-			this->m_nextState = _name;
+	bool StateMachine::loadState(std::string _name) {
+		if (availableStates_.contains(_name)) {
+			nextState_ = _name;
 			return true;
 		}
 		else
 			return false;
 	}
 
-	void StateMachine::Initialize() {
-		if (this->m_nextState.has_value()) {
-			if (this->m_currentState != Ir::_priv::g_nullStateName)
-				this->Unload();
-			this->m_currentState = this->m_nextState.value();
-			this->m_availableStates[this->m_currentState]->OnInitialize();
-			this->m_nextState.reset();
+	void StateMachine::initialize() {
+		if (nextState_.has_value()) {
+			if (currentState_ != ir::detail::g_nullStateName)
+				unload();
+			currentState_ = nextState_.value();
+			availableStates_[currentState_]->onInitialize();
+			nextState_.reset();
 		}
 	}
 	
-	void StateMachine::HandleEvents(Ir::ApplicationWindow &_window) {
-		if (!this->m_availableStates[this->m_currentState])
-			throw Ir::Exceptions::BadStateID(this->m_currentState);
+	void StateMachine::handleEvents(ir::ApplicationWindow& window) {
+		if (!availableStates_[currentState_])
+			throw ir::Exceptions::BadStateID(currentState_);
 
-		while (const std::optional event = _window.PollNextEvent()) {
-			this->m_availableStates[this->m_currentState]->OnReceiveEvent(event.value());
+		while (const std::optional event = window.pollNextEvent()) {
+			availableStates_[currentState_]->onReceiveEvent(event.value());
 		}
 	}
 	
-	void StateMachine::Update(Ir::ApplicationWindow& _window) {
-		if (!this->m_availableStates[this->m_currentState])
-			throw Ir::Exceptions::BadStateID(this->m_currentState);
+	void StateMachine::update(ir::ApplicationWindow& window) {
+		if (!availableStates_[currentState_])
+			throw ir::Exceptions::BadStateID(currentState_);
 
-		this->m_availableStates[this->m_currentState]->OnUpdate(_window);
+		availableStates_[currentState_]->onUpdate(window);
 	}
 	
-	void StateMachine::Render(Ir::ApplicationWindow &_window) {
-		if (!this->m_availableStates[this->m_currentState])
-			throw Ir::Exceptions::BadStateID(this->m_currentState);
+	void StateMachine::render(ir::ApplicationWindow &window) {
+		if (!availableStates_[currentState_])
+			throw ir::Exceptions::BadStateID(currentState_);
 
-		_window.Clear(sf::Color::Black);
-		this->m_availableStates[this->m_currentState]->OnRender(_window);
-		_window.Flush();
+		window.clear(sf::Color::Black);
+		availableStates_[currentState_]->onRender(window);
+		window.flush();
 	}
 	
-	void StateMachine::Unload() {
-		if (!this->m_availableStates[this->m_currentState])
-			throw Ir::Exceptions::BadStateID(this->m_currentState);
+	void StateMachine::unload() {
+		if (!availableStates_[currentState_])
+			throw ir::Exceptions::BadStateID(currentState_);
 
-		this->m_availableStates[this->m_currentState]->OnEnd();
+		availableStates_[currentState_]->onEnd();
 	}	
 }

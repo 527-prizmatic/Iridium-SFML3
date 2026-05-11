@@ -1,76 +1,76 @@
 #include "Iridium/time.hpp"
 
-namespace Ir {
+namespace ir {
 	namespace Time {
 		using ClockType = std::chrono::steady_clock;
     	using Timestamp = std::chrono::time_point<std::chrono::steady_clock>;
 
-		namespace _priv {
-			ClockType g_clock;
-			Timestamp g_last;
-			float g_deltaUnscaled { 0.f };
-			float g_deltaScaled { 0.f };
-			float g_scale { 1.f };
-			bool g_firstTick { true };
+		namespace detail {
+			ClockType gClock;
+			Timestamp gLast;
+			float gDeltaUnscaled { 0.f };
+			float gDeltaScaled { 0.f };
+			float gScale { 1.f };
+			bool gFirstTick { true };
 		}
 
-		void Reset() {
-			Ir::Time::_priv::g_deltaUnscaled = 0.f;
-			Ir::Time::_priv::g_deltaScaled = 0.f;
-			Ir::Time::_priv::g_clock = ClockType{};
-			Ir::Time::_priv::g_firstTick = true;
+		void reset() {
+			ir::Time::detail::gDeltaUnscaled = 0.f;
+			ir::Time::detail::gDeltaScaled = 0.f;
+			ir::Time::detail::gClock = ClockType{};
+			ir::Time::detail::gFirstTick = true;
 		}
 
-		void Restart() {
-			Timestamp now = Ir::Time::_priv::g_clock.now();
-			if (!Ir::Time::_priv::g_firstTick) /// Removing this safeguard causes issues as _last is zero-initialized, causing a half-century-long first tick
-				Ir::Time::_priv::g_deltaUnscaled = static_cast<float>((now - Ir::Time::_priv::g_last).count() * 1e-9f); /// Multiplying by one billionth because nanoseconds
-			Ir::Time::_priv::g_last = now;
+		void restart() {
+			Timestamp now = ir::Time::detail::gClock.now();
+			if (!ir::Time::detail::gFirstTick) /// Removing this safeguard causes issues as last is zero-initialized, causing a half-century-long first tick
+				ir::Time::detail::gDeltaUnscaled = static_cast<float>((now - ir::Time::detail::gLast).count() * 1e-9f); /// Multiplying by one billionth because nanoseconds
+			ir::Time::detail::gLast = now;
 
-			Ir::Time::_priv::g_deltaScaled = Ir::Time::_priv::g_deltaUnscaled * Ir::Time::_priv::g_scale;
+			ir::Time::detail::gDeltaScaled = ir::Time::detail::gDeltaUnscaled * ir::Time::detail::gScale;
 
-			Ir::Time::_priv::g_clock = ClockType{};
-			Ir::Time::_priv::g_firstTick = false;
+			ir::Time::detail::gClock = ClockType{};
+			ir::Time::detail::gFirstTick = false;
 		}
 
-		float Delta() {
-			return Ir::Time::_priv::g_deltaScaled;
+		float deltaTime() {
+			return ir::Time::detail::gDeltaScaled;
 		}
 
-		float DeltaUnscaled() {
-			return Ir::Time::_priv::g_deltaUnscaled;
+		float unscaledDeltaTime() {
+			return ir::Time::detail::gDeltaUnscaled;
 		}
 
-		void SetTimeScale(float _new_scale) {
-			Ir::Time::_priv::g_scale = _new_scale;
-			Ir::Time::_priv::g_deltaScaled = Ir::Time::_priv::g_deltaUnscaled * Ir::Time::_priv::g_scale;
+		void setTimeScale(float scale) {
+			ir::Time::detail::gScale = scale;
+			ir::Time::detail::gDeltaScaled = ir::Time::detail::gDeltaUnscaled * ir::Time::detail::gScale;
 		}
 
-		float GetTimeScale() {
-			return Ir::Time::_priv::g_scale;
+		float getTimeScale() {
+			return ir::Time::detail::gScale;
 		}
 
-		void ResetTimeScale() {
-			Ir::Time::SetTimeScale(1.f);
+		void resetTimeScale() {
+			ir::Time::setTimeScale(1.f);
 		}
 	}
 
 	void LocalClock::Stop() {
-		this->ticking = false;
-		this->Reset();
+		ticking = false;
+		reset();
 	}
 
-	void LocalClock::Reset() {
-		this->time = 0.f;
+	void LocalClock::reset() {
+		time = 0.f;
 	}
 
-	void LocalClock::Update() {
-		if (!this->ticking)
+	void LocalClock::update() {
+		if (!ticking)
 			return;
 		
-		if (this->usesUnscaledTime)
-			this->time += Ir::Time::DeltaUnscaled();
+		if (usesUnscaledTime)
+			time += ir::Time::unscaledDeltaTime();
 		else
-			this->time += Ir::Time::Delta();
+			time += ir::Time::deltaTime();
 	}
 }

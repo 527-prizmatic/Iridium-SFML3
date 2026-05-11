@@ -3,31 +3,32 @@
 
 #include "Iridium/libraries.hpp"
 
-namespace Ir {
+namespace ir {
+	/// @todo Replace this with a class
 	namespace Time {
 		/// @brief Resets the clock's internal states and restarts it.
-		void Reset();
+		void reset();
 
 		/// @brief Restarts the clock.
-		void Restart();
+		void restart();
 
-		/// @return Scaled time elapsed since last Restart() call.
+		/// @return Scaled time elapsed since last restart() call.
 		/// This function takes time scale into account.
-		float Delta();
+		float deltaTime();
 
-		/// @return Real time elapsed since last Restart() call.
+		/// @return Real time elapsed since last restart() call.
 		/// This function does not take time scale into account.
-		float DeltaUnscaled();
+		float unscaledDeltaTime();
 		
 		/// @brief Sets time scale to a value different than 1.
-		/// Time scale directly influences the value of Delta(), but not that of DeltaUnscaled().
-		void SetTimeScale(float _new_scale);
+		/// Time scale directly influences the value of deltaTime(), but not that of unscaledDeltaTime().
+		void setTimeScale(float scale);
 		
 		/// @return Current time scale (default value is 1)
-		float GetTimeScale();
+		float getTimeScale();
 
 		/// @brief Resets time scale to 1.
-		void ResetTimeScale();
+		void resetTimeScale();
 	}
 
 	/// @brief Simple utility class for handling timers
@@ -37,12 +38,12 @@ namespace Ir {
 		void Stop();
 
 		/// @brief Resets the clock to zero.
-		void Reset();
+		void reset();
 
 		/// @brief Ticks the clock.
-		void Update();
+		void update();
 
-		float time { 0 }; /// Time since started. Can be mofidied, although ticking is handled by Update()
+		float time { 0 }; /// Time since started. Can be mofidied, although ticking is handled by update()
 		bool ticking = false; /// Whether the clock is currently ticking
 		bool usesUnscaledTime { false }; /// Whether the clock should use unscaled or scaled time
 	};

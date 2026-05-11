@@ -1,7 +1,7 @@
 #ifndef IRIDIUM_EXCEPTIONS_HPP_
 #define IRIDIUM_EXCEPTIONS_HPP_
 
-namespace Ir {
+namespace ir {
 	namespace Exceptions {
 		class InvalidRenderTarget : public std::exception {
 		public:
@@ -10,22 +10,22 @@ namespace Ir {
 		
 		class BadResourceID : public std::exception {
 		public:
-			BadResourceID(std::string _id) : m_badID { _id } {}
+			BadResourceID(std::string id) : badID_ { id } {}
 
-			const char * what() { return std::string{ "Requested resource ID \"" + this->m_badID + "\" does not exist" }.c_str(); }
+			const char * what() { return std::string{ "Requested resource ID \"" + badID_ + "\" does not exist" }.c_str(); }
 
 		private:
-			std::string m_badID {};
+			std::string badID_ {};
 		};
 		
 		class BadStateID : public std::exception {
 		public:
-			BadStateID(std::string _id) : m_badID { _id } {}
+			BadStateID(std::string id) : badID_ { id } {}
 
-			const char * what() { return std::string{ "State machine attempted to update nonexistent state \"" + this->m_badID + "\"" }.c_str(); }
+			const char * what() { return std::string{ "State machine attempted to update nonexistent state \"" + badID_ + "\"" }.c_str(); }
 
 		private:
-			std::string m_badID {};
+			std::string badID_ {};
 		};
 	}
 }

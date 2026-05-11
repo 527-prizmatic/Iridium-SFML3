@@ -2,22 +2,22 @@
 #include "Iridium/input/mouse.hpp"
 
 int main() {
-	Ir::ApplicationWindow window{Ir::Vector{1280.f, 720.f}};
-	window.SetFPS(60u);
-	Ir::MouseInput::Setup(window);
+	ir::ApplicationWindow window{ir::Vector{1280.f, 720.f}};
+	window.setFPS(60u);
+	ir::MouseInput::setup(window);
 
-	Ir::StateMachine sm;
-	sm.LoadState<CoreState>();
+	ir::StateMachine sm;
+	sm.loadState<CoreState>();
 
-	while (!sm.HasRequestedExit()) {
-		window.ReduceBackgroundResourceUsage();
-		Ir::MouseInput::Update();
+	while (!sm.hasRequestedExit()) {
+		window.reduceBackgroundResourceUsage();
+		ir::MouseInput::update();
 
-		sm.Initialize();
-		sm.HandleEvents(window);
-		sm.Update(window);
-		sm.Render(window);
+		sm.initialize();
+		sm.handleEvents(window);
+		sm.update(window);
+		sm.render(window);
 	}
 
-	sm.Unload();
+	sm.unload();
 }

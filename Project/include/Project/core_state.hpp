@@ -5,15 +5,15 @@
 
 IRIDIUM_STATE_CLASS(CoreState)
 public:
-	void OnInitialize() override { }
+	void onInitialize() override { }
 	
-	void OnReceiveEvent(const sf::Event& _e) override { }
+	void onReceiveEvent(const sf::Event& event) override { }
 
-	void OnUpdate(Ir::ApplicationWindow& _window) override { }
+	void onUpdate(ir::ApplicationWindow& window) override { }
 
-	void OnRender(Ir::ApplicationWindow& _window) override { }
+	void onRender(ir::ApplicationWindow& window) override { }
 		
-	void OnEnd() override { }
+	void onEnd() override { }
 };
 
 #endif // PROJECT_TESTSTATE_HPP_
