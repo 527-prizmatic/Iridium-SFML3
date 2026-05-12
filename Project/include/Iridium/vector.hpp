@@ -1,7 +1,7 @@
 #ifndef IRIDIUM_VECTOR_HPP_
 #define IRIDIUM_VECTOR_HPP_
 
-namespace Ir {
+namespace iridium {
 	struct Vector {
 	public:
 		float x; /// x component
@@ -10,142 +10,142 @@ namespace Ir {
 		Vector();
 
 		/// @brief Constructs a vector from cartesian coordinates.
-		Vector(float _x, float _y);
+		Vector(float x, float y);
 
 		/// @brief Constructs a vector from a SFML vector.
-		template <typename T> static Ir::Vector FromSFMLVector(sf::Vector2<T> _other) {
-			return Ir::Vector(static_cast<float>(_other.x), static_cast<float>(_other.y));
+		template <typename T> static iridium::Vector fromSFMLVector(sf::Vector2<T> other) {
+			return iridium::Vector(static_cast<float>(other.x), static_cast<float>(other.y));
 		}
 
 		/// @brief Copies a vector
-		Vector(const Ir::Vector& _other);
+		Vector(const iridium::Vector& other);
 
-		Ir::Vector& operator=(const Ir::Vector& _other);
+		iridium::Vector& operator=(const iridium::Vector& other);
 		
 		/// @brief Constructs a cartesian-space vector from polar coordinates.
-		[[nodiscard]] static Ir::Vector Polar(float _radius, float _angle);
+		[[nodiscard]] static iridium::Vector polar(float radius, float angle);
 
 		/// @return Whether both the vector's components are equal to zero 
-		[[nodiscard]] bool IsZero() const;
+		[[nodiscard]] bool isZero() const;
 
 		/// @return Vector's magnitude
-		/// @note As computing magnitude requires an expensive square root, consider using MagnitudeSquare if possible.
-		[[nodiscard]] float Magnitude() const;
+		/// @note As computing magnitude requires an expensive square root, consider using magnitudeSquare if possible.
+		[[nodiscard]] float magnitude() const;
 
 		/// @return Vector's square magnitude
-		[[nodiscard]] float MagnitudeSquare() const;
+		[[nodiscard]] float magnitudeSquare() const;
 
 		/// @return Angle between the vector and another one. If no reference vector is provided, the angle returned will be relative to the X axis.
-		[[nodiscard]] float Angle(Ir::Vector _reference = Ir::Vector{1.f, 0.f}) const;
+		[[nodiscard]] float getAngle(iridium::Vector reference = iridium::Vector{1.f, 0.f}) const;
 
 		/// @return Distance between this vector and another one
-		[[nodiscard]] float Distance(Ir::Vector _other) const;
+		[[nodiscard]] float distance(iridium::Vector other) const;
 		
 		/// @return This vector, normalized
-		[[nodiscard]] Ir::Vector Normalize() const;
+		[[nodiscard]] iridium::Vector normalize() const;
 
 		/// @brief Clamps the vector's magnitude below the given threshold.
-		[[nodiscard]] Ir::Vector ClampMagnitude(float _max) const;
+		[[nodiscard]] iridium::Vector clampMagnitude(float max) const;
 
 		/// @brief Clamps the vector's magnitude between the given thresholds.
-		[[nodiscard]] Ir::Vector ClampMagnitude(float _min, float _max) const;
+		[[nodiscard]] iridium::Vector clampMagnitude(float min, float max) const;
 
 		/// @brief Converts a cartesian-space vector into polar vector space.
-		[[nodiscard]] Ir::Vector RecToPol() const;
+		[[nodiscard]] iridium::Vector recToPol() const;
 		
 		/// @brief Converts a polar-space vector into cartesian vector space.
-		[[nodiscard]] Ir::Vector PolToRec() const;
+		[[nodiscard]] iridium::Vector polToRec() const;
 
 		/// @brief Rotates about the given angle.
-		[[nodiscard]] Ir::Vector Rotate(float _angle) const;
+		[[nodiscard]] iridium::Vector rotate(float angle) const;
 
 		/// @brief Rotates about the given angle, using a point as reference.
-		[[nodiscard]] Ir::Vector Rotate(float _angle, Ir::Vector _reference) const;
+		[[nodiscard]] iridium::Vector rotate(float angle, iridium::Vector reference) const;
 
 		/// @return Axial mirror image of the vector about the given symmetry axis
-		[[nodiscard]] Ir::Vector Mirror(Ir::Vector _axis) const;
+		[[nodiscard]] iridium::Vector mirror(iridium::Vector axis) const;
 
 		/// @return Axial mirror image of the vector about the X axis
-		[[nodiscard]] Ir::Vector MirrorX() const;
+		[[nodiscard]] iridium::Vector mirrorX() const;
 
 		/// @return Axial mirror image of the vector about the Y axis
-		[[nodiscard]] Ir::Vector MirrorY() const;
+		[[nodiscard]] iridium::Vector mirrorY() const;
 
 		/// @return Opposite of the vector
-		[[nodiscard]] Ir::Vector Negate() const;
+		[[nodiscard]] iridium::Vector negate() const;
 
 		template <typename T>
 		[[nodiscard]] explicit operator sf::Vector2<T>() const {
-			return sf::Vector2<T>{ static_cast<T>(this->x), static_cast<T>(this->y) };
+			return sf::Vector2<T>{ static_cast<T>(x), static_cast<T>(y) };
 		}
 		
 		[[nodiscard]] operator std::string() const {
-			return '(' + std::to_string(this->x) + ' ' + std::to_string(this->y) + ')';
+			return '(' + std::to_string(x) + ' ' + std::to_string(y) + ')';
 		}
 
 		// [[nodiscard]] inline explicit operator sf::Vector2i() const {
-		// 	return sf::Vector2i{ static_cast<int>(this->x), static_cast<int>(this->y) };
+		// 	return sf::Vector2i{ static_cast<int>(x), static_cast<int>(y) };
 		// }
 
 		// [[nodiscard]] inline explicit operator sf::Vector2u() const {
-		// 	return sf::Vector2u{ static_cast<unsigned int>(this->x), static_cast<unsigned int>(this->y) };
+		// 	return sf::Vector2u{ static_cast<unsigned int>(x), static_cast<unsigned int>(y) };
 		// }
 		
 		// [[nodiscard]] inline explicit operator sf::Vector2f() const {
-		// 	return sf::Vector2f{ this->x, this->y };
+		// 	return sf::Vector2f{ x, y };
 		// }
 		
-		[[nodiscard]] inline Ir::Vector operator+(const Ir::Vector& _other) const {
-			return Ir::Vector { this->x + _other.x, this->y + _other.y };
+		[[nodiscard]] inline iridium::Vector operator+(const iridium::Vector& other) const {
+			return iridium::Vector { x + other.x, y + other.y };
 		}
 		
-		[[nodiscard]] inline Ir::Vector operator-(const Ir::Vector& _other) const {
-			return Ir::Vector { this->x - _other.x, this->y - _other.y };
+		[[nodiscard]] inline iridium::Vector operator-(const iridium::Vector& other) const {
+			return iridium::Vector { x - other.x, y - other.y };
 		}
 		
-		[[nodiscard]] inline Ir::Vector operator-() const {
-			return Ir::Vector { -this->x, -this->y };
+		[[nodiscard]] inline iridium::Vector operator-() const {
+			return iridium::Vector { -x, -y };
 		}
 		
-		[[nodiscard]] inline Ir::Vector operator*(const float _other) const {
-			return Ir::Vector { this->x * _other, this->y * _other };
+		[[nodiscard]] inline iridium::Vector operator*(const float other) const {
+			return iridium::Vector { x * other, y * other };
 		}
 		
-		[[nodiscard]] inline Ir::Vector operator/(const float _other) const {
-			return Ir::Vector { this->x / _other, this->y / _other };
+		[[nodiscard]] inline iridium::Vector operator/(const float other) const {
+			return iridium::Vector { x / other, y / other };
 		}
 		
-		[[nodiscard]] inline float operator*(const Ir::Vector& _other) const {
-			return this->x * _other.x + this->y * _other.y;
+		[[nodiscard]] inline float operator*(const iridium::Vector& other) const {
+			return x * other.x + y * other.y;
 		}
 		
 		
-		inline void operator+=(const Ir::Vector& _other) {
-			this->x += _other.x;
-			this->y += _other.y;
+		inline void operator+=(const iridium::Vector& other) {
+			x += other.x;
+			y += other.y;
 		}
 		
-		inline void operator-=(const Ir::Vector& _other) {
-			this->x -= _other.x;
-			this->y -= _other.y;
+		inline void operator-=(const iridium::Vector& other) {
+			x -= other.x;
+			y -= other.y;
 		}
 		
-		inline void operator*=(const float _other) {
-			this->x *= _other;
-			this->y *= _other;
+		inline void operator*=(const float other) {
+			x *= other;
+			y *= other;
 		}
 		
-		inline void operator/=(const float _other) {
-			this->x /= _other;
-			this->y /= _other;
+		inline void operator/=(const float other) {
+			x /= other;
+			y /= other;
 		}
 		
-		[[nodiscard]] inline bool operator==(const Ir::Vector& _other) const {
-			return (*this - _other).IsZero();
+		[[nodiscard]] inline bool operator==(const iridium::Vector& other) const {
+			return (*this - other).isZero();
 		}
 
-		static const Ir::Vector zero;
-		static const Ir::Vector unit;
+		static const iridium::Vector kZero;
+		static const iridium::Vector kUnit;
 	};
 }
 

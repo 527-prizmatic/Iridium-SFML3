@@ -1,25 +1,25 @@
-/// @brief Used to declare derived classes of Ir::State.
+/// @brief Used to declare derived classes of iridium::State.
 /// Also contains a set of functions for smooth integration with the state machine.
 #define IRIDIUM_STATE_CLASS(s)						\
-class s : public Ir::State {						\
+class s : public iridium::State {						\
 private:											\
 	static std::string ir_m_typeName;				\
-	Ir::StateMachine* ir_m_machine;					\
+	iridium::StateMachine* ir_m_machine;					\
 													\
 public:												\
-	static std::string GetStateName() {				\
+	static std::string getStateName() {				\
 		return typeid(s).name();					\
 	}												\
 													\
 	template <typename T>							\
-	void LoadState() {								\
-		this->ir_m_machine->LoadState<T>();			\
+	void loadState() {								\
+		this->ir_m_machine->loadState<T>();			\
 }													\
 													\
-	void SetStateMachine(Ir::StateMachine* _sm) {	\
+	void setStateMachine(iridium::StateMachine* _sm) {	\
 		this->ir_m_machine = _sm;					\
 	}												\
 													\
-	void RequestExit() {							\
-		this->ir_m_machine->RequestExit();			\
+	void requestExit() {							\
+		this->ir_m_machine->requestExit();			\
 	}

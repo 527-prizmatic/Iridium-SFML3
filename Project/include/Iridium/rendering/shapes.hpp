@@ -4,23 +4,23 @@
 #include "Iridium/vector.hpp"
 #include "Iridium/math.hpp"
 
-namespace Ir {
+namespace iridium {
 	class RenderTarget;
 
-	namespace Render {
+	namespace render {
 		/// @brief Data holder for texture UVs, comprising a starting position and a size.
 		struct UV {
-			Ir::Vector topLeft {}; ///< Top-left corner of the UV rectangle
-			Ir::Vector size {}; ///< Size of the UV rectangle
+			iridium::Vector topLeft {}; ///< Top-left corner of the UV rectangle
+			iridium::Vector size {}; ///< Size of the UV rectangle
 
 			UV() {}
 
-			UV(Ir::Vector _top_left, Ir::Vector _size) : topLeft { _top_left }, size { _size } {}
+			UV(iridium::Vector topLeft, iridium::Vector size) : topLeft { topLeft }, size { size } {}
 
-			Ir::Vector TopLeftCorner() const { return this->topLeft; }
-			Ir::Vector TopRightCorner() const { return this->topLeft + Ir::Vector { this->size.x, 0.f }; }
-			Ir::Vector BottomLeftCorner() const { return this->topLeft + Ir::Vector { 0.f, this->size.y }; }
-			Ir::Vector BottomRightCorner() const { return this->topLeft + this->size; }
+			iridium::Vector topLeftCorner() const { return topLeft; }
+			iridium::Vector topRightCorner() const { return topLeft + iridium::Vector { size.x, 0.f }; }
+			iridium::Vector bottomLeftCorner() const { return topLeft + iridium::Vector { 0.f, size.y }; }
+			iridium::Vector bottomRightCorner() const { return topLeft + size; }
 		};
 
 		enum Mode : unsigned char {
@@ -34,27 +34,27 @@ namespace Ir {
 		class Shape {
 		public:
 			/// @brief Draws the object on the given render target.
-			virtual void Render(Ir::RenderTarget& _target) const = 0;
+			virtual void render(iridium::RenderTarget& _target) const = 0;
 
-			Shape& SetPosition(Ir::Vector _pos); ///< @brief Sets screen position, in pixels
-			Shape& SetAngle(float _angle); ///< @brief Sets rotation about the anchor point, CCW in radians
-			Shape& SetAnchor(Ir::Vector _anchor); ///< @brief Sets anchor point, in pixels
-			Shape& SetAnchor(float _x, float _y); ///< @brief Sets anchor point, in pixels
-			Shape& SetColor(sf::Color _color); ///< @brief Sets object color
-			Shape& SetMode(Ir::Render::Mode _mode); ///< @brief Sets rendering mode
+			Shape& setPosition(iridium::Vector pos); ///< @brief Sets screen position, in pixels
+			Shape& setAngle(float angle); ///< @brief Sets rotation about the anchor point, CCW in radians
+			Shape& setAnchor(iridium::Vector anchor); ///< @brief Sets anchor point, in pixels
+			Shape& setAnchor(float x, float y); ///< @brief Sets anchor point, in pixels
+			Shape& setColor(sf::Color color); ///< @brief Sets object color
+			Shape& setMode(iridium::render::Mode mode); ///< @brief Sets rendering mode
 
-			inline Ir::Vector GetPosition() const { return this->m_position; } ///< @return Screen position, in pixels
-			inline float GetAngle() const { return this->m_angle; } ///< @return Rotation about the anchor point, in radians
-			inline Ir::Vector GetAnchor() const { return this->m_anchor; } ///< @return Anchor point, in pixels
-			inline sf::Color GetColor() const { return this->m_color; } ///< @return Object color
-			inline Ir::Render::Mode GetMode() const { return this->m_mode; } ///< @return Rendering mode
+			inline iridium::Vector getPosition() const { return position_; } ///< @return Screen position, in pixels
+			inline float getAngle() const { return angle_; } ///< @return Rotation about the anchor point, in radians
+			inline iridium::Vector getAnchor() const { return anchor_; } ///< @return Anchor point, in pixels
+			inline sf::Color getColor() const { return color_; } ///< @return Object color
+			inline iridium::render::Mode getMode() const { return mode_; } ///< @return Rendering mode
 
 		private:
-			Ir::Vector m_position { 0.f, 0.f }; ///< Screen position
-			float m_angle { 0.f }; ///< Angle, in radians
-			Ir::Vector m_anchor { 0.f, 0.f }; ///< Anchor point
-			sf::Color m_color { sf::Color::White }; ///< Object color
-			Ir::Render::Mode m_mode { Ir::Render::Mode::WIREFRAME }; ///< Rendering mode
+			iridium::Vector position_ { 0.f, 0.f }; ///< Screen position
+			float angle_ { 0.f }; ///< Angle, in radians
+			iridium::Vector anchor_ { 0.f, 0.f }; ///< Anchor point
+			sf::Color color_ { sf::Color::White }; ///< Object color
+			iridium::render::Mode mode_ { iridium::render::Mode::WIREFRAME }; ///< Rendering mode
 		};
 
 		/// @brief Utility class for drawing wireframe rectangles.
@@ -62,16 +62,16 @@ namespace Ir {
 		class Rectangle : public Shape {
 		public:
 			/// @brief Draws the object on the given render target.
-			virtual void Render(Ir::RenderTarget& _target) const;
+			virtual void render(iridium::RenderTarget& target) const;
 			
-			Rectangle& SetSize(Ir::Vector _size); ///< @brief Sets size, in pixels
-			Rectangle& SetSize(float _x, float _y); ///< @brief Sets size, in pixels
-			Rectangle& SetCorners(Ir::Vector _top_left, Ir::Vector _bottom_right); ///< @brief Sets rectangle's corners as screen positions
+			Rectangle& setSize(iridium::Vector size); ///< @brief Sets size, in pixels
+			Rectangle& setSize(float x, float y); ///< @brief Sets size, in pixels
+			Rectangle& setCorners(iridium::Vector topLeft, iridium::Vector bottomRight); ///< @brief Sets rectangle's corners as screen positions
 
-			inline Ir::Vector GetSize() const { return this->m_size; } ///< @return Rectangle size, in pixels
+			inline iridium::Vector getSize() const { return size_; } ///< @return Rectangle size, in pixels
 
 		private:
-			Ir::Vector m_size { 0.f, 0.f }; ///< Size
+			iridium::Vector size_ { 0.f, 0.f }; ///< Size
 		};
 
 		/// @brief Utility class for drawing quads (textured objects).
@@ -80,17 +80,17 @@ namespace Ir {
 		class Quad : public Rectangle {
 		public:
 			/// @brief Draws the object on the given render target.
-			virtual void Render(Ir::RenderTarget& _target) const override;
+			virtual void render(iridium::RenderTarget& _target) const override;
 
-			Rectangle& SetUVs(Ir::Vector _top_left, Ir::Vector _size); ///< Sets UVs, in texture pixels
-			Rectangle& SetUVs(Ir::Render::UV _uv); ///< Sets UVs, in texture pixels
-			Rectangle& SetTexture(const sf::Texture& _texture); ///< Sets texture resource
+			Rectangle& setUVs(iridium::Vector _top_left, iridium::Vector _size); ///< Sets UVs, in texture pixels
+			Rectangle& setUVs(iridium::render::UV _uv); ///< Sets UVs, in texture pixels
+			Rectangle& setTexture(const sf::Texture& _texture); ///< Sets texture resource
 
-			Ir::Render::UV GetUVs() { return this->m_uv; } ///< @return UVs, in texture pixels
+			iridium::render::UV getUVs() { return this->uv_; } ///< @return UVs, in texture pixels
 
 		private:
-			Ir::Render::UV m_uv {}; ///< Texture UVs
-			const sf::Texture* m_texture {}; ///< Texture to use in rendering
+			iridium::render::UV uv_ {}; ///< Texture UVs
+			const sf::Texture* texture_ {}; ///< Texture to use in rendering
 		};
 
 		/// @brief Utility class for drawing wireframe circles.
@@ -99,7 +99,7 @@ namespace Ir {
 		class Circle : public Shape {
 		public:
 			/// @brief Draws the object on the given render target.
-			virtual void Render(Ir::RenderTarget& _target) const;
+			virtual void render(iridium::RenderTarget& _target) const;
 			
 			Circle& SetRadius(float _rds); ///< @brief Sets radius, in pixels
 			Circle& SetVertexCount(unsigned int _count); ///< @brief Sets vertex count
@@ -110,7 +110,7 @@ namespace Ir {
 		private:
 			float m_radius { 0.f }; ///< Radius
 			unsigned int m_vertexCount { 32u }; ///< Vertex count
-			float m_vertexAngle { Ir::Math::tau / 32.f }; ///< Angle between two vertices. Used internally for reducing calculations in render calls.
+			float m_vertexAngle { iridium::Math::tau / 32.f }; ///< Angle between two vertices. Used internally for reducing calculations in render calls.
 		};
 	}
 }

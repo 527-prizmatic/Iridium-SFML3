@@ -1,122 +1,125 @@
 #include "Iridium/vector.hpp"
 #include "Iridium/math.hpp"
 
-namespace Ir {
-	const Ir::Vector Ir::Vector::zero = Ir::Vector{ 0.f, 0.f };
-	const Ir::Vector Ir::Vector::unit = Ir::Vector{ 1.f, 0.f };
+namespace iridium {
+	const iridium::Vector iridium::Vector::kZero = iridium::Vector{ 0.f, 0.f };
+	const iridium::Vector iridium::Vector::kUnit = iridium::Vector{ 1.f, 0.f };
 
 	Vector::Vector() {
-		this->x = 0.f;
-		this->y = 0.f;
+		x = 0.f;
+		y = 0.f;
 	}
 
-	Vector::Vector(float _x, float _y) {
-		this->x = _x;
-		this->y = _y;
+	Vector::Vector(float x, float y) {
+		this->x = x;
+		this->y = y;
 	}
 
-	Vector::Vector(const Ir::Vector& _other) {
-		this->x = _other.x;
-		this->y = _other.y;
+	Vector::Vector(const iridium::Vector& other) {
+		x = other.x;
+		y = other.y;
 	}
 
-	Ir::Vector& Vector::operator=(const Ir::Vector& _other) {
-		this->x = _other.x;
-		this->y = _other.y;
+	iridium::Vector& Vector::operator=(const iridium::Vector& other) {
+		x = other.x;
+		y = other.y;
 		return *this;
 	}
 
-	bool Vector::IsZero() const {
+	bool Vector::isZero() const {
 		return false;
 	}
 
-	Ir::Vector Vector::Polar(float _radius, float _angle) {
-		Expects(_radius >= 0.f);
-		return Ir::Vector(_radius, _angle).PolToRec();
+	iridium::Vector Vector::polar(float radius, float angle) {
+		Expects(radius >= 0.f);
+		return iridium::Vector(radius, angle).polToRec();
 	}
 	
-	float Vector::Magnitude() const {
-		return std::sqrtf(this->MagnitudeSquare());
+	float Vector::magnitude() const {
+		return std::sqrtf(magnitudeSquare());
 	}
 
-	float Vector::MagnitudeSquare() const {
-		return this->x * this->x + this->y * this->y;
+	float Vector::magnitudeSquare() const {
+		return x * x + y * y;
 	}
 	
-	float Vector::Angle(Ir::Vector _reference) const {
-		if (this->IsZero())
+	float Vector::getAngle(iridium::Vector reference) const {
+		if (isZero())
 			return 0.f;
-		return std::atan2(this->y , this->x) - std::atan2(_reference.y, _reference.x);
+		return std::atan2(y, x) - std::atan2(reference.y, reference.x);
 	}
 	
-	float Vector::Distance(Ir::Vector _other) const {
-		return (*this - _other).Magnitude();
+	float Vector::distance(iridium::Vector other) const {
+		return (*this - other).magnitude();
 	}
 	
-	Ir::Vector Vector::Normalize() const {
-		if (this->IsZero())
+	iridium::Vector Vector::normalize() const {
+		if (isZero())
 			return *this;
-		return *this / this->Magnitude();
+		return *this / magnitude();
 	}
 	
-	Ir::Vector Vector::ClampMagnitude(float _max) const {
-		Expects(_max >= 0.f);
+	iridium::Vector Vector::clampMagnitude(float max) const {
+		Expects(max >= 0.f);
 
-		float magnitude { this->Magnitude() };
-		if (magnitude > _max)
-			return *this / magnitude * _max;
+		float mag { magnitude() };
+		if (mag > max) {
+			return *this / mag * max;
+		}
 		return *this;
 	}
 	
-	Ir::Vector Vector::ClampMagnitude(float _min, float _max) const {
-		Expects(_max >= _min);
+	iridium::Vector Vector::clampMagnitude(float min, float max) const {
+		Expects(max >= min);
 
-		float magnitude { this->Magnitude() };
-		if (magnitude < _min)
-			return *this / magnitude * _min;
-		if (magnitude > _max)
-			return *this / magnitude * _max;
+		float mag { magnitude() };
+		if (mag < min) {
+			return *this / mag * min;
+		}
+		if (mag > max) {
+			return *this / mag * max;
+		}
 		return *this;
 	}
 	
-	Ir::Vector Vector::RecToPol() const {
-		return Ir::Vector{ this->Magnitude(), this->Angle() };
+	iridium::Vector Vector::recToPol() const {
+		return iridium::Vector{ magnitude(), getAngle() };
 	}
 	
-	Ir::Vector Vector::PolToRec() const {
-		return Ir::Vector{ this->x * std::cosf(this->y), this->x * std::sinf(this->y) };
+	iridium::Vector Vector::polToRec() const {
+		return iridium::Vector{ x * std::cosf(y), x * std::sinf(y) };
 	}
 	
-	Ir::Vector Vector::Rotate(float _angle) const {
-		if (Ir::Math::IsZero(_angle) || this->IsZero())
+	iridium::Vector Vector::rotate(float angle) const {
+		if (iridium::Math::isZero(angle) || isZero())
 			return *this;
-		Ir::Vector v { this->RecToPol() };
-		v.y += _angle;
-		return v.PolToRec();
+		iridium::Vector v { recToPol() };
+		v.y += angle;
+		return v.polToRec();
 	}
 	
-	Ir::Vector Vector::Rotate(float _angle, Ir::Vector _reference) const {
-		return _reference + (*this - _reference).Rotate(_angle);
+	iridium::Vector Vector::rotate(float angle, iridium::Vector reference) const {
+		return reference + (*this - reference).rotate(angle);
 	}
 	
-	Ir::Vector Vector::Mirror(Ir::Vector _axis) const {
-		if (this->IsZero() || _axis.IsZero())
+	iridium::Vector Vector::mirror(iridium::Vector _axis) const {
+		if (isZero() || _axis.isZero())
 			return *this;
-		float angle { this->Angle(_axis) };
-		if (Ir::Math::IsZero(angle))
+		float angle { getAngle(_axis) };
+		if (iridium::Math::isZero(angle))
 			return *this;
-		return this->Rotate(angle * 2.f);
+		return rotate(angle * 2.f);
 	}
 	
-	Ir::Vector Vector::MirrorX() const {
-		return Ir::Vector{ -this->x, this->y };
+	iridium::Vector Vector::mirrorX() const {
+		return iridium::Vector{ -x, y };
 	}
 	
-	Ir::Vector Vector::MirrorY() const {
-		return Ir::Vector{ this->x, -this->y };
+	iridium::Vector Vector::mirrorY() const {
+		return iridium::Vector{ x, -y };
 	}
 	
-	Ir::Vector Vector::Negate() const {
-		return Ir::Vector{ -this->x, -this->y };
+	iridium::Vector Vector::negate() const {
+		return iridium::Vector{ -x, -y };
 	}
 }

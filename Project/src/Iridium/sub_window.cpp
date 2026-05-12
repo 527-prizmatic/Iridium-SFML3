@@ -2,98 +2,98 @@
 #include "Iridium/exceptions.hpp"
 #include "Iridium/rendering/shapes.hpp"
 
-namespace Ir {
-	SubWindow::SubWindow(Ir::Vector _size) {
-		this->AllocateResources(_size);
+namespace iridium {
+	SubWindow::SubWindow(iridium::Vector size_) {
+		allocateResources(size_);
 	}
 	
-	void SubWindow::SetSize(Ir::Vector _size) {
-		this->AllocateResources(_size);
+	void SubWindow::setSize(iridium::Vector size_) {
+		allocateResources(size_);
 	}
 
-	Ir::Vector SubWindow::GetSize() {
-		if (!this->IsValid())
-			throw Ir::Exceptions::InvalidRenderTarget{};
+	iridium::Vector SubWindow::getSize() {
+		if (!isValid())
+			throw iridium::Exceptions::InvalidRenderTarget{};
 
-		return Ir::Vector::FromSFMLVector(this->m_renderTexture->getSize());
+		return iridium::Vector::fromSFMLVector(renderTexture_->getSize());
 	}
 
-	void SubWindow::Clear(sf::Color _fill_color) {
-		if (!this->IsValid())
-			throw Ir::Exceptions::InvalidRenderTarget{};
+	void SubWindow::clear(sf::Color _fill_color) {
+		if (!isValid())
+			throw iridium::Exceptions::InvalidRenderTarget{};
 
-		this->m_renderTexture->clear(_fill_color);
+		renderTexture_->clear(_fill_color);
 	}
 
-	void SubWindow::Render(sf::Drawable &_drawable, const sf::Texture* _texture) {
-		if (!this->IsValid())
-			throw Ir::Exceptions::InvalidRenderTarget{};
+	void SubWindow::render(sf::Drawable &_drawable, const sf::Texture* _texture) {
+		if (!isValid())
+			throw iridium::Exceptions::InvalidRenderTarget{};
 		
 			
-		this->m_renderTexture->draw(_drawable, _texture);
+		renderTexture_->draw(_drawable, _texture);
 	}
 
-	void SubWindow::Render(Ir::Render::Shape& _shape) {
-		if (!this->IsValid())
-			throw Ir::Exceptions::InvalidRenderTarget{};
+	void SubWindow::render(iridium::render::Shape& _shape) {
+		if (!isValid())
+			throw iridium::Exceptions::InvalidRenderTarget{};
 		
-		_shape.Render(*this);
+		_shape.render(*this);
 	}
 
-	void SubWindow::Render(Ir::RenderTarget &_render_target) {
-		if (!this->IsValid())
-			throw Ir::Exceptions::InvalidRenderTarget{};
+	void SubWindow::render(iridium::RenderTarget &renderTarget) {
+		if (!isValid())
+			throw iridium::Exceptions::InvalidRenderTarget{};
 		
-		if (Ir::SubWindow* sub = dynamic_cast<Ir::SubWindow*>(&_render_target)) {
-			sub->FlushToTarget(*this);
+		if (iridium::SubWindow* sub = dynamic_cast<iridium::SubWindow*>(&renderTarget)) {
+			sub->flushToTarget(*this);
 		}
 	}
 	
-	void SubWindow::FlushToTarget(Ir::RenderTarget& _render_target) {
-		if (!_render_target.IsValid() || !this->IsValid())
-			throw Ir::Exceptions::InvalidRenderTarget{};
+	void SubWindow::flushToTarget(iridium::RenderTarget& renderTarget) {
+		if (!renderTarget.isValid() || !isValid())
+			throw iridium::Exceptions::InvalidRenderTarget{};
 		
-		this->m_rect->SetPosition(this->m_position + Ir::Vector{0.f, this->GetSize().y});
-		_render_target.Render(*this->m_rect);
-		if (this->m_renderFrame) {
-			this->m_frame->SetPosition(this->m_position + Ir::Vector(1.f, 0.f));
-			_render_target.Render(*this->m_frame);
+		rect_->setPosition(position_ + iridium::Vector{0.f, getSize().y});
+		renderTarget.render(*rect_);
+		if (renderFrame_) {
+			frame_->setPosition(position_ + iridium::Vector(1.f, 0.f));
+			renderTarget.render(*frame_);
 		}
 	}
 
-	void SubWindow::AllocateResources() {
-		if (!this->IsValid())
-			throw Ir::Exceptions::InvalidRenderTarget{};
+	void SubWindow::allocateResources() {
+		if (!isValid())
+			throw iridium::Exceptions::InvalidRenderTarget{};
 
-		this->AllocateResources(Ir::Vector::FromSFMLVector(this->m_renderTexture->getSize()));
+		allocateResources(iridium::Vector::fromSFMLVector(renderTexture_->getSize()));
 	}
 
-	void SubWindow::AllocateResources(Ir::Vector _size) {
-		if (this->m_renderTexture != nullptr)
-			this->m_renderTexture.reset();
-		this->m_renderTexture = std::make_unique<sf::RenderTexture>(sf::Vector2u{_size});
-		this->ConfigureRect(_size);
-		this->ConfigureFrame(_size);
+	void SubWindow::allocateResources(iridium::Vector _size) {
+		if (renderTexture_ != nullptr)
+			renderTexture_.reset();
+		renderTexture_ = std::make_unique<sf::RenderTexture>(sf::Vector2u{_size});
+		configureRect(_size);
+		configureFrame(_size);
 	}
 
-	void SubWindow::ConfigureRect(Ir::Vector _size) {
-		if (this->m_rect == nullptr)
-			this->m_rect = std::make_unique<Ir::Render::Quad>();
+	void SubWindow::configureRect(iridium::Vector _size) {
+		if (rect_ == nullptr)
+			rect_ = std::make_unique<iridium::render::Quad>();
 
-		this->m_rect->SetTexture(this->m_renderTexture->getTexture());
-		this->m_rect->SetSize(_size.MirrorX());
+		rect_->setTexture(renderTexture_->getTexture());
+		rect_->setSize(_size.mirrorX());
 	}
 	
-	void SubWindow::ConfigureFrame(Ir::Vector _size) {
-		if (this->m_frame == nullptr)
-			this->m_frame = std::make_unique<Ir::Render::Rectangle>();
-		this->m_frame->SetSize(_size.x - 1.f, _size.y - 1.f); /// -1 on each dimension so it precisely lines up with the edges of the subwindow
+	void SubWindow::configureFrame(iridium::Vector _size) {
+		if (frame_ == nullptr)
+			frame_ = std::make_unique<iridium::render::Rectangle>();
+		frame_->setSize(_size.x - 1.f, _size.y - 1.f); /// -1 on each dimension so it precisely lines up with the edges of the subwindow
 	}
 
-	void SubWindow::SetRenderFrameColor(sf::Color _clr) {
-		if (!this->IsValid())
-			throw Ir::Exceptions::InvalidRenderTarget{};
+	void SubWindow::setRenderFrameColor(sf::Color _clr) {
+		if (!isValid())
+			throw iridium::Exceptions::InvalidRenderTarget{};
 		
-		this->m_frame->SetColor(_clr);
+		frame_->setColor(_clr);
 	}
 }

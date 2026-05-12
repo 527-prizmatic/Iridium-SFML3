@@ -7,63 +7,63 @@
 #include <windows.h>
 #endif
 
-namespace Ir {
-	ApplicationWindow::ApplicationWindow(Ir::Vector _size) {
-		this->AllocateResources(sf::Vector2u{ _size });
+namespace iridium {
+	ApplicationWindow::ApplicationWindow(iridium::Vector _size) {
+		allocateResources(sf::Vector2u{ _size });
 	}
 	
-	void ApplicationWindow::SetSize(Ir::Vector _size) {
-		this->AllocateResources(sf::Vector2u{ _size });
+	void ApplicationWindow::setSize(iridium::Vector _size) {
+		allocateResources(sf::Vector2u{ _size });
 	}
 
-	Ir::Vector ApplicationWindow::GetSize() {
-		if (!this->IsValid())
-			throw Ir::Exceptions::InvalidRenderTarget{};
+	iridium::Vector ApplicationWindow::getSize() {
+		if (!isValid())
+			throw iridium::Exceptions::InvalidRenderTarget{};
 
-		return Ir::Vector::FromSFMLVector(this->m_renderWindow->getSize());
+		return iridium::Vector::fromSFMLVector(m_renderWindow->getSize());
 	}
 
-	void ApplicationWindow::Clear(sf::Color _fill_color) {
-		if (!this->IsValid())
-			throw Ir::Exceptions::InvalidRenderTarget{};
+	void ApplicationWindow::clear(sf::Color _fill_color) {
+		if (!isValid())
+			throw iridium::Exceptions::InvalidRenderTarget{};
 
-		this->m_renderWindow->clear(sf::Color::Transparent);
-		this->m_renderTexture->clear(_fill_color);
+		m_renderWindow->clear(sf::Color::Transparent);
+		renderTexture_->clear(_fill_color);
 	}
 
-	void ApplicationWindow::Render(sf::Drawable &_drawable, const sf::Texture* _texture) {
-		if (!this->IsValid())
-			throw Ir::Exceptions::InvalidRenderTarget{};
+	void ApplicationWindow::render(sf::Drawable &_drawable, const sf::Texture* _texture) {
+		if (!isValid())
+			throw iridium::Exceptions::InvalidRenderTarget{};
 		
-		this->m_renderTexture->draw(_drawable, _texture);
+		renderTexture_->draw(_drawable, _texture);
 	}
 
-	void ApplicationWindow::Render(Ir::Render::Shape& _shape) {
-		if (!this->IsValid())
-			throw Ir::Exceptions::InvalidRenderTarget{};
+	void ApplicationWindow::render(iridium::render::Shape& _shape) {
+		if (!isValid())
+			throw iridium::Exceptions::InvalidRenderTarget{};
 		
-		_shape.Render(*this);
+		_shape.render(*this);
 	}
 
-	void ApplicationWindow::Render(Ir::RenderTarget &_render_target) {
-		if (!this->IsValid())
-			throw Ir::Exceptions::InvalidRenderTarget{};
+	void ApplicationWindow::render(iridium::RenderTarget &_render_target) {
+		if (!isValid())
+			throw iridium::Exceptions::InvalidRenderTarget{};
 		
-		/// @todo Placeholder. Extract render target's internal buffer data and draw it onto m_renderTexture
-	//	_render_target.SetSize(_render_target.GetSize());
+		/// @todo Placeholder. Extract render target's internal buffer data and draw it onto renderTexture_
+	//	_render_target.setSize(_render_target.GetSize());
 
-		if (Ir::SubWindow* sub = dynamic_cast<Ir::SubWindow*>(&_render_target)) {
-			sub->FlushToTarget(*this);
+		if (iridium::SubWindow* sub = dynamic_cast<iridium::SubWindow*>(&_render_target)) {
+			sub->flushToTarget(*this);
 		}
 	}
 
 	void ApplicationWindow::Flush() {
-		this->m_renderWindow->draw(*this->m_rect);
-		this->m_renderWindow->display();
+		m_renderWindow->draw(*rect_);
+		m_renderWindow->display();
 	}
 
 	void ApplicationWindow::Minimize() {
-		sf::WindowHandle handle { this->m_renderWindow->getNativeHandle() };
+		sf::WindowHandle handle { m_renderWindow->getNativeHandle() };
 
 /// @todo Add support for other OSes, probably
 #if defined(_WIN32)
@@ -73,66 +73,66 @@ namespace Ir {
 	}
 
 	void ApplicationWindow::ReduceBackgroundResourceUsage() {
-		if (this->HasFocus())
-			this->m_renderWindow->setFramerateLimit(this->m_fps);
+		if (HasFocus())
+			m_renderWindow->setFramerateLimit(m_fps);
 		else
-			this->m_renderWindow->setFramerateLimit(10u);
+			m_renderWindow->setFramerateLimit(10u);
 	}
 
-	void ApplicationWindow::AllocateResources() {
-		if (!this->IsValid())
-			throw Ir::Exceptions::InvalidRenderTarget{};
+	void ApplicationWindow::allocateResources() {
+		if (!isValid())
+			throw iridium::Exceptions::InvalidRenderTarget{};
 
-		this->AllocateResources(this->m_renderWindow->getSize());
+		allocateResources(m_renderWindow->getSize());
 	}
 
-	void ApplicationWindow::AllocateResources(sf::Vector2u _size) {
-		if (this->m_renderWindow != nullptr) this->m_renderWindow.reset();
-		if (this->m_renderTexture != nullptr) this->m_renderTexture.reset();
+	void ApplicationWindow::allocateResources(sf::Vector2u _size) {
+		if (m_renderWindow != nullptr) m_renderWindow.reset();
+		if (renderTexture_ != nullptr) renderTexture_.reset();
 
 		sf::VideoMode vmode { sf::VideoMode::getDesktopMode() };
 		vmode.size = _size;
-		this->m_renderWindow = std::make_shared<sf::RenderWindow>(vmode, "Window", sf::Style::None);
-		this->m_renderTexture = std::make_unique<sf::RenderTexture>(_size);
-		if (this->m_rect == nullptr) this->m_rect = std::make_unique<sf::RectangleShape>(sf::Vector2f{_size});
-		this->ConfigureRect();
+		m_renderWindow = std::make_shared<sf::RenderWindow>(vmode, "Window", sf::Style::None);
+		renderTexture_ = std::make_unique<sf::RenderTexture>(_size);
+		if (rect_ == nullptr) rect_ = std::make_unique<sf::RectangleShape>(sf::Vector2f{_size});
+		configureRect();
 	}
 
-	void ApplicationWindow::ConfigureRect() {
-		this->m_rect->setTexture(&this->m_renderTexture->getTexture(), true);
-		this->m_rect->setScale({1.f, -1.f});
-		this->m_rect->setPosition({0.f, static_cast<float>(this->GetSize().y)});
+	void ApplicationWindow::configureRect() {
+		rect_->setTexture(&renderTexture_->getTexture(), true);
+		rect_->setScale({1.f, -1.f});
+		rect_->setPosition({0.f, static_cast<float>(getSize().y)});
 	}
 
 	void ApplicationWindow::SetFPS(unsigned int _fps) {
-		this->m_fps = _fps;
-		if (this->IsValid())
-			this->m_renderWindow->setFramerateLimit(this->m_fps);
+		m_fps = _fps;
+		if (isValid())
+			m_renderWindow->setFramerateLimit(m_fps);
 	}
 
 	[[nodiscard]] sf::Vector2i ApplicationWindow::GetMouseCursorPosition() const {
-		if (this->m_renderWindow)
-			return sf::Mouse::getPosition(*this->m_renderWindow);
+		if (m_renderWindow)
+			return sf::Mouse::getPosition(*m_renderWindow);
 		else
 			return sf::Mouse::getPosition();
 	}
 
 	[[nodiscard]] const std::optional<sf::Event> ApplicationWindow::PollNextEvent() {
-		if (!this->IsValid())
+		if (!isValid())
 			return std::optional<sf::Event>();
 			
-		return this->m_renderWindow->pollEvent();
+		return m_renderWindow->pollEvent();
 	}
 	
 	void ApplicationWindow::SetTitle(std::string _title) {
-		if (!this->IsValid())
-			throw Ir::Exceptions::InvalidRenderTarget{};
+		if (!isValid())
+			throw iridium::Exceptions::InvalidRenderTarget{};
 
-		this->m_renderWindow->setTitle(_title);
-		this->m_windowTitle = _title;
+		m_renderWindow->setTitle(_title);
+		m_windowTitle = _title;
 	}
 		
 	std::string ApplicationWindow::GetTitle() {
-		return this->m_windowTitle;
+		return m_windowTitle;
 	}
 }
