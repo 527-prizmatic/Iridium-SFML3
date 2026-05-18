@@ -1,25 +1,94 @@
-/// @brief Used to declare derived classes of iridium::State.
-/// Also contains a set of functions for smooth integration with the state machine.
-/// @todo Replace this with CRTP (ew jreg)
-#define IRIDIUM_STATE_CLASS(s)						\
-class s : public ir::State {						\
-private:											\
-	ir::StateMachine* ir_machine_;					\
-													\
-public:												\
-	static std::string ir_getStateName() {			\
-		return typeid(s).name();					\
-	}												\
-													\
-	template <typename T>							\
-	void loadState() {								\
-		ir_machine_->loadState<T>();				\
-}													\
-													\
-	void ir_setStateMachine(ir::StateMachine* sm) {	\
-		ir_machine_ = sm;							\
-	}												\
-													\
-	void requestExit() {							\
-		ir_machine_->requestExit();					\
+namespace ir {
+	namespace detail {
+		namespace states {
+			template <typename T>
+			concept NoRttiReserved =
+				!requires(T t) { t.meta_name(); } &&
+				!requires(T t) { t.meta_load(); } &&
+				!requires(T t, ir::StateMachine* sm) { t.meta_setStateMachine(sm); } &&
+				!requires(T t) { t.meta_exit(); };
+		}
+
+		class State {
+		private:
+			class Concept {
+			public:
+				virtual void onInitialize() = 0;
+				virtual void onReceiveEvent(const sf::Event& event) = 0;
+				virtual void onUpdate(ir::ApplicationWindow& window) = 0;
+				virtual void onRender(ir::ApplicationWindow& window) = 0;
+				virtual void onEnd() = 0;
+
+				virtual void meta_setStateMachine(ir::StateMachine* sm) = 0;
+				virtual void meta_exit() = 0;
+			};
+
+			template <typename T>
+			class Model : public Concept {
+			private:
+				T value;
+
+			public:
+				Model(T val) : value(std::move(val)) {}
+
+				void onInitialize() override {
+					value.onInitialize();
+				}
+
+				void onReceiveEvent(const sf::Event& event) override {
+					value.onReceiveEvent(event);
+				}
+
+				void onUpdate(ir::ApplicationWindow& window) override {
+					value.onUpdate(window);
+				}
+
+				void onRender(ir::ApplicationWindow& window) override {
+					value.onRender(window);
+				}
+
+				void onEnd() override {
+					value.onInitialize();
+				}
+
+				void meta_setStateMachine(ir::StateMachine* stateMachine) override {
+					value.meta_setStateMachine(stateMachine);
+				}
+
+				void meta_exit() override {
+					value.meta_exit();
+				}
+			};
+			
+			std::unique_ptr<Concept> self_;
+
+		public:
+			template <typename T>
+			State(T value) : self_(std::make_unique<Model<T>>(std::move(value))) {}
+
+			void onInitialize() {
+				self_->onInitialize();
+			}
+
+			void onReceiveEvent(const sf::Event& event) {
+				self_->onReceiveEvent(event);
+			}
+
+			void onUpdate(ir::ApplicationWindow& window) {
+				self_->onUpdate(window);
+			}
+
+			void onRender(ir::ApplicationWindow& window) {
+				self_->onRender(window);
+			}
+
+			void onEnd() {
+				self_->onInitialize();
+			}
+
+			void meta_setStateMachine(ir::StateMachine* stateMachine) {
+				self_->meta_setStateMachine(stateMachine);
+			}
+		};
 	}
+}

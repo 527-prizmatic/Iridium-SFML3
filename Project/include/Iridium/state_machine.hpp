@@ -4,14 +4,18 @@
 #include "Iridium/libraries.hpp"
 
 namespace ir {
-	class State;
+	namespace detail {
+
+		class State;
+	}
 	class ApplicationWindow;
 
 	/// @brief Verifies that the type is a correctly implemented derivative of Ir::State.
 	template <typename T>
 	concept StateClass = requires {
-		std::is_base_of<ir::State, T>::value;
-		{ T::ir_getStateName() } -> std::same_as<std::string>;
+	//	std::is_base_of<ir::State, T>::value;
+	//	{ T::ir_getStateName() } -> std::same_as<std::string>;
+		{ T::meta_name() } -> std::same_as<std::string>;
 	};
 
 	class StateMachine {
@@ -28,7 +32,7 @@ namespace ir {
 		/// @brief If the state did not exist already, it is registered, allowing to perform lazy initialization if the user wishes.
 		template <StateClass T> void loadState() {
 			registerState<T>();
-			nextState_ = T::ir_getStateName();
+			nextState_ = T::meta_name();
 		}
 
 		/// @brief Performs initialization for the currently active state.
@@ -48,12 +52,12 @@ namespace ir {
 
 		/// @brief Registers a state of the given type into the state machine.
 		template <StateClass T> bool registerState() {
-			if (availableStates_.contains(T::ir_getStateName()))
+			if (availableStates_.contains(T::meta_name()))
 				return false;
 
-			availableStates_[T::ir_getStateName()] = std::make_shared<T>();
-			std::dynamic_pointer_cast<T>(availableStates_[T::ir_getStateName()])->ir_setStateMachine(this);
-			std::cout << "Registered state " << T::ir_getStateName() << std::endl;
+			availableStates_.emplace(T::meta_name(), ir::detail::State(T()));
+			availableStates_.at(T::meta_name()).meta_setStateMachine(this);
+			std::cout << "Registered state " << T::meta_name() << std::endl;
 			return true;
 		}
 
@@ -69,7 +73,7 @@ namespace ir {
 		bool hasRequestedExit() { return requestedExit_; }
 
 	private:
-		std::map<std::string, std::shared_ptr<ir::State>> availableStates_; ///< Storage for available states
+		std::map<std::string, ir::detail::State> availableStates_; ///< Storage for available states
 		std::string currentState_; ///< Name of the currently active state
 		std::optional<std::string> nextState_; ///< Name of the state to be loaded upon starting the next frame
 

@@ -3,17 +3,17 @@
 
 #include "Iridium/state.hpp"
 
-IRIDIUM_STATE_CLASS(CoreState)
+class CoreState : public ir::StateBase<CoreState> {
 public:
-	void onInitialize() override { }
+	void onInitialize() { }
 	
-	void onReceiveEvent(const sf::Event& event) override { }
+	void onReceiveEvent(const sf::Event& event) { std::cout <<"a";}
 
-	void onUpdate(ir::ApplicationWindow& window) override { }
+	void onUpdate(ir::ApplicationWindow& window) { }
 
-	void onRender(ir::ApplicationWindow& window) override { }
+	void onRender(ir::ApplicationWindow& window) { }
 		
-	void onEnd() override { }
+	void onEnd() { }
 };
 
 #endif // PROJECT_TESTSTATE_HPP_

@@ -7,24 +7,66 @@
 #include "Iridium/application_window.hpp"
 #include "Iridium/state_machine.hpp"
 
-namespace ir {
-	/// @brief Core state machine state class for main game logic.
-	/// All states in use should derive from this one, using the IRIDIUM_STATE_CLASS macro.
-	/// Ideally, no resources should be initialized during construction; everything should be done in onInitialize() instead.
-	class State {
-	private:
-		
-	public:
-		State() = default;
-		~State() = default;
+#include "Iridium/state.inl"
 
-		virtual void onInitialize() = 0; /// Fires upon initializing the state, initialize all resources here
-		virtual void onReceiveEvent(const sf::Event& event) = 0; /// Fires first on every frame
-		virtual void onUpdate(ir::ApplicationWindow& window) = 0; /// Fires on every frame, after polling system events
-		virtual void onRender(ir::ApplicationWindow& window) = 0; /// Fires on every frame upon rendering
-		virtual void onEnd() = 0; /// Fires upon changing states, destroy allocated resources here
+namespace ir {
+
+	/// @brief CRTP core for state classes.
+	/// All states in use must derive from this one, using themselves as template argument.
+	/// Ideally, no resources should be allocated during construction; everything should be done in onInitialize() instead.
+	template <ir::detail::states::NoRttiReserved T>
+	class StateBase {
+	private:
+		ir::StateMachine* stateMachine_;
+	
+	public:
+		void onInitialize() {
+			if constexpr (requires() { onInitialize(); }) {
+				static_cast<T*>(this)->onInitialize();
+			}
+		}
+		
+		void onReceiveEvent(const sf::Event& event) {
+			if constexpr (requires(const sf::Event& event) { onReceiveEvent(event); }) {
+				static_cast<T*>(this)->onReceiveEvent(event);
+			}
+		}
+		
+		void onUpdate(ir::ApplicationWindow& window) {
+			if constexpr (requires(ir::ApplicationWindow& window) { onUpdate(window); }) {
+				static_cast<T*>(this)->onUpdate(window);
+			}
+		}
+		
+		void onRender(ir::ApplicationWindow& window) {
+			if constexpr (requires(ir::ApplicationWindow& window) { onRender(window); }) {
+				static_cast<T*>(this)->onRender(window);
+			}
+		}
+		
+		void onEnd() {
+			if constexpr (requires() { onEnd(); }) {
+				static_cast<T*>(this)->onEnd();
+			}
+		}
+
+		static std::string meta_name() {
+			return typeid(T).name();
+		}
+
+		template <typename U>
+		void meta_load() {
+			stateMachine_->loadState<U>();
+		}
+
+		void meta_setStateMachine(ir::StateMachine* sm) {
+			stateMachine_ = sm;
+		}
+	
+		void meta_exit() {
+			stateMachine_->requestExit();
+		}
 	};
 }
 
-#include "Iridium/state.inl"
 #endif // IRIDIUM_STATE_HPP_

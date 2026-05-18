@@ -25,40 +25,40 @@ namespace ir {
 			if (currentState_ != ir::detail::g_nullStateName)
 				unload();
 			currentState_ = nextState_.value();
-			availableStates_[currentState_]->onInitialize();
+			availableStates_.at(currentState_).onInitialize();
 			nextState_.reset();
 		}
 	}
 	
 	void StateMachine::handleEvents(ir::ApplicationWindow& window) {
-		if (!availableStates_[currentState_])
+		if (!availableStates_.contains(currentState_))
 			throw ir::Exceptions::BadStateID(currentState_);
 
 		while (const std::optional event = window.pollNextEvent()) {
-			availableStates_[currentState_]->onReceiveEvent(event.value());
+			availableStates_.at(currentState_).onReceiveEvent(event.value());
 		}
 	}
 	
 	void StateMachine::update(ir::ApplicationWindow& window) {
-		if (!availableStates_[currentState_])
+		if (!availableStates_.contains(currentState_))
 			throw ir::Exceptions::BadStateID(currentState_);
 
-		availableStates_[currentState_]->onUpdate(window);
+		availableStates_.at(currentState_).onUpdate(window);
 	}
 	
 	void StateMachine::render(ir::ApplicationWindow &window) {
-		if (!availableStates_[currentState_])
+		if (!availableStates_.contains(currentState_))
 			throw ir::Exceptions::BadStateID(currentState_);
 
 		window.clear(sf::Color::Black);
-		availableStates_[currentState_]->onRender(window);
+		availableStates_.at(currentState_).onRender(window);
 		window.flush();
 	}
 	
 	void StateMachine::unload() {
-		if (!availableStates_[currentState_])
+		if (!availableStates_.contains(currentState_))
 			throw ir::Exceptions::BadStateID(currentState_);
 
-		availableStates_[currentState_]->onEnd();
+		availableStates_.at(currentState_).onEnd();
 	}	
 }
