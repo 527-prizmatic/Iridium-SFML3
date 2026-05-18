@@ -8,7 +8,7 @@ include("CPM.cmake")
 # Fetch dependencies using CPM
 CPMAddPackage("gh:SFML/SFML#3.0.2")
 CPMAddPackage("gh:microsoft/GSL@4.2.0")
-CPMAddPackage("gh:nlohmann/json@3.10.5")
+CPMAddPackage("gh:nlohmann/json@3.12.0")
 
 # Misc dependency config jobs
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build SFML as static libraries" FORCE)
