@@ -4,14 +4,15 @@
 int main() {
 	ir::ApplicationWindow window{ir::Vector{1280.f, 720.f}};
 	window.setFPS(60u);
-	ir::MouseInput::setup(window);
+
+	ir::input::Mouse mouseInput;
 
 	ir::StateMachine sm;
 	sm.loadState<CoreState>();
 
 	while (!sm.hasRequestedExit()) {
 		window.reduceBackgroundResourceUsage();
-		ir::MouseInput::update();
+		mouseInput.update(window);
 
 		sm.initialize();
 		sm.handleEvents(window);

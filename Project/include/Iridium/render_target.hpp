@@ -3,10 +3,9 @@
 
 #include "Iridium/libraries.hpp"
 #include "Iridium/vector.hpp"
+#include "Iridium/rendering/shapes.hpp"
 
 namespace ir {
-	namespace render { class Shape; }
-
 	/// @brief Base class for various rendering buffers.
 	/// They are typically implemented as wrappers for a sf::RenderTexture,
 	/// coming with various utilities for ease of manipulation by the end user.

@@ -11,7 +11,7 @@ namespace ir {
 	template <typename T>
 	concept StateClass = requires {
 		std::is_base_of<ir::State, T>::value;
-		{ T::getStateName() } -> std::same_as<std::string>;
+		{ T::ir_getStateName() } -> std::same_as<std::string>;
 	};
 
 	class StateMachine {
@@ -28,7 +28,7 @@ namespace ir {
 		/// @brief If the state did not exist already, it is registered, allowing to perform lazy initialization if the user wishes.
 		template <StateClass T> void loadState() {
 			registerState<T>();
-			nextState_ = T::getStateName();
+			nextState_ = T::ir_getStateName();
 		}
 
 		/// @brief Performs initialization for the currently active state.

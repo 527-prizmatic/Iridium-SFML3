@@ -16,7 +16,7 @@ namespace ir {
 		template <typename T> concept Number = std::is_arithmetic<T>::value;
 
 		template <Number T> [[nodiscard]] constexpr bool isZero(T n) noexcept {
-			return abs(_n) <= std::numeric_limits<T>::epsilon();
+			return abs(n) <= std::numeric_limits<T>::epsilon();
 		}
 
 		template <Number T> [[nodiscard]] constexpr T powi(T a, int exp) noexcept {
