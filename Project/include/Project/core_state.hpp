@@ -7,7 +7,7 @@ class CoreState : public ir::StateBase<CoreState> {
 public:
 	void onInitialize() { }
 	
-	void onReceiveEvent(const sf::Event& event) { std::cout <<"a";}
+	void onReceiveEvent(const sf::Event& event) { std::cout <<"a"; }
 
 	void onUpdate(ir::ApplicationWindow& window) { }
 

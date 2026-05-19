@@ -11,15 +11,14 @@ namespace ir {
 
 	/// @brief Verifies that the type is a correctly implemented derivative of Ir::State.
 	template <typename T>
-	concept StateClass = requires {
-	//	std::is_base_of<ir::State, T>::value;
-	//	{ T::ir_getStateName() } -> std::same_as<std::string>;
+	concept HasMethodMetaName = requires {
 		{ T::meta_name() } -> std::same_as<std::string>;
 	};
 
 	class StateMachine {
 	public:
 		StateMachine();
+		~StateMachine();
 
 		/// @brief Queues loading of the state with the given name, to be loaded upon the start of the next frame.
 		/// @return Whether the state was successfully queued
@@ -29,7 +28,7 @@ namespace ir {
 
 		/// @brief Queues loading of the state with the given type, to be loaded upon the start of the next frame.
 		/// @brief If the state did not exist already, it is registered, allowing to perform lazy initialization if the user wishes.
-		template <StateClass T> void loadState() {
+		template <HasMethodMetaName T> void loadState() {
 			registerState<T>();
 			nextState_ = T::meta_name();
 		}
@@ -50,12 +49,14 @@ namespace ir {
 		void unload();
 
 		/// @brief Registers a state of the given type into the state machine.
-		template <StateClass T> bool registerState() {
-			if (availableStates_.contains(T::meta_name()))
+		template <HasMethodMetaName T>
+		bool registerState() {
+			if (availableStates_.contains(T::meta_name())) {
 				return false;
-
-			availableStates_.emplace(T::meta_name(), ir::detail::State(T()));
-			availableStates_.at(T::meta_name()).meta_setStateMachine(this);
+			}
+			
+			availableStates_.emplace(T::meta_name(), std::make_unique<ir::detail::State>(T()));
+			availableStates_.at(T::meta_name())->meta_setStateMachine(this);
 			std::cout << "Registered state " << T::meta_name() << std::endl;
 			return true;
 		}
@@ -72,7 +73,7 @@ namespace ir {
 		bool hasRequestedExit() { return requestedExit_; }
 
 	private:
-		std::unordered_map<std::string, ir::detail::State> availableStates_; ///< Storage for available states
+		std::unordered_map<std::string, std::unique_ptr<ir::detail::State>> availableStates_; ///< Storage for available states
 		std::string currentState_; ///< Name of the currently active state
 		std::optional<std::string> nextState_; ///< Name of the state to be loaded upon starting the next frame
 

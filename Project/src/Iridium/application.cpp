@@ -26,7 +26,7 @@ namespace ir {
 			stateMachine_->initialize();
 			stateMachine_->handleEvents(*appWindow_);
 			stateMachine_->update(*appWindow_);
-			stateMachine_->update(*appWindow_);
+			stateMachine_->render(*appWindow_);
 		}
 
 		stateMachine_->unload();

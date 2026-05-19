@@ -11,6 +11,8 @@ namespace ir {
 		currentState_ = ir::detail::g_nullStateName;
 	}
 
+	StateMachine::~StateMachine() = default;
+
 	bool StateMachine::loadState(std::string _name) {
 		if (availableStates_.contains(_name)) {
 			nextState_ = _name;
@@ -25,7 +27,7 @@ namespace ir {
 			if (currentState_ != ir::detail::g_nullStateName)
 				unload();
 			currentState_ = nextState_.value();
-			availableStates_.at(currentState_).onInitialize();
+			availableStates_.at(currentState_)->onInitialize();
 			nextState_.reset();
 		}
 	}
@@ -35,7 +37,7 @@ namespace ir {
 			throw ir::Exceptions::BadStateID(currentState_);
 
 		while (const std::optional event = window.pollNextEvent()) {
-			availableStates_.at(currentState_).onReceiveEvent(event.value());
+			availableStates_.at(currentState_)->onReceiveEvent(event.value());
 		}
 	}
 	
@@ -44,7 +46,7 @@ namespace ir {
 		if (!availableStates_.contains(currentState_))
 			throw ir::Exceptions::BadStateID(currentState_);
 
-		availableStates_.at(currentState_).onUpdate(window);
+		availableStates_.at(currentState_)->onUpdate(window);
 	}
 	
 	void StateMachine::render(ir::ApplicationWindow &window) {
@@ -52,7 +54,7 @@ namespace ir {
 			throw ir::Exceptions::BadStateID(currentState_);
 
 		window.clear(sf::Color::Black);
-		availableStates_.at(currentState_).onRender(window);
+		availableStates_.at(currentState_)->onRender(window);
 		window.flush();
 	}
 	
@@ -60,6 +62,6 @@ namespace ir {
 		if (!availableStates_.contains(currentState_))
 			throw ir::Exceptions::BadStateID(currentState_);
 
-		availableStates_.at(currentState_).onEnd();
-	}	
+		availableStates_.at(currentState_)->onEnd();
+	}
 }
