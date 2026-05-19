@@ -9,24 +9,30 @@ namespace ir {
 		initializeComponent(gameClock_);
 		gameClock_->zero();
 
-		initializeComponent(stateMachine_);
 		initializeComponent(mouseInput_);
+
+		initializeComponent(stateMachine_);
+
+		context_.appWindow = &*appWindow_;
+		context_.gameClock = &*gameClock_;
+		context_.mouseInput = &*mouseInput_;
+		
+		stateMachine_->registerContext(&context_);
 	}
 
-	void Application::run() {
+	void Application::runMainLoop() {
 		expectInitialized();
-		/// @todo Extract this template argument into a template function
-		stateMachine_->loadState<CoreState>();
 
 		while (!stateMachine_->hasRequestedExit()) {
 			gameClock_->startTick();
 			appWindow_->reduceBackgroundResourceUsage();
 			mouseInput_->update(*appWindow_);
 
+			/// Keep StateMachine init last
 			stateMachine_->initialize();
-			stateMachine_->handleEvents(*appWindow_);
-			stateMachine_->update(*appWindow_);
-			stateMachine_->render(*appWindow_);
+			stateMachine_->handleEvents();
+			stateMachine_->update();
+			stateMachine_->render();
 		}
 
 		stateMachine_->unload();

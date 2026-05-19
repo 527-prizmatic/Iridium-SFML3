@@ -15,12 +15,13 @@ namespace ir {
 			public:
 				virtual void onInitialize() = 0;
 				virtual void onReceiveEvent(const sf::Event& event) = 0;
-				virtual void onUpdate(ir::ApplicationWindow& window) = 0;
-				virtual void onRender(ir::ApplicationWindow& window) = 0;
+				virtual void onUpdate() = 0;
+				virtual void onRender() = 0;
 				virtual void onEnd() = 0;
 
 				virtual void meta_setStateMachine(ir::StateMachine* sm) = 0;
 				virtual void meta_exit() = 0;
+				virtual void meta_setContext(ApplicationContext* context) = 0;
 			};
 
 			template <typename T>
@@ -39,12 +40,12 @@ namespace ir {
 					value.onReceiveEvent(event);
 				}
 
-				void onUpdate(ir::ApplicationWindow& window) override {
-					value.onUpdate(window);
+				void onUpdate() override {
+					value.onUpdate();
 				}
 
-				void onRender(ir::ApplicationWindow& window) override {
-					value.onRender(window);
+				void onRender() override {
+					value.onRender();
 				}
 
 				void onEnd() override {
@@ -57,6 +58,10 @@ namespace ir {
 
 				void meta_exit() override {
 					value.meta_exit();
+				}
+
+				void meta_setContext(ApplicationContext* context) {
+					value.meta_setContext(context);
 				}
 			};
 			
@@ -74,12 +79,12 @@ namespace ir {
 				self_->onReceiveEvent(event);
 			}
 
-			void onUpdate(ir::ApplicationWindow& window) {
-				self_->onUpdate(window);
+			void onUpdate() {
+				self_->onUpdate();
 			}
 
-			void onRender(ir::ApplicationWindow& window) {
-				self_->onRender(window);
+			void onRender() {
+				self_->onRender();
 			}
 
 			void onEnd() {
@@ -88,6 +93,10 @@ namespace ir {
 
 			void meta_setStateMachine(ir::StateMachine* stateMachine) {
 				self_->meta_setStateMachine(stateMachine);
+			}
+
+			void meta_setContext(ApplicationContext* context) {
+				self_->meta_setContext(context);
 			}
 		};
 	}

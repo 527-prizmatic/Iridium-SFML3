@@ -10,6 +10,7 @@
 #include "Iridium/state.inl"
 
 namespace ir {
+	class ApplicationContext;
 
 	/// @brief CRTP core for state classes.
 	/// All states in use must derive from this one, using themselves as template argument.
@@ -18,7 +19,10 @@ namespace ir {
 	class StateBase {
 	private:
 		ir::StateMachine* stateMachine_;
-	
+
+	protected:
+		ApplicationContext* context_;
+
 	public:
 		void onInitialize() {
 			if constexpr (requires() { onInitialize(); }) {
@@ -32,15 +36,15 @@ namespace ir {
 			}
 		}
 		
-		void onUpdate(ir::ApplicationWindow& window) {
-			if constexpr (requires(ir::ApplicationWindow& window) { onUpdate(window); }) {
-				static_cast<T*>(this)->onUpdate(window);
+		void onUpdate() {
+			if constexpr (requires() { onUpdate(); }) {
+				static_cast<T*>(this)->onUpdate();
 			}
 		}
 		
-		void onRender(ir::ApplicationWindow& window) {
-			if constexpr (requires(ir::ApplicationWindow& window) { onRender(window); }) {
-				static_cast<T*>(this)->onRender(window);
+		void onRender() {
+			if constexpr (requires() { onRender(); }) {
+				static_cast<T*>(this)->onRender();
 			}
 		}
 		
@@ -65,6 +69,10 @@ namespace ir {
 	
 		void meta_exit() {
 			stateMachine_->requestExit();
+		}
+
+		void meta_setContext(ApplicationContext* context) {
+			context_ = context;
 		}
 	};
 }

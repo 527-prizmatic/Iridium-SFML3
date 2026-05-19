@@ -8,6 +8,7 @@ namespace ir {
 		class State;
 	}
 	class ApplicationWindow;
+	class ApplicationContext;
 
 	/// @brief Verifies that the type is a correctly implemented derivative of Ir::State.
 	template <typename T>
@@ -37,13 +38,13 @@ namespace ir {
 		void initialize();
 
 		/// @brief Collects events for the given application window, and sends them to the currently active state for processing.
-		void handleEvents(ir::ApplicationWindow& window);
+		void handleEvents();
 
 		/// @brief Performs frame updates for the currently active state.
-		void update(ir::ApplicationWindow& window);
+		void update();
 
 		/// @brief Performs rendering operations for the currently active state.
-		void render(ir::ApplicationWindow& window);
+		void render();
 
 		/// @brief Calls resource destruction functions for the currently active state.
 		void unload();
@@ -57,6 +58,7 @@ namespace ir {
 			
 			availableStates_.emplace(T::meta_name(), std::make_unique<ir::detail::State>(T()));
 			availableStates_.at(T::meta_name())->meta_setStateMachine(this);
+			availableStates_.at(T::meta_name())->meta_setContext(context_);
 			std::cout << "Registered state " << T::meta_name() << std::endl;
 			return true;
 		}
@@ -72,6 +74,8 @@ namespace ir {
 		void requestExit() { requestedExit_ = true; }
 		bool hasRequestedExit() { return requestedExit_; }
 
+		void registerContext(ApplicationContext* context);
+
 	private:
 		std::unordered_map<std::string, std::unique_ptr<ir::detail::State>> availableStates_; ///< Storage for available states
 		std::string currentState_; ///< Name of the currently active state
@@ -79,6 +83,8 @@ namespace ir {
 
 		bool requestedExit_ { false };
 		void expectValidID();
+
+		ApplicationContext* context_;
 	};
 }
 

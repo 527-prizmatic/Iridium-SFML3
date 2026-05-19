@@ -7,18 +7,38 @@
 #include "Iridium/exceptions.hpp"
 
 namespace ir {
+	struct ApplicationContext {
+		ir::ApplicationWindow* appWindow {};
+		ir::GameClock* gameClock {};
+		ir::input::Mouse* mouseInput {};
+
+		float deltaTime() {
+			return gameClock->getDeltaTime();
+		}
+
+		float deltaTimeUnscaled() {
+			return gameClock->getDeltaTimeUnscaled();
+		}
+	};
+
 	class Application {
 	public:
 		Application();
-		void run();
+
+		/// @brief Starts up the application.
+		/// @tparam T Any derivative of ir::StateBase, for use as the initial StateMachine state
+		template <typename T>
+		void run() {
+			expectInitialized();
+			stateMachine_->loadState<T>();
+			runMainLoop();
+		}
 
 	private:
+		std::unique_ptr<ir::StateMachine> stateMachine_;
 		std::unique_ptr<ir::ApplicationWindow> appWindow_;
 		std::unique_ptr<ir::GameClock> gameClock_;
-		std::unique_ptr<ir::StateMachine> stateMachine_;
 		std::unique_ptr<ir::input::Mouse> mouseInput_;
-
-		void expectInitialized();
 
 		template <typename T, typename... Args>
 		void initializeComponent(std::unique_ptr<T>& component, Args... args) {
@@ -27,8 +47,12 @@ namespace ir {
 				throw ir::Exceptions::InitializationError(std::string{typeid(T).name()} + " component of Application");
 			}
 		}
-	};
 
+		void expectInitialized();
+		void runMainLoop();
+
+		ApplicationContext context_ {};
+	};
 }
 
 

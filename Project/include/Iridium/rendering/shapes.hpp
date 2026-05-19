@@ -76,7 +76,7 @@ namespace ir {
 
 		/// @brief Utility class for drawing quads (textured objects).
 		/// For rectangles, position is considered to be the top-left corner.
-		/// @todo Integrate this with a future resource manager, when there will be one
+		/// @future Integrate this with a future resource manager, when there will be one
 		class Quad : public Rectangle {
 		public:
 			/// @brief Draws the object on the given render target.

@@ -38,7 +38,7 @@ namespace ir {
 
 		/// @brief Minimizes the window.
 		/// Exact implementation differs based on the OS.
-		/// @todo Add support for other OSes, probably
+		/// @future Add support for other OSes
 		void minimize();
 
 		/// @brief Reduces framerate when running in background to save on resources.

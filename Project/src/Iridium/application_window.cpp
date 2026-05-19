@@ -2,7 +2,7 @@
 #include "Iridium/exceptions.hpp"
 #include "Iridium/sub_window.hpp"
 
-/// @todo Add support for other OSes
+/// @future Add support for other OSes
 #if defined(_WIN32)
 #include <windows.h>
 #endif
@@ -44,9 +44,6 @@ namespace ir {
 	void ApplicationWindow::render(ir::RenderTarget &renderTarget) {
 		expectValid();
 		
-		/// @todo Placeholder. Extract render target's internal buffer data and draw it onto renderTexture_
-		//	renderTarget.setSize(renderTarget.GetSize());
-
 		if (ir::SubWindow* sub = dynamic_cast<ir::SubWindow*>(&renderTarget)) {
 			sub->flushToTarget(*this);
 		}
@@ -60,10 +57,10 @@ namespace ir {
 	void ApplicationWindow::minimize() {
 		sf::WindowHandle handle { renderWindow_->getNativeHandle() };
 
-/// @todo Add support for other OSes, probably
+/// @future Add support for other OSes
 #if defined(_WIN32)
 		PostMessage(handle, WM_SYSCOMMAND, SC_MINIMIZE, 0);
-		std::cout << handle;
+	//	std::cout << handle;
 #endif
 	}
 

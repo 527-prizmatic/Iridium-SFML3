@@ -1,6 +1,7 @@
 #include "Iridium/state_machine.hpp"
 #include "Iridium/state.hpp"
 #include "Iridium/exceptions.hpp"
+#include "Iridium/application.hpp"
 
 namespace ir {
 	namespace detail {
@@ -33,26 +34,25 @@ namespace ir {
 		}
 	}
 	
-	void StateMachine::handleEvents(ir::ApplicationWindow& window) {
+	void StateMachine::handleEvents() {
 		expectValidID();
 
-		while (const std::optional event = window.pollNextEvent()) {
+		while (const std::optional event = context_->appWindow->pollNextEvent()) {
 			availableStates_.at(currentState_)->onReceiveEvent(event.value());
 		}
 	}
 	
-	/// @todo Add GameClock ref argument, and propagate that change to states as well
-	void StateMachine::update(ir::ApplicationWindow& window) {
+	void StateMachine::update() {
 		expectValidID();
-		availableStates_.at(currentState_)->onUpdate(window);
+		availableStates_.at(currentState_)->onUpdate();
 	}
 	
-	void StateMachine::render(ir::ApplicationWindow &window) {
+	void StateMachine::render() {
 		expectValidID();
 
-		window.clear(sf::Color::Black);
-		availableStates_.at(currentState_)->onRender(window);
-		window.flush();
+		context_->appWindow->clear(sf::Color::Black);
+		availableStates_.at(currentState_)->onRender();
+		context_->appWindow->flush();
 	}
 	
 	void StateMachine::unload() {
@@ -64,5 +64,9 @@ namespace ir {
 		if (!availableStates_.contains(currentState_)) {
 			throw ir::Exceptions::BadStateID(currentState_);
 		}
+	}
+
+	void StateMachine::registerContext(ApplicationContext* context) {
+		this->context_ = context;
 	}
 }
