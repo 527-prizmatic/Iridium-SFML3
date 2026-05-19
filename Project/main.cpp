@@ -1,6 +1,7 @@
 #include "Project/core_state.hpp"
 #include "Iridium/input/mouse.hpp"
 
+/// @todo Replace all these free variables with an Application class
 int main() {
 	ir::ApplicationWindow window{ir::Vector{1280.f, 720.f}};
 	window.setFPS(60u);

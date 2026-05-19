@@ -1,60 +1,49 @@
 #include "Iridium/time.hpp"
 
 namespace ir {
-	namespace Time {
-		using ClockType = std::chrono::steady_clock;
-    	using Timestamp = std::chrono::time_point<std::chrono::steady_clock>;
+#pragma region GameClock
+	GameClock::GameClock() {
+		last_ = clock_.now();
+	}
 
-		namespace detail {
-			ClockType gClock;
-			Timestamp gLast;
-			float gDeltaUnscaled { 0.f };
-			float gDeltaScaled { 0.f };
-			float gScale { 1.f };
-			bool gFirstTick { true };
-		}
+	void GameClock::zero(bool resetTimeScale) {
+		clock_ = ClockType();
+		last_ = clock_.now();
+		deltaUnscaled_ = 0.f;
+		deltaScaled_ = 0.f;
 
-		void reset() {
-			ir::Time::detail::gDeltaUnscaled = 0.f;
-			ir::Time::detail::gDeltaScaled = 0.f;
-			ir::Time::detail::gClock = ClockType{};
-			ir::Time::detail::gFirstTick = true;
-		}
-
-		void restart() {
-			Timestamp now = ir::Time::detail::gClock.now();
-			if (!ir::Time::detail::gFirstTick) /// Removing this safeguard causes issues as last is zero-initialized, causing a half-century-long first tick
-				ir::Time::detail::gDeltaUnscaled = static_cast<float>((now - ir::Time::detail::gLast).count() * 1e-9f); /// Multiplying by one billionth because nanoseconds
-			ir::Time::detail::gLast = now;
-
-			ir::Time::detail::gDeltaScaled = ir::Time::detail::gDeltaUnscaled * ir::Time::detail::gScale;
-
-			ir::Time::detail::gClock = ClockType{};
-			ir::Time::detail::gFirstTick = false;
-		}
-
-		float deltaTime() {
-			return ir::Time::detail::gDeltaScaled;
-		}
-
-		float unscaledDeltaTime() {
-			return ir::Time::detail::gDeltaUnscaled;
-		}
-
-		void setTimeScale(float scale) {
-			ir::Time::detail::gScale = scale;
-			ir::Time::detail::gDeltaScaled = ir::Time::detail::gDeltaUnscaled * ir::Time::detail::gScale;
-		}
-
-		float getTimeScale() {
-			return ir::Time::detail::gScale;
-		}
-
-		void resetTimeScale() {
-			ir::Time::setTimeScale(1.f);
+		if (resetTimeScale) {
+			setTimeScale(1.f);
 		}
 	}
 
+	void GameClock::startTick() {
+		Timestamp now = clock_.now();
+		deltaUnscaled_ = static_cast<float>((now - last_).count() * 1e-9f);
+		deltaScaled_ = deltaUnscaled_ * timeScale_;
+		last_ = now;
+		clock_ = ClockType{};
+	}
+
+	float GameClock::getDeltaTime() {
+		return deltaScaled_;
+	}
+
+	float GameClock::getDeltaTimeUnscaled() {
+		return deltaUnscaled_;
+	}
+
+	void GameClock::setTimeScale(float timeScale) {
+		timeScale_ = timeScale;
+		deltaScaled_ = deltaUnscaled_ * timeScale_;
+	}
+
+	float GameClock::getTimeScale() {
+		return timeScale_;
+	}
+#pragma endregion
+
+#pragma LocalClock
 	void LocalClock::Stop() {
 		ticking = false;
 		reset();
@@ -73,4 +62,5 @@ namespace ir {
 		else
 			time += ir::Time::deltaTime();
 	}
+#pragma endregion
 }

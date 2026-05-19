@@ -3,35 +3,34 @@
 
 #include "Iridium/libraries.hpp"
 
-namespace ir {
-	/// @todo Replace this with a class
-	namespace Time {
-		/// @brief Resets the clock's internal states and restarts it.
-		void reset();
+namespace ir {	
+	using ClockType = std::chrono::steady_clock;
+	using Timestamp = std::chrono::time_point<std::chrono::steady_clock>;
 
-		/// @brief Restarts the clock.
-		void restart();
+	class GameClock {
+	public:
+		GameClock();
 
-		/// @return Scaled time elapsed since last restart() call.
-		/// This function takes time scale into account.
-		float deltaTime();
+		void zero(bool resetTimeScale = false);
+		void startTick();
 
-		/// @return Real time elapsed since last restart() call.
-		/// This function does not take time scale into account.
-		float unscaledDeltaTime();
-		
-		/// @brief Sets time scale to a value different than 1.
-		/// Time scale directly influences the value of deltaTime(), but not that of unscaledDeltaTime().
-		void setTimeScale(float scale);
-		
-		/// @return Current time scale (default value is 1)
+		void setTimeScale(float timeScale);
+
+		float getDeltaTime();
+		float getDeltaTimeUnscaled();
 		float getTimeScale();
 
-		/// @brief Resets time scale to 1.
-		void resetTimeScale();
-	}
+	private:
+		ClockType clock_;
+		Timestamp last_;
+		float deltaUnscaled_ { 0.f };
+		float deltaScaled_ { 0.f };
+		float timeScale_ { 1.f };
+		bool isFirstTick_ { true };
+	};
 
 	/// @brief Simple utility class for handling timers
+	/// @todo Decide whether this class is worth keeping (think of use cases, make prototypes, and such)
 	struct LocalClock {
 	public:
 		/// @brief Disables ticking and resets the clock to zero.
