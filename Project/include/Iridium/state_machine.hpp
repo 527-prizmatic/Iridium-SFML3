@@ -5,7 +5,6 @@
 
 namespace ir {
 	namespace detail {
-
 		class State;
 	}
 	class ApplicationWindow;
@@ -73,7 +72,7 @@ namespace ir {
 		bool hasRequestedExit() { return requestedExit_; }
 
 	private:
-		std::map<std::string, ir::detail::State> availableStates_; ///< Storage for available states
+		std::unordered_map<std::string, ir::detail::State> availableStates_; ///< Storage for available states
 		std::string currentState_; ///< Name of the currently active state
 		std::optional<std::string> nextState_; ///< Name of the state to be loaded upon starting the next frame
 

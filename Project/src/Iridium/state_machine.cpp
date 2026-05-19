@@ -39,6 +39,7 @@ namespace ir {
 		}
 	}
 	
+	/// @todo Add GameClock ref argument, and propagate that change to states as well
 	void StateMachine::update(ir::ApplicationWindow& window) {
 		if (!availableStates_.contains(currentState_))
 			throw ir::Exceptions::BadStateID(currentState_);

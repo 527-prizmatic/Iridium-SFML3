@@ -10,22 +10,32 @@ namespace ir {
 		
 		class BadResourceID : public std::exception {
 		public:
-			BadResourceID(std::string id) : badID_ { id } {}
+			BadResourceID(std::string what) : what_ { what } {}
 
-			const char * what() { return std::string{ "Requested resource ID \"" + badID_ + "\" does not exist" }.c_str(); }
+			const char * what() { return std::string{ "Requested resource ID \"" + what_ + "\" does not exist" }.c_str(); }
 
 		private:
-			std::string badID_ {};
+			std::string what_ {};
 		};
 		
 		class BadStateID : public std::exception {
 		public:
-			BadStateID(std::string id) : badID_ { id } {}
+			BadStateID(std::string what) : what_ { what } {}
 
-			const char * what() { return std::string{ "State machine attempted to update nonexistent state \"" + badID_ + "\"" }.c_str(); }
+			const char * what() { return std::string{ "State machine attempted to update nonexistent state \"" + what_ + "\"" }.c_str(); }
 
 		private:
-			std::string badID_ {};
+			std::string what_ {};
+		};
+		
+		class InitializationError : public std::exception {
+		public:
+			InitializationError(std::string what) : what_ { what } {}
+
+			const char * what() { return std::string{ what_ + " failed to initialize properly" }.c_str(); }
+
+		private:
+			std::string what_ {};
 		};
 	}
 }

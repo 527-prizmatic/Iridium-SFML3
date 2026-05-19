@@ -43,7 +43,7 @@ namespace ir {
 	}
 #pragma endregion
 
-#pragma LocalClock
+#pragma region LocalClock
 	void LocalClock::Stop() {
 		ticking = false;
 		reset();
@@ -57,10 +57,10 @@ namespace ir {
 		if (!ticking)
 			return;
 		
-		if (usesUnscaledTime)
-			time += ir::Time::unscaledDeltaTime();
-		else
-			time += ir::Time::deltaTime();
+	//	if (usesUnscaledTime)
+	//		time += ir::Time::unscaledDeltaTime();
+	//	else
+	//		time += ir::Time::deltaTime();
 	}
 #pragma endregion
 }
