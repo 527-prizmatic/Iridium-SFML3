@@ -17,37 +17,32 @@ namespace ir {
 	}
 
 	ir::Vector ApplicationWindow::getSize() {
-		if (!isValid())
-			throw ir::Exceptions::InvalidRenderTarget{};
+		expectValid();
 
 		return ir::Vector::fromSFMLVector(renderWindow_->getSize());
 	}
 
 	void ApplicationWindow::clear(sf::Color fillColor) {
-		if (!isValid())
-			throw ir::Exceptions::InvalidRenderTarget{};
+		expectValid();
 
 		renderWindow_->clear(sf::Color::Transparent);
 		renderTexture_->clear(fillColor);
 	}
 
 	void ApplicationWindow::render(sf::Drawable &drawable, const sf::Texture* texture) {
-		if (!isValid())
-			throw ir::Exceptions::InvalidRenderTarget{};
+		expectValid();
 		
 		renderTexture_->draw(drawable, texture);
 	}
 
 	void ApplicationWindow::render(ir::render::Shape& shape) {
-		if (!isValid())
-			throw ir::Exceptions::InvalidRenderTarget{};
+		expectValid();
 		
 		shape.render(*this);
 	}
 
 	void ApplicationWindow::render(ir::RenderTarget &renderTarget) {
-		if (!isValid())
-			throw ir::Exceptions::InvalidRenderTarget{};
+		expectValid();
 		
 		/// @todo Placeholder. Extract render target's internal buffer data and draw it onto renderTexture_
 		//	renderTarget.setSize(renderTarget.GetSize());
@@ -73,15 +68,15 @@ namespace ir {
 	}
 
 	void ApplicationWindow::reduceBackgroundResourceUsage() {
-		if (hasFocus())
+		if (hasFocus()) {
 			renderWindow_->setFramerateLimit(fps_);
-		else
+		} else {
 			renderWindow_->setFramerateLimit(10u);
+		}
 	}
 
 	void ApplicationWindow::allocateResources() {
-		if (!isValid())
-			throw ir::Exceptions::InvalidRenderTarget{};
+		expectValid();
 
 		allocateResources(renderWindow_->getSize());
 	}
@@ -111,22 +106,23 @@ namespace ir {
 	}
 
 	[[nodiscard]] sf::Vector2i ApplicationWindow::getMouseCursorPosition() const {
-		if (renderWindow_)
+		if (renderWindow_) {
 			return sf::Mouse::getPosition(*renderWindow_);
-		else
+		} else {
 			return sf::Mouse::getPosition();
+		}
 	}
 
 	[[nodiscard]] const std::optional<sf::Event> ApplicationWindow::pollNextEvent() {
-		if (!isValid())
+		if (!isValid()) {
 			return std::optional<sf::Event>();
+		}
 			
 		return renderWindow_->pollEvent();
 	}
 	
 	void ApplicationWindow::setTitle(std::string title) {
-		if (!isValid())
-			throw ir::Exceptions::InvalidRenderTarget{};
+		expectValid();
 
 		renderWindow_->setTitle(title);
 		windowTitle_ = title;

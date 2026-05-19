@@ -17,15 +17,16 @@ namespace ir {
 		if (availableStates_.contains(_name)) {
 			nextState_ = _name;
 			return true;
-		}
-		else
+		} else {
 			return false;
+		}
 	}
 
 	void StateMachine::initialize() {
 		if (nextState_.has_value()) {
-			if (currentState_ != ir::detail::g_nullStateName)
+			if (currentState_ != ir::detail::g_nullStateName) {
 				unload();
+			}
 			currentState_ = nextState_.value();
 			availableStates_.at(currentState_)->onInitialize();
 			nextState_.reset();
@@ -33,8 +34,7 @@ namespace ir {
 	}
 	
 	void StateMachine::handleEvents(ir::ApplicationWindow& window) {
-		if (!availableStates_.contains(currentState_))
-			throw ir::Exceptions::BadStateID(currentState_);
+		expectValidID();
 
 		while (const std::optional event = window.pollNextEvent()) {
 			availableStates_.at(currentState_)->onReceiveEvent(event.value());
@@ -43,15 +43,12 @@ namespace ir {
 	
 	/// @todo Add GameClock ref argument, and propagate that change to states as well
 	void StateMachine::update(ir::ApplicationWindow& window) {
-		if (!availableStates_.contains(currentState_))
-			throw ir::Exceptions::BadStateID(currentState_);
-
+		expectValidID();
 		availableStates_.at(currentState_)->onUpdate(window);
 	}
 	
 	void StateMachine::render(ir::ApplicationWindow &window) {
-		if (!availableStates_.contains(currentState_))
-			throw ir::Exceptions::BadStateID(currentState_);
+		expectValidID();
 
 		window.clear(sf::Color::Black);
 		availableStates_.at(currentState_)->onRender(window);
@@ -59,9 +56,13 @@ namespace ir {
 	}
 	
 	void StateMachine::unload() {
-		if (!availableStates_.contains(currentState_))
-			throw ir::Exceptions::BadStateID(currentState_);
-
+		expectValidID();
 		availableStates_.at(currentState_)->onEnd();
+	}
+
+	void StateMachine::expectValidID() {
+		if (!availableStates_.contains(currentState_)) {
+			throw ir::Exceptions::BadStateID(currentState_);
+		}
 	}
 }

@@ -14,7 +14,7 @@ namespace ir {
 	}
 
 	void Application::run() {
-		runSafetyChecks();
+		expectInitialized();
 		/// @todo Extract this template argument into a template function
 		stateMachine_->loadState<CoreState>();
 
@@ -32,7 +32,7 @@ namespace ir {
 		stateMachine_->unload();
 	}
 
-	void Application::runSafetyChecks() {
+	void Application::expectInitialized() {
 		Expects(appWindow_ != nullptr);
 		Expects(gameClock_ != nullptr);
 		Expects(stateMachine_ != nullptr);

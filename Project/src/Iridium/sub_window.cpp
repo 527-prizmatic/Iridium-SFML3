@@ -12,37 +12,31 @@ namespace ir {
 	}
 
 	ir::Vector SubWindow::getSize() {
-		if (!isValid())
-			throw ir::Exceptions::InvalidRenderTarget{};
+		expectValid();
 
 		return ir::Vector::fromSFMLVector(renderTexture_->getSize());
 	}
 
 	void SubWindow::clear(sf::Color fill_color) {
-		if (!isValid())
-			throw ir::Exceptions::InvalidRenderTarget{};
+		expectValid();
 
 		renderTexture_->clear(fill_color);
 	}
 
 	void SubWindow::render(sf::Drawable &drawable, const sf::Texture* texture) {
-		if (!isValid())
-			throw ir::Exceptions::InvalidRenderTarget{};
-		
+		expectValid();
 			
 		renderTexture_->draw(drawable, texture);
 	}
 
 	void SubWindow::render(ir::render::Shape& shape) {
-		if (!isValid())
-			throw ir::Exceptions::InvalidRenderTarget{};
-		
+		expectValid();
+
 		shape.render(*this);
 	}
 
 	void SubWindow::render(ir::RenderTarget &renderTarget) {
-		if (!isValid())
-			throw ir::Exceptions::InvalidRenderTarget{};
+		expectValid();
 		
 		if (ir::SubWindow* sub = dynamic_cast<ir::SubWindow*>(&renderTarget)) {
 			sub->flushToTarget(*this);
@@ -50,8 +44,9 @@ namespace ir {
 	}
 	
 	void SubWindow::flushToTarget(ir::RenderTarget& renderTarget) {
-		if (!renderTarget.isValid() || !isValid())
+		if (!renderTarget.isValid() || !isValid()) {
 			throw ir::Exceptions::InvalidRenderTarget{};
+		}
 		
 		rect_->setPosition(position_ + ir::Vector{0.f, getSize().y});
 		renderTarget.render(*rect_);
@@ -62,37 +57,41 @@ namespace ir {
 	}
 
 	void SubWindow::allocateResources() {
-		if (!isValid())
-			throw ir::Exceptions::InvalidRenderTarget{};
+		expectValid();
 
 		allocateResources(ir::Vector::fromSFMLVector(renderTexture_->getSize()));
 	}
 
 	void SubWindow::allocateResources(ir::Vector size) {
-		if (renderTexture_ != nullptr)
+		if (renderTexture_ != nullptr) {
 			renderTexture_.reset();
+		}
+
 		renderTexture_ = std::make_unique<sf::RenderTexture>(sf::Vector2u{size});
 		configureRect(size);
 		configureFrame(size);
 	}
 
 	void SubWindow::configureRect(ir::Vector size) {
-		if (rect_ == nullptr)
+		if (rect_ == nullptr) {
 			rect_ = std::make_unique<ir::render::Quad>();
+		}
 
 		rect_->setTexture(renderTexture_->getTexture());
 		rect_->setSize(size.mirrorX());
 	}
 	
 	void SubWindow::configureFrame(ir::Vector size) {
-		if (frame_ == nullptr)
+		if (frame_ == nullptr) {
 			frame_ = std::make_unique<ir::render::Rectangle>();
+		}
 		frame_->setSize(size.x - 1.f, size.y - 1.f); /// -1 on each dimension so it precisely lines up with the edges of the subwindow
 	}
 
 	void SubWindow::setRenderFrameColor(sf::Color clr) {
-		if (!isValid())
+		if (!isValid()) {
 			throw ir::Exceptions::InvalidRenderTarget{};
+		}
 		
 		frame_->setColor(clr);
 	}

@@ -10,8 +10,9 @@ namespace ir {
 			/// @brief Tries to initialize the internal vertex array used for rendering.
 			/// Does strictly nothing if it was already initialized.
 			void tryInitialize() {
-				if (!ir::render::detail::g_vertices)
+				if (!ir::render::detail::g_vertices) {
 					ir::render::detail::g_vertices = std::make_unique<sf::VertexArray>();
+				}
 			}
 
 			void reset(sf::PrimitiveType type = sf::PrimitiveType::LineStrip) {
@@ -150,8 +151,9 @@ namespace ir {
 		}
 
 		void Quad::render(ir::RenderTarget& target) const {
-			if (!texture_)
+			if (!texture_) {
 				return;
+			}
 			
 			ir::render::detail::tryInitialize();
 			ir::render::detail::reset(sf::PrimitiveType::TriangleStrip);

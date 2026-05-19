@@ -31,6 +31,9 @@ namespace ir {
 
 		/// @return Whether the render target has been properly initialized and is ready for rendering
 		virtual bool isValid() = 0;
+	
+	protected:
+		void expectValid();
 	};
 };
 

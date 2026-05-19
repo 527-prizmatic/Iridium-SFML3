@@ -18,7 +18,7 @@ namespace ir {
 		std::unique_ptr<ir::StateMachine> stateMachine_;
 		std::unique_ptr<ir::input::Mouse> mouseInput_;
 
-		void runSafetyChecks();
+		void expectInitialized();
 
 		template <typename T, typename... Args>
 		void initializeComponent(std::unique_ptr<T>& component, Args... args) {

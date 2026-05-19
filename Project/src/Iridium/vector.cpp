@@ -44,8 +44,9 @@ namespace ir {
 	}
 	
 	float Vector::getAngle(ir::Vector reference) const {
-		if (isZero())
+		if (isZero()) {
 			return 0.f;
+		}
 		return std::atan2(y, x) - std::atan2(reference.y, reference.x);
 	}
 	
@@ -54,8 +55,9 @@ namespace ir {
 	}
 	
 	ir::Vector Vector::normalize() const {
-		if (isZero())
+		if (isZero()) {
 			return *this;
+		}
 		return *this / magnitude();
 	}
 	
@@ -91,8 +93,9 @@ namespace ir {
 	}
 	
 	ir::Vector Vector::rotate(float angle) const {
-		if (ir::math::isZero(angle) || isZero())
+		if (ir::math::isZero(angle) || isZero()) {
 			return *this;
+		}
 		ir::Vector v { recToPol() };
 		v.y += angle;
 		return v.polToRec();
@@ -103,11 +106,13 @@ namespace ir {
 	}
 	
 	ir::Vector Vector::mirror(ir::Vector axis) const {
-		if (isZero() || axis.isZero())
+		if (isZero() || axis.isZero()) {
 			return *this;
+		}
 		float angle { getAngle(axis) };
-		if (ir::math::isZero(angle))
+		if (ir::math::isZero(angle)) {
 			return *this;
+		}
 		return rotate(angle * 2.f);
 	}
 	

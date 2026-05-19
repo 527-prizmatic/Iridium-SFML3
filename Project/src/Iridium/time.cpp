@@ -42,25 +42,4 @@ namespace ir {
 		return timeScale_;
 	}
 #pragma endregion
-
-#pragma region LocalClock
-	void LocalClock::Stop() {
-		ticking = false;
-		reset();
-	}
-
-	void LocalClock::reset() {
-		time = 0.f;
-	}
-
-	void LocalClock::update() {
-		if (!ticking)
-			return;
-		
-	//	if (usesUnscaledTime)
-	//		time += ir::Time::unscaledDeltaTime();
-	//	else
-	//		time += ir::Time::deltaTime();
-	}
-#pragma endregion
 }

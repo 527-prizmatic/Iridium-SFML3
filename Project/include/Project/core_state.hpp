@@ -7,7 +7,14 @@ class CoreState : public ir::StateBase<CoreState> {
 public:
 	void onInitialize() { }
 	
-	void onReceiveEvent(const sf::Event& event) { std::cout <<"a"; }
+	void onReceiveEvent(const sf::Event& event) {
+		std::cout << "a";
+		if (event.is<sf::Event::KeyReleased>()) {
+			if (event.getIf<sf::Event::KeyReleased>()->code == sf::Keyboard::Key::Escape) {
+				meta_exit();
+			}
+		}
+	}
 
 	void onUpdate(ir::ApplicationWindow& window) { }
 

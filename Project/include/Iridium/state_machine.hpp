@@ -78,6 +78,7 @@ namespace ir {
 		std::optional<std::string> nextState_; ///< Name of the state to be loaded upon starting the next frame
 
 		bool requestedExit_ { false };
+		void expectValidID();
 	};
 }
 
