@@ -17,8 +17,10 @@ namespace ir {
 			float getScale() { return scale_; }
 
 		private:
-			float scale_;
+			float scale_ { 1.f };
 			Model model_;
+
+			void addVertexToBuffer(const Vertex& v, ir::render::VertexRenderer& renderer) const;
 		};
 	}
 }
