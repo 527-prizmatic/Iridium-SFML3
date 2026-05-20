@@ -32,7 +32,6 @@ namespace ir {
 			components_.push_back(cmp);
 		}
 
-		// @todo Implement file loading and parsing
 		Model Model::loadFromFile(std::string file) {
 			std::filesystem::path path = "..\\resources\\models\\" + file + ".vmf";
 

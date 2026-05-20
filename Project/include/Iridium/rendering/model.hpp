@@ -11,12 +11,6 @@ namespace ir {
 			char y;
 			sf::Color color;
 
-		//	Vertex(char x, char y, sf::Color color) {
-		//		this->x = x;
-		//		this->y = y;
-		//		this->color = color;
-		//	}
-
 			void setPosition(char x, char y) {
 				this->x = x;
 				this->y = y;
@@ -52,9 +46,10 @@ namespace ir {
 			
 			void addComponent(Component&& cmp);
 
-			// @todo Implement file loading and parsing
 			static Model loadFromFile(std::string file);
 			static Model testTriangle();
+
+			/// @todo Implement saving-to-file static function directly in ir::render::Model
 
 			size_t getComponentCount() const { return components_.size(); }
 			const Component& getComponent(size_t index) const { return components_[index]; }
