@@ -1,6 +1,7 @@
 #include "Iridium/application_window.hpp"
-#include "Iridium/exceptions.hpp"
 #include "Iridium/sub_window.hpp"
+#include "Iridium/exceptions.hpp"
+#include "Iridium/rendering/quad.hpp"
 
 /// @future Add support for other OSes
 #if defined(_WIN32)
@@ -33,12 +34,6 @@ namespace ir {
 		expectValid();
 		
 		renderTexture_->draw(drawable, texture);
-	}
-
-	void ApplicationWindow::render(ir::render::Shape& shape) {
-		expectValid();
-		
-		shape.render(*this);
 	}
 
 	void ApplicationWindow::render(ir::RenderTarget &renderTarget) {

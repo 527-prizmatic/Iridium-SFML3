@@ -5,6 +5,7 @@ namespace ir {
 	Application::Application() {
 		initializeComponent(appWindow_, ir::Vector{ 1280.f, 720.f });
 		appWindow_->setFPS(60u);
+		initializeComponent(vertexRenderer_, &*appWindow_);
 
 		initializeComponent(gameClock_);
 		gameClock_->zero();
@@ -16,6 +17,7 @@ namespace ir {
 		context_.appWindow = &*appWindow_;
 		context_.gameClock = &*gameClock_;
 		context_.mouseInput = &*mouseInput_;
+		context_.vertexRenderer = &*vertexRenderer_;
 		
 		stateMachine_->registerContext(&context_);
 	}
@@ -43,5 +45,6 @@ namespace ir {
 		Expects(gameClock_ != nullptr);
 		Expects(stateMachine_ != nullptr);
 		Expects(mouseInput_ != nullptr);
+		Expects(vertexRenderer_ != nullptr);
 	}
 }

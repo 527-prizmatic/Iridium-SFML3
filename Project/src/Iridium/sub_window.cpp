@@ -1,6 +1,6 @@
 #include "Iridium/sub_window.hpp"
 #include "Iridium/exceptions.hpp"
-#include "Iridium/rendering/shapes.hpp"
+#include "Iridium/rendering/quad.hpp"
 
 namespace ir {
 	SubWindow::SubWindow(ir::Vector size_) {
@@ -29,12 +29,6 @@ namespace ir {
 		renderTexture_->draw(drawable, texture);
 	}
 
-	void SubWindow::render(ir::render::Shape& shape) {
-		expectValid();
-
-		shape.render(*this);
-	}
-
 	void SubWindow::render(ir::RenderTarget &renderTarget) {
 		expectValid();
 		
@@ -49,10 +43,11 @@ namespace ir {
 		}
 		
 		rect_->setPosition(position_ + ir::Vector{0.f, getSize().y});
-		renderTarget.render(*rect_);
+		rect_->render(*renderTarget.getRenderer());
+
 		if (renderFrame_) {
 			frame_->setPosition(position_ + ir::Vector(1.f, 0.f));
-			renderTarget.render(*frame_);
+			frame_->render(*renderTarget.getRenderer());
 		}
 	}
 

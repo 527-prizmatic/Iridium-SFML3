@@ -6,7 +6,7 @@ namespace ir {
 
 		}
 
-		void ModelRenderer::render(ir::RenderTarget& target) const {
+		void ModelRenderer::render(ir::render::VertexRenderer& renderer) const {
 		//	for (size_t counter { 0 }; counter < model_.getComponentCount(); counter++) {
 		//		const Component& cmp = model_.getComponent(counter);
 		//		if (cmp.type == Component::Type::POINT) {

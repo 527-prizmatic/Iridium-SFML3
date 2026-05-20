@@ -8,8 +8,12 @@ target_sources(${PROJECT_NAME} PRIVATE "state_machine.cpp")
 target_sources(${PROJECT_NAME} PRIVATE "application.cpp")
 # target_sources(${PROJECT_NAME} PRIVATE "resources.cpp")
 
-target_sources(${PROJECT_NAME} PRIVATE "rendering/shapes.cpp")
+target_sources(${PROJECT_NAME} PRIVATE "rendering/shape.cpp")
+target_sources(${PROJECT_NAME} PRIVATE "rendering/rectangle.cpp")
+target_sources(${PROJECT_NAME} PRIVATE "rendering/circle.cpp")
+target_sources(${PROJECT_NAME} PRIVATE "rendering/quad.cpp")
 target_sources(${PROJECT_NAME} PRIVATE "rendering/model.cpp")
 target_sources(${PROJECT_NAME} PRIVATE "rendering/model_renderer.cpp")
+target_sources(${PROJECT_NAME} PRIVATE "rendering/vertex_renderer.cpp")
 
 target_sources(${PROJECT_NAME} PRIVATE "input/mouse.cpp")

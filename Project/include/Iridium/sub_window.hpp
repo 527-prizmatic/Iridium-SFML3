@@ -2,6 +2,7 @@
 #define IRIDIUM_SUBWINDOW_HPP_
 
 #include "Iridium/render_target.hpp"
+#include "Iridium/rendering/quad.hpp"
 
 namespace ir {
 	class SubWindow: public ir::RenderTarget {
@@ -27,7 +28,8 @@ namespace ir {
 
 		/// @brief Draws an Iridium drawable object into the rendering buffer.
 		/// @attention Attempting to call this function while the buffer is in an invalid state will throw an exception.
-		void render(ir::render::Shape& shape);
+		/// @todo This function can probably go, as the window should never be directly called for rendering now that we have a VertexRenderer handling that
+	//	void render(ir::render::Shape& shape);
 
 		/// @brief Draws the contents of another render target into this one.
 		/// @attention Attempting to call this function while the buffer is in an invalid state will throw an exception.

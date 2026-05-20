@@ -2,7 +2,7 @@
 #define IRIDIUM_RENDERING_MODEL_HPP_
 
 #include "Iridium/libraries.hpp"
-#include "Iridium/rendering/shapes.hpp"
+#include "Iridium/rendering/shape.hpp"
 
 namespace ir {
 	namespace render {

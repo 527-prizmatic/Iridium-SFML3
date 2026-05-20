@@ -4,6 +4,7 @@
 #include "Iridium/state_machine.hpp"
 #include "Iridium/time.hpp"
 #include "Iridium/input/mouse.hpp"
+#include "Iridium/rendering/vertex_renderer.hpp"
 #include "Iridium/exceptions.hpp"
 
 namespace ir {
@@ -11,6 +12,7 @@ namespace ir {
 		ir::ApplicationWindow* appWindow {};
 		ir::GameClock* gameClock {};
 		ir::input::Mouse* mouseInput {};
+		ir::render::VertexRenderer* vertexRenderer {};
 
 		float deltaTime() {
 			return gameClock->getDeltaTime();
@@ -39,6 +41,7 @@ namespace ir {
 		std::unique_ptr<ir::ApplicationWindow> appWindow_;
 		std::unique_ptr<ir::GameClock> gameClock_;
 		std::unique_ptr<ir::input::Mouse> mouseInput_;
+		std::unique_ptr<ir::render::VertexRenderer> vertexRenderer_;
 
 		template <typename T, typename... Args>
 		void initializeComponent(std::unique_ptr<T>& component, Args... args) {

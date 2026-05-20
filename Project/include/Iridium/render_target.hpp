@@ -3,9 +3,12 @@
 
 #include "Iridium/libraries.hpp"
 #include "Iridium/vector.hpp"
-#include "Iridium/rendering/shapes.hpp"
 
 namespace ir {
+	namespace render{
+		class VertexRenderer;
+	}
+
 	/// @brief Base class for various rendering buffers.
 	/// They are typically implemented as wrappers for a sf::RenderTexture,
 	/// coming with various utilities for ease of manipulation by the end user.
@@ -24,15 +27,23 @@ namespace ir {
 		virtual void render(sf::Drawable& drawable, const sf::Texture* texture = nullptr) = 0;
 		
 		/// @brief Renders the given object onto the render target.
-		virtual void render(ir::render::Shape& shape) = 0;
+	//	virtual void render(ir::render::Shape& shape) = 0;
 
 		/// @brief Renders the contents of the given render target's buffer onto this one.
 		virtual void render(ir::RenderTarget& renderTarget) = 0;
 
 		/// @return Whether the render target has been properly initialized and is ready for rendering
 		virtual bool isValid() = 0;
+
+		void setRenderer(ir::render::VertexRenderer* renderer) {
+			renderer_ = renderer;
+		}
+
+		ir::render::VertexRenderer* getRenderer() { return renderer_; }
 	
 	protected:
+		ir::render::VertexRenderer* renderer_;
+
 		void expectValid();
 	};
 };

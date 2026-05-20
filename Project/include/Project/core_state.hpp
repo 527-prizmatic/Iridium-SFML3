@@ -2,7 +2,7 @@
 #define PROJECT_TESTSTATE_HPP_
 
 #include "Iridium/state.hpp"
-#include "Iridium/rendering/shapes.hpp"
+#include "Iridium/rendering/rectangle.hpp"
 
 class CoreState : public ir::StateBase<CoreState> {
 public:
@@ -18,6 +18,9 @@ public:
 		if (event.is<sf::Event::KeyReleased>()) {
 			if (event.getIf<sf::Event::KeyReleased>()->code == sf::Keyboard::Key::Escape) {
 				meta_exit();
+			} else {
+				rec_->setAngle(rec_->getAngle() + ir::math::pi * .1f);
+				std::cout << rec_->getAngle() << std::endl;
 			}
 		}
 	}
@@ -29,7 +32,7 @@ public:
 	}
 
 	void onRender() {
-		context_->appWindow->render(*rec_);
+		rec_->render(*context_->vertexRenderer);
 	}
 		
 	void onEnd() { }
