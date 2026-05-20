@@ -1,9 +1,11 @@
-#ifndef PROJECT_TESTSTATE_HPP_
-#define PROJECT_TESTSTATE_HPP_
+#ifndef PROJECT_TEST_STATE_HPP_
+#define PROJECT_TEST_STATE_HPP_
 
 #include "Iridium/state.hpp"
 #include "Iridium/rendering/rectangle.hpp"
 #include "Iridium/rendering/model_renderer.hpp"
+
+#include "Project/vmf_editor_state.hpp"
 
 class CoreState : public ir::StateBase<CoreState> {
 public:
@@ -15,7 +17,7 @@ public:
 
 		modelRenderer_ = std::make_unique<ir::render::ModelRenderer>();
 	//	modelRenderer_->setModel(ir::render::Model::testTriangle());
-		modelRenderer_->setModel(ir::render::Model::loadFromFile("text"));
+		modelRenderer_->setModel(ir::render::Model::loadFromFile("out"));
 		modelRenderer_->setScale(10.f);
 	}
 	
@@ -24,6 +26,8 @@ public:
 		if (event.is<sf::Event::KeyReleased>()) {
 			if (event.getIf<sf::Event::KeyReleased>()->code == sf::Keyboard::Key::Escape) {
 				meta_exit();
+			} else if (event.getIf<sf::Event::KeyReleased>()->code == sf::Keyboard::Key::V && event.getIf<sf::Event::KeyReleased>()->alt) {
+				meta_load<VmfEditorState>();
 			} else {
 				modelRenderer_->setAngle(modelRenderer_->getAngle() + ir::math::pi * .1f);
 				std::cout << modelRenderer_->getAngle() << std::endl;
@@ -48,4 +52,4 @@ private:
 	std::unique_ptr<ir::render::ModelRenderer> modelRenderer_;
 };
 
-#endif // PROJECT_TESTSTATE_HPP_
+#endif // PROJECT_TEST_STATE_HPP_

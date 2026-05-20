@@ -13,6 +13,7 @@
 #include <random>
 #include <map>
 #include <any>
+#include <fstream>
 
 // SFML
 #include <SFML/Graphics.hpp>

@@ -1,5 +1,4 @@
 #include "Iridium/rendering/model.hpp"
-#include <fstream>
 
 namespace ir {
 	namespace render {

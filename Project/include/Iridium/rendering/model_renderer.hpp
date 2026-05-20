@@ -10,7 +10,7 @@ namespace ir {
 		public:
 			virtual void render(ir::render::VertexRenderer& renderer) const;
 
-			void setModel(Model&& model) { model_ = model; }
+			void setModel(Model model) { model_ = model; }
 			Model& getModel() { return model_; }
 
 			void setScale(float scale) { scale_ = scale; }
