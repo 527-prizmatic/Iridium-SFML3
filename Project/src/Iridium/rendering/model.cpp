@@ -1,4 +1,5 @@
 #include "Iridium/rendering/model.hpp"
+#include <fstream>
 
 namespace ir {
 	namespace render {
@@ -32,9 +33,47 @@ namespace ir {
 		}
 
 		// @todo Implement file loading and parsing
-//		Model Model::loadFromFile(std::filesystem::path file) {
-//
-//		}
+		Model Model::loadFromFile(std::string file) {
+			std::filesystem::path path = "..\\resources\\models\\" + file + ".vmf";
+
+			std::ifstream stream(path, std::ios::binary);
+			if (stream.fail()) {
+				throw "pavouk";
+			}
+
+			Model model;
+
+			char c;
+			while (!stream.eof()) {
+				stream.read(&c, 1);
+				if (stream.eof()) {
+					break;
+				}
+
+				if (*reinterpret_cast<unsigned char*>(&c) > 2) {
+					throw "domaci";
+				}
+
+				Component cmp;
+				cmp.type = static_cast<ir::render::Component::Type>(c);
+
+				size_t iterations = c;
+				for (size_t i = 0; i <= iterations; i++) {
+					Vertex v;
+					stream.read(&v.x, 1);
+					stream.read(&v.y, 1);
+					stream.read(reinterpret_cast<char*>(&v.color.r), 1);
+					stream.read(reinterpret_cast<char*>(&v.color.g), 1);
+					stream.read(reinterpret_cast<char*>(&v.color.b), 1);
+					stream.read(reinterpret_cast<char*>(&v.color.a), 1);
+					cmp.vertices[i] = v;
+				}
+
+				model.addComponent(std::move(cmp));
+			}
+
+			return model;
+		}
 
 		Model Model::testTriangle() {
 			Model model;

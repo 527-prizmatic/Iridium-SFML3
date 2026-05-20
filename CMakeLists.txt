@@ -15,3 +15,6 @@ set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build SFML as static libraries" FORCE)
 
 project("Iridium")
 add_subdirectory("Project")
+
+file(REMOVE "${CMAKE_CURRENT_BINARY_DIR}/resources")
+file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/resources" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")

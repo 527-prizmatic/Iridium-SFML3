@@ -14,7 +14,9 @@ public:
 		rec_->setMode(ir::render::Mode::WIREFRAME);
 
 		modelRenderer_ = std::make_unique<ir::render::ModelRenderer>();
-		modelRenderer_->setModel(ir::render::Model::testTriangle());
+	//	modelRenderer_->setModel(ir::render::Model::testTriangle());
+		modelRenderer_->setModel(ir::render::Model::loadFromFile("text"));
+		modelRenderer_->setScale(10.f);
 	}
 	
 	void onReceiveEvent(const sf::Event& event) {

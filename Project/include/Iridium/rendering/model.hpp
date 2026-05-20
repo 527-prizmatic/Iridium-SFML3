@@ -53,7 +53,7 @@ namespace ir {
 			void addComponent(Component&& cmp);
 
 			// @todo Implement file loading and parsing
-		//	static Model loadFromFile(std::filesystem::path file);
+			static Model loadFromFile(std::string file);
 			static Model testTriangle();
 
 			size_t getComponentCount() const { return components_.size(); }
