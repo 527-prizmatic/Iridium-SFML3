@@ -9,5 +9,7 @@ target_sources(${PROJECT_NAME} PRIVATE "application.cpp")
 # target_sources(${PROJECT_NAME} PRIVATE "resources.cpp")
 
 target_sources(${PROJECT_NAME} PRIVATE "rendering/shapes.cpp")
+target_sources(${PROJECT_NAME} PRIVATE "rendering/model.cpp")
+target_sources(${PROJECT_NAME} PRIVATE "rendering/model_renderer.cpp")
 
 target_sources(${PROJECT_NAME} PRIVATE "input/mouse.cpp")

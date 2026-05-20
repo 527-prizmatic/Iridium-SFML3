@@ -4,6 +4,7 @@
 
 namespace ir {
 	namespace render {
+		// @todo Refactor this (needs to be public to other rendering files)
 		namespace detail {
 			std::unique_ptr<sf::VertexArray> g_vertices;
 
