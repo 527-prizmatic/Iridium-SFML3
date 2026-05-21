@@ -6,6 +6,7 @@ target_sources(${PROJECT_NAME} PRIVATE "random.cpp")
 target_sources(${PROJECT_NAME} PRIVATE "time.cpp")
 target_sources(${PROJECT_NAME} PRIVATE "state_machine.cpp")
 target_sources(${PROJECT_NAME} PRIVATE "application.cpp")
+target_sources(${PROJECT_NAME} PRIVATE "log.cpp")
 # target_sources(${PROJECT_NAME} PRIVATE "resources.cpp")
 
 target_sources(${PROJECT_NAME} PRIVATE "rendering/shape.cpp")

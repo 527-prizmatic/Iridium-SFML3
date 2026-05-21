@@ -20,13 +20,12 @@ public:
 	}
 	
 	void onReceiveEvent(const sf::Event& event) {
-		std::cout << "a";
 		if (event.is<sf::Event::KeyReleased>()) {
 			if (event.getIf<sf::Event::KeyReleased>()->code == sf::Keyboard::Key::Escape) {
 				meta_exit();
 			} else {
 				modelRenderer_->setAngle(modelRenderer_->getAngle() + ir::math::pi * .1f);
-				std::cout << modelRenderer_->getAngle() << std::endl;
+				LOG_INFO(std::to_string(modelRenderer_->getAngle()));
 			}
 		}
 	}

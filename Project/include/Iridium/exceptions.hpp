@@ -1,6 +1,8 @@
 #ifndef IRIDIUM_EXCEPTIONS_HPP_
 #define IRIDIUM_EXCEPTIONS_HPP_
 
+#include <exception>
+
 namespace ir {
 	namespace Exceptions {
 		class InvalidRenderTarget : public std::exception {

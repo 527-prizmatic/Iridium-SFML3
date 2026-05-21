@@ -59,7 +59,7 @@ namespace ir {
 			availableStates_.emplace(T::meta_name(), std::make_unique<ir::detail::State>(T()));
 			availableStates_.at(T::meta_name())->meta_setStateMachine(this);
 			availableStates_.at(T::meta_name())->meta_setContext(context_);
-			std::cout << "Registered state " << T::meta_name() << std::endl;
+			LOG_INFO("Registered state " + T::meta_name());
 			return true;
 		}
 

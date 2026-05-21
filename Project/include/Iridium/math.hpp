@@ -1,7 +1,7 @@
 #ifndef IRIDIUM_MATH_HPP_
 #define IRIDIUM_MATH_HPP_
 
-#include "Iridium/libraries.hpp"
+#include <cmath>
 
 namespace ir {
 	namespace math {

@@ -4,13 +4,9 @@
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 
 // C++ core and STL features
-#include <iostream>
 #include <memory>
-#include <exception>
 #include <type_traits>
-#include <cmath>
 #include <functional>
-#include <random>
 #include <map>
 #include <any>
 
@@ -22,5 +18,8 @@
 #include <gsl/gsl>
 
 // JSON
+
+// Base-level Iridium components
+#include "Iridium/log.hpp"
 
 #endif // IRIDIUM_LIBRARIES_HPP_
