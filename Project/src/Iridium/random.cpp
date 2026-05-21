@@ -1,6 +1,8 @@
 #include "Iridium/random.hpp"
 #include "Iridium/math.hpp"
 
+#include <random>
+
 namespace ir {
 	namespace Random {
 		namespace detail {

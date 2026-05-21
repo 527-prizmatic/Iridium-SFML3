@@ -31,11 +31,11 @@ namespace ir {
 			components_.push_back(cmp);
 		}
 
-		// @todo Implement file loading and parsing
 		Model Model::loadFromFile(std::string file) {
 			std::filesystem::path path = "..\\resources\\models\\" + file + ".vmf";
 
 			std::ifstream stream(path, std::ios::binary);
+			LOG_INFO(path.string());
 			if (stream.fail()) {
 				throw "pavouk";
 			}
@@ -58,9 +58,12 @@ namespace ir {
 
 				size_t iterations = c;
 				for (size_t i = 0; i <= iterations; i++) {
-					Vertex v;
-					stream.read(&v.x, 1);
-					stream.read(&v.y, 1);
+					Vertex v { 0, 0, sf::Color::White };
+					char c = 0;
+					stream.read(&c, 1);
+					v.x = static_cast<short>(c);
+					stream.read(&c, 1);
+					v.y = static_cast<short>(c);
 					stream.read(reinterpret_cast<char*>(&v.color.r), 1);
 					stream.read(reinterpret_cast<char*>(&v.color.g), 1);
 					stream.read(reinterpret_cast<char*>(&v.color.b), 1);
