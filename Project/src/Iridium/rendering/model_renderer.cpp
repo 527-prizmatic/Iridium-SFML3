@@ -4,9 +4,7 @@
 namespace ir {
 	namespace render {
 		void ModelRenderer::render(ir::render::VertexRenderer& renderer) const {
-			for (size_t counter { 0 }; counter < model_.getComponentCount(); counter++) {
-				const Component& cmp = model_.getComponent(counter);
-
+			for (auto& cmp : model_) {
 				if (cmp.type == Component::Type::POINT) {
 					renderer.reset(sf::PrimitiveType::Points);
 					addVertexToBuffer(cmp.vertices[0], renderer);

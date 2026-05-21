@@ -4,10 +4,13 @@
 #include "Iridium/state.hpp"
 #include "Iridium/rendering/rectangle.hpp"
 #include "Iridium/rendering/model_renderer.hpp"
+#include "Iridium/rendering/text.hpp"
 
 class CoreState : public ir::StateBase<CoreState> {
 public:
 	void onInitialize() {
+		ir::render::Text::loadModels();
+
 		rec_ = std::make_unique<ir::render::Rectangle>();
 		rec_->setCorners(ir::Vector(100.f, 100.f), ir::Vector(150.f, 150.f));
 		rec_->setColor(sf::Color::Red);
@@ -17,6 +20,12 @@ public:
 	//	modelRenderer_->setModel(ir::render::Model::testTriangle());
 		modelRenderer_->setModel(ir::render::Model::loadFromFile("text"));
 		modelRenderer_->setScale(10.f);
+
+		text_ = std::make_unique<ir::render::Text>();
+		text_->setColor(sf::Color::Green);
+	//	text_->setString("abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+		text_->setPosition(ir::Vector{ 10.f, 10.f });
+		text_->setScale(3.f);
 	}
 	
 	void onReceiveEvent(const sf::Event& event) {
@@ -38,6 +47,7 @@ public:
 
 	void onRender() {
 		modelRenderer_->render(*context_->vertexRenderer);
+		text_->render(*context_->vertexRenderer);
 	}
 		
 	void onEnd() { }
@@ -45,6 +55,7 @@ public:
 private:
 	std::unique_ptr<ir::render::Rectangle> rec_;
 	std::unique_ptr<ir::render::ModelRenderer> modelRenderer_;
+	std::unique_ptr<ir::render::Text> text_;
 };
 
 #endif // PROJECT_TESTSTATE_HPP_

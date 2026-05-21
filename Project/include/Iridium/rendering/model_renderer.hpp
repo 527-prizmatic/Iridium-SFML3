@@ -16,11 +16,11 @@ namespace ir {
 			void setScale(float scale) { scale_ = scale; }
 			float getScale() { return scale_; }
 
-		private:
+		protected:
 			float scale_ { 1.f };
 			Model model_;
 
-			void addVertexToBuffer(const Vertex& v, ir::render::VertexRenderer& renderer) const;
+			virtual void addVertexToBuffer(const Vertex& v, ir::render::VertexRenderer& renderer) const;
 		};
 	}
 }

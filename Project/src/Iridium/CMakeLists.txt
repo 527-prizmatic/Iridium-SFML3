@@ -16,5 +16,6 @@ target_sources(${PROJECT_NAME} PRIVATE "rendering/quad.cpp")
 target_sources(${PROJECT_NAME} PRIVATE "rendering/model.cpp")
 target_sources(${PROJECT_NAME} PRIVATE "rendering/model_renderer.cpp")
 target_sources(${PROJECT_NAME} PRIVATE "rendering/vertex_renderer.cpp")
+target_sources(${PROJECT_NAME} PRIVATE "rendering/text.cpp")
 
 target_sources(${PROJECT_NAME} PRIVATE "input/mouse.cpp")

@@ -7,11 +7,11 @@
 namespace ir {
 	namespace render {
 		struct Vertex {
-			char x;
-			char y;
+			short x;
+			short y;
 			sf::Color color;
 
-			void setPosition(char x, char y) {
+			void setPosition(short x, short y) {
 				this->x = x;
 				this->y = y;
 			}
@@ -31,7 +31,7 @@ namespace ir {
 			Component(Vertex& v1, Vertex& v2);
 			Component(Vertex& v1, Vertex& v2, Vertex& v3);
 
-			void setPosition(size_t vertex, char x, char y) {
+			void setPosition(size_t vertex, short x, short y) {
 				vertices[vertex].setPosition(x, y);
 			}
 
@@ -53,6 +53,11 @@ namespace ir {
 
 			size_t getComponentCount() const { return components_.size(); }
 			const Component& getComponent(size_t index) const { return components_[index]; }
+
+			auto begin() { return components_.begin(); }
+			auto begin() const { return components_.begin(); }
+			auto end() { return components_.end(); }
+			auto end() const { return components_.end(); }
 
 		private:
 			std::vector<Component> components_;
