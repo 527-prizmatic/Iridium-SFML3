@@ -19,25 +19,18 @@ public:
 	
 	void onReceiveEvent(const sf::Event& event) {
 		if (event.is<sf::Event::KeyReleased>()) {
-			if (event.getIf<sf::Event::KeyReleased>()->code == sf::Keyboard::Key::Escape) {
+			auto e = event.getIf<sf::Event::KeyReleased>();
+
+			if (e->code == sf::Keyboard::Key::Escape) {
 				meta_exit();
-			} else if (event.getIf<sf::Event::KeyReleased>()->code == sf::Keyboard::Key::Left) {
-				vmfContext_->posOffset.x += 2.f;
-			} else if (event.getIf<sf::Event::KeyReleased>()->code == sf::Keyboard::Key::Right) {
-				vmfContext_->posOffset.x -= 2.f;
-			} else if (event.getIf<sf::Event::KeyReleased>()->code == sf::Keyboard::Key::Up) {
-				vmfContext_->posOffset.y += 2.f;
-			} else if (event.getIf<sf::Event::KeyReleased>()->code == sf::Keyboard::Key::Down) {
-				vmfContext_->posOffset.y -= 2.f;
-			} else if (event.getIf<sf::Event::KeyReleased>()->control) {
-				if (event.getIf<sf::Event::KeyReleased>()->code == sf::Keyboard::Key::Z) {
+			} 
+			if (e->control) {
+				if (e->code == sf::Keyboard::Key::Z) {
 					editingModel_->popLastComponent();
-				} else if (event.getIf<sf::Event::KeyReleased>()->code == sf::Keyboard::Key::D) {
+				} else if (e->code == sf::Keyboard::Key::D) {
 					editingModel_ = std::make_unique<ir::render::Model>();
 				}
-			}
-
-			else if (event.getIf<sf::Event::KeyReleased>()->code == sf::Keyboard::Key::Enter && event.getIf<sf::Event::KeyReleased>()->shift) {
+			} else if (e->code == sf::Keyboard::Key::Enter && e->shift) {
 				static char id { 'a' };
 				std::string filename { "text_" };
 				filename.push_back(id);
@@ -55,52 +48,37 @@ public:
 				id++;
 			}
 
+		} else if (event.is<sf::Event::KeyPressed>()) {
+			auto e = event.getIf<sf::Event::KeyPressed>();
+			drawArea_->processKeyboardInput(e);
+			
 		} else if (event.is<sf::Event::MouseWheelScrolled>()) {
-			float delta = event.getIf<sf::Event::MouseWheelScrolled>()->delta;
-			vmfContext_->zoomFactor *= std::powf(1.1f, delta);
-			vmfContext_->posOffset /= std::powf(1.1f, delta);
-			vmfContext_->posOffset.x = static_cast<int>(vmfContext_->posOffset.x);
-			vmfContext_->posOffset.y = static_cast<int>(vmfContext_->posOffset.y);
+			auto e = event.getIf<sf::Event::MouseWheelScrolled>();
+			drawArea_->zoom(e->delta);
+			modelRenderer_->setScale(vmfContext_->zoomFactor);
 		}
+		
 	}
 
 	void onUpdate() {
-		if (context_->mouseInput->isPressed(sf::Mouse::Button::Left)) {
-			clickPosFloat_ = context_->mouseInput->getCursorPosition();
-			ir::Vector v = clickPosFloat_ + ir::Vector(128.f, 128.f) * vmfContext_->zoomFactor;
-			v -= vmfContext_->posOffset * vmfContext_->zoomFactor;
-			clickPos_.x = static_cast<int>(v.x / vmfContext_->zoomFactor) - 128;
-			clickPos_.y = static_cast<int>(v.y / vmfContext_->zoomFactor) - 128;
-		}
-
-		if (context_->mouseInput->isReleased(sf::Mouse::Button::Left)) {
-			clickPosFloat_ = context_->mouseInput->getCursorPosition();
-			ir::Vector v = clickPosFloat_ + ir::Vector(128.f, 128.f) * vmfContext_->zoomFactor;
-			v -= vmfContext_->posOffset * vmfContext_->zoomFactor;
-			int x = static_cast<int>(v.x / vmfContext_->zoomFactor) - 128;
-			int y = static_cast<int>(v.y / vmfContext_->zoomFactor) - 128;
-
-			ir::render::Vertex v1(clickPos_.x, clickPos_.y, sf::Color::White);
-			ir::render::Vertex v2(x, y, sf::Color::White);
-
-			editingModel_->addComponent(ir::render::Component(v1, v2));
-		}
+		drawArea_->processMouseInput(context_->mouseInput);
 	}
 
 	void onRender() {
 		drawArea_->render(*context_->vertexRenderer);
 
 		modelRenderer_->setModel(*editingModel_);
-		modelRenderer_->setScale(vmfContext_->zoomFactor);
 		modelRenderer_->setPosition((vmfContext_->posOffset + ir::Vector(.5f, .5f)) * vmfContext_->zoomFactor);
 		modelRenderer_->render(*context_->vertexRenderer);
 
-		if (context_->mouseInput->isActive(sf::Mouse::Button::Left)) {
+		/*
+		if (vmfContext_->vertexList.size() == 1) {
 			context_->vertexRenderer->reset(sf::PrimitiveType::Lines);
 			context_->vertexRenderer->addPoint(clickPosFloat_, sf::Color::Yellow);
 			context_->vertexRenderer->addPoint(context_->mouseInput->getCursorPosition(), sf::Color::Yellow);
 			context_->vertexRenderer->flush();
 		}
+		*/
 	}
 		
 	void onEnd() {

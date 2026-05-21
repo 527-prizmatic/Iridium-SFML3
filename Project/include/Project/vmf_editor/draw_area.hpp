@@ -10,11 +10,13 @@ namespace vmf {
 	public:
 		DrawArea(vmf::Context* context);
 
-		void processKeyboardInput(const sf::Event& event);
+		void processKeyboardInput(const sf::Event::KeyPressed* event);
 
 		void processMouseInput(ir::input::Mouse* mouseInput);
 
 		void render(ir::render::VertexRenderer& renderer);
+
+		void zoom(float delta);
 
 	private:
 		
@@ -24,6 +26,10 @@ namespace vmf {
 		void drawGrid(ir::render::VertexRenderer& renderer);
 
 		vmf::Context* context_;
+
+		ir::Vector gridToScreen(sf::Vector2i grid);
+		sf::Vector2i screenToGrid(ir::Vector screen);
+
 	};
 }
 

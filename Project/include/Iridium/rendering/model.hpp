@@ -15,6 +15,10 @@ namespace ir {
 				this->x = x;
 				this->y = y;
 			}
+
+			sf::Vector2i getPosition() {
+				return sf::Vector2i { x, y };
+			}
 		};
 
 		struct Component {
