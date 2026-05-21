@@ -1,0 +1,30 @@
+#ifndef PROJECT_EDITOR_DRAW_AREA_HPP_
+#define PROJECT_EDITOR_DRAW_AREA_HPP_
+
+#include "Iridium/rendering/model_renderer.hpp"
+#include "Iridium/input/mouse.hpp"
+#include "Project/vmf_editor/context.hpp"
+
+namespace vmf {
+	class DrawArea {
+	public:
+		DrawArea(vmf::Context* context);
+
+		void processKeyboardInput(const sf::Event& event);
+
+		void processMouseInput(ir::input::Mouse* mouseInput);
+
+		void render(ir::render::VertexRenderer& renderer);
+
+	private:
+		
+		std::unique_ptr<ir::render::ModelRenderer> gridRenderer_;
+
+		ir::render::Model assembleGridModel();
+		void drawGrid(ir::render::VertexRenderer& renderer);
+
+		vmf::Context* context_;
+	};
+}
+
+#endif // PROJECT_EDITOR_DRAW_AREA_HPP_

@@ -6,20 +6,20 @@ namespace ir {
 			vertices.resize(3);
 		}
 
-		Component::Component(Vertex& v1) {
+		Component::Component(Vertex v1) {
 			vertices.resize(1);
 			type = Component::Type::POINT;
 			vertices[0] = v1;
 		}
 
-		Component::Component(Vertex& v1, Vertex& v2) {
+		Component::Component(Vertex v1, Vertex v2) {
 			vertices.resize(2);
 			type = Component::Type::LINE;
 			vertices[0] = v1;
 			vertices[1] = v2;
 		}
 
-		Component::Component(Vertex& v1, Vertex& v2, Vertex& v3) {
+		Component::Component(Vertex v1, Vertex v2, Vertex v3) {
 			vertices.resize(3);
 			type = Component::Type::TRIANGLE;
 			vertices[0] = v1;

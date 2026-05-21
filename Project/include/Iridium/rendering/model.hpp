@@ -27,9 +27,9 @@ namespace ir {
 			std::vector<Vertex> vertices;
 
 			Component();
-			Component(Vertex& v1);
-			Component(Vertex& v1, Vertex& v2);
-			Component(Vertex& v1, Vertex& v2, Vertex& v3);
+			Component(Vertex v1);
+			Component(Vertex v1, Vertex v2);
+			Component(Vertex v1, Vertex v2, Vertex v3);
 
 			void setPosition(size_t vertex, short x, short y) {
 				vertices[vertex].setPosition(x, y);
