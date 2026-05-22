@@ -22,7 +22,7 @@ namespace ir::render {
 				}
 			}
 
-			offset += 6.f;
+			offset += 5.f;
 		}
 	}
 

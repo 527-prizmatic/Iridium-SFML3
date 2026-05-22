@@ -3,7 +3,7 @@
 
 #include "Iridium/state.hpp"
 #include "Project/vmf_editor/draw_area.hpp"
-#include "Project/vmf_editor/context.hpp"
+#include "Project/vmf_editor/ui_button.hpp"
 
 class VmfEditorState : public ir::StateBase<VmfEditorState> {
 
@@ -15,6 +15,11 @@ public:
 		modelRenderer_ = std::make_unique<ir::render::ModelRenderer>();
 
 		drawArea_ = std::make_unique<vmf::DrawArea>(&*vmfContext_);
+
+		buttonDiscard_ = std::make_unique<vmf::UiButton>(&*vmfContext_, ir::Vector { 600.f, 600.f }, ir::Vector { 100.f, 40.f }, "test", [&](vmf::Context* context){ context->events.push_back(vmf::UserEvent::DEBUG); });
+		buttonDiscard_->setLabelScale(2.f);
+		buttonDiscard_->setColors(sf::Color::Red, sf::Color::White);
+		buttonDiscard_->setIsTransparent(true);
 	}
 	
 	void onReceiveEvent(const sf::Event& event) {
@@ -61,7 +66,30 @@ public:
 	}
 
 	void onUpdate() {
-		drawArea_->processMouseInput(context_->mouseInput);
+		bool canDraw = true;
+		if (buttonDiscard_->processMouseInput(context_->mouseInput)) {
+			canDraw = false;
+		}
+
+		if (canDraw) {
+			drawArea_->processMouseInput(context_->mouseInput);
+		}
+
+		/// @todo Move into a proper event processor
+		while (vmfContext_->events.size() != 0) {
+			vmf::UserEvent evt = *vmfContext_->events.begin();
+			if (evt == vmf::UserEvent::DEBUG) {
+				LOG_INFO("Button debug");
+			} else if (evt == vmf::UserEvent::MODEL_SAVE) {
+				LOG_INFO("Saved model");
+				LOG_WARN("Model save not yet implemented, debugging purposes only");
+			} else if (evt == vmf::UserEvent::MODEL_DISCARD) {
+				LOG_INFO("Discarded model");
+				editingModel_ = std::make_unique<ir::render::Model>();
+			} 
+
+			vmfContext_->events.pop_front();
+		}
 	}
 
 	void onRender() {
@@ -70,6 +98,8 @@ public:
 		modelRenderer_->setModel(*editingModel_);
 		modelRenderer_->setPosition((vmfContext_->posOffset + ir::Vector(.5f, .5f)) * vmfContext_->zoomFactor);
 		modelRenderer_->render(*context_->vertexRenderer);
+
+		buttonDiscard_->render(*context_->vertexRenderer);
 
 		/*
 		if (vmfContext_->vertexList.size() == 1) {
@@ -94,6 +124,8 @@ private:
 	std::unique_ptr<ir::render::ModelRenderer> modelRenderer_;
 	std::unique_ptr<vmf::DrawArea> drawArea_;
 	std::unique_ptr<vmf::Context> vmfContext_;
+
+	std::unique_ptr<vmf::UiButton> buttonDiscard_;
 };
 
 

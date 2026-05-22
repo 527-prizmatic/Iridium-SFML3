@@ -42,6 +42,11 @@ namespace ir {
 			void setColor(size_t vertex, sf::Color color) {
 				vertices[vertex].color = color;
 			}
+			
+			auto begin() { return vertices.begin(); }
+			auto begin() const { return vertices.begin(); }
+			auto end() { return vertices.end(); }
+			auto end() const { return vertices.end(); }
 		};
 
 		class Model {

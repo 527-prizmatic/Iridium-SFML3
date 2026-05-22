@@ -1,8 +1,6 @@
 #ifndef PROJECT_EDITOR_DRAW_AREA_HPP_
 #define PROJECT_EDITOR_DRAW_AREA_HPP_
 
-#include "Iridium/rendering/model_renderer.hpp"
-#include "Iridium/input/mouse.hpp"
 #include "Project/vmf_editor/context.hpp"
 
 namespace vmf {

@@ -15,7 +15,7 @@
 
 ## INDENTATION
  - All code files must be indented with tabs rather than spaces.
- - Follow the One True Brace Style.
+ - Follow the K&R indentation style.
  - Spaces should be added:
    - After but not before commas and semicolons.
    - Before and after operators, except . and ->.

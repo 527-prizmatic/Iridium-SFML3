@@ -1,5 +1,7 @@
 #include "Project/vmf_editor/draw_area.hpp"
+#include "Iridium/rendering/model_renderer.hpp"
 #include "Iridium/rendering/vertex_renderer.hpp"
+#include "Iridium/input/mouse.hpp"
 
 namespace vmf {
 	DrawArea::DrawArea(vmf::Context* context) {

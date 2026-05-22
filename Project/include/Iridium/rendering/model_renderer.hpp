@@ -17,6 +17,8 @@ namespace ir {
 			void setScale(float scale) { scale_ = scale; }
 			float getScale() { return scale_; }
 
+			ir::Vector getBoundingBoxSize();
+
 		protected:
 			float scale_ { 1.f };
 			Model model_;
