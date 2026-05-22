@@ -15,6 +15,10 @@ namespace ir {
 				this->x = x;
 				this->y = y;
 			}
+
+			sf::Vector2i getPosition() {
+				return sf::Vector2i { x, y };
+			}
 		};
 
 		struct Component {
@@ -27,9 +31,9 @@ namespace ir {
 			std::vector<Vertex> vertices;
 
 			Component();
-			Component(Vertex& v1);
-			Component(Vertex& v1, Vertex& v2);
-			Component(Vertex& v1, Vertex& v2, Vertex& v3);
+			Component(Vertex v1);
+			Component(Vertex v1, Vertex v2);
+			Component(Vertex v1, Vertex v2, Vertex v3);
 
 			void setPosition(size_t vertex, short x, short y) {
 				vertices[vertex].setPosition(x, y);
@@ -38,6 +42,11 @@ namespace ir {
 			void setColor(size_t vertex, sf::Color color) {
 				vertices[vertex].color = color;
 			}
+			
+			auto begin() { return vertices.begin(); }
+			auto begin() const { return vertices.begin(); }
+			auto end() { return vertices.end(); }
+			auto end() const { return vertices.end(); }
 		};
 
 		class Model {
@@ -54,6 +63,12 @@ namespace ir {
 			size_t getComponentCount() const { return components_.size(); }
 			const Component& getComponent(size_t index) const { return components_[index]; }
 
+			void removeLastComponent() {
+				if (components_.size() > 0) {
+					components_.pop_back();
+				}
+			}
+			
 			auto begin() { return components_.begin(); }
 			auto begin() const { return components_.begin(); }
 			auto end() { return components_.end(); }

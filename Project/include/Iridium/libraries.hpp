@@ -9,6 +9,7 @@
 #include <functional>
 #include <map>
 #include <any>
+#include <fstream>
 
 // SFML
 #include <SFML/Graphics.hpp>

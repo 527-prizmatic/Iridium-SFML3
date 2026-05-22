@@ -7,6 +7,8 @@ namespace ir {
 	class RenderTarget;
 
 	namespace render {
+		class Vertex;
+
 		class VertexRenderer {
 		public:
 			VertexRenderer() = delete;
@@ -17,7 +19,6 @@ namespace ir {
 			void flush(const sf::Texture* texture = nullptr);
 
 			void addPoint(ir::Vector position, sf::Color color = sf::Color::White);
-
 			void addPoint(ir::Vector position, ir::Vector textureCoord);
 
 			ir::RenderTarget* getTarget() { return target_; }

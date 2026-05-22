@@ -31,5 +31,20 @@ namespace ir {
 			
 			renderer.addPoint(position, v.color);
 		}
+
+		ir::Vector ModelRenderer::getBoundingBoxSize() {
+			ir::Vector posMin { 0.f, 0.f };
+			ir::Vector posMax { 0.f, 0.f };
+			for (auto& cmp : model_) {
+				for (auto& v : cmp) {
+					posMin.x = ir::math::min(static_cast<short>(posMin.x), v.x);
+					posMin.y = ir::math::min(static_cast<short>(posMin.y), v.y);
+					posMax.x = ir::math::max(static_cast<short>(posMax.x), v.x);
+					posMax.y = ir::math::max(static_cast<short>(posMax.y), v.y);
+				}
+			}
+
+			return (posMax - posMin) * scale_;
+		}
 	}
 }
