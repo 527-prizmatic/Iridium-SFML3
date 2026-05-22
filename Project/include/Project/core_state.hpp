@@ -11,8 +11,6 @@
 class CoreState : public ir::StateBase<CoreState> {
 public:
 	void onInitialize() {
-		ir::render::Text::loadModels();
-
 		rec_ = std::make_unique<ir::render::Rectangle>();
 		rec_->setCorners(ir::Vector(100.f, 100.f), ir::Vector(150.f, 150.f));
 		rec_->setColor(sf::Color::Red);

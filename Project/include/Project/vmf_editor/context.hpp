@@ -10,6 +10,13 @@ namespace vmf {
 		DEBUG,
 		MODEL_SAVE,
 		MODEL_DISCARD,
+		COMPONENT_VALIDATE,
+	};
+
+	enum class DrawingMode {
+		POINT,
+		LINE,
+		TRIANGLE
 	};
 
 	struct Context {
@@ -18,6 +25,8 @@ namespace vmf {
 
 		std::vector<ir::render::Vertex> vertexList;
 		std::list<vmf::UserEvent> events;
+
+		vmf::DrawingMode mode { vmf::DrawingMode::LINE };
 
 		void registerEvent(vmf::UserEvent evt) { events.push_back(evt); }
 

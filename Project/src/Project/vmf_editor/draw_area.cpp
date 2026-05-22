@@ -53,18 +53,35 @@ namespace vmf {
 			/// @todo Add color selection
 			context_->vertexList.push_back(ir::render::Vertex(clickPos.x, clickPos.y, sf::Color::White));
 
-			/// @todo Implement variants for each component type (to be later selectable)
-			if (context_->vertexList.size() == 2) {
-				ir::render::Component cmp {};
-				for (auto& v : context_->vertexList) {
-					cmp.vertices.push_back(std::move(v));
-				}
-				
-				/// @todo Add cmp to edited model
-				// editingModel_->addComponent(ir::render::Component(v1, v2));
+			auto tryValidate = [&](size_t count) {
+				/// @todo Implement variants for each component type (to be later selectable)
+				if (context_->vertexList.size() == count) {
+					ir::render::Component cmp {};
+					for (auto& v : context_->vertexList) {
+						cmp.vertices.push_back(std::move(v));
+					}
+					
+					/// @todo Add cmp to edited model
+					// editingModel_->addComponent(ir::render::Component(v1, v2));
 
-				context_->vertexList.clear();
+					context_->registerEvent(vmf::UserEvent::COMPONENT_VALIDATE);
+				}
+			};
+
+			switch (context_->mode) {
+			case vmf::DrawingMode::POINT:
+				tryValidate(1);
+				break;
+			case vmf::DrawingMode::LINE:
+				tryValidate(2);
+				break;
+			case vmf::DrawingMode::TRIANGLE:
+				tryValidate(3);
+				break;
 			}
+		}
+		if (mouseInput->isPressed(sf::Mouse::Button::Right)) {
+			context_->vertexList.clear();
 		}
 	}
 
@@ -73,10 +90,10 @@ namespace vmf {
 		gridRenderer_->setPosition(context_->posOffset * context_->zoomFactor);
 		gridRenderer_->render(renderer);
 
+		/// @todo Temporary solution, clean up this monster later
 		if (context_->vertexList.size() == 1) {
 			renderer.reset(sf::PrimitiveType::Lines);
 
-			/// @todo Temporary solution, clean up this monster later
 			auto offset = ir::Vector(.5f, .5f) * context_->zoomFactor;
 			auto pos = gridToScreen(context_->vertexList[0].getPosition()) + offset;
 
@@ -96,24 +113,35 @@ namespace vmf {
 		}
 	}
 
-	void DrawArea::zoom(float delta) {
+	void DrawArea::zoom(float delta, ir::Vector mousePos) {
+		sf::Vector2i cursorPosGrid = screenToGrid(mousePos);
+
 		context_->zoomFactor *= std::powf(1.1f, delta);
 		context_->posOffset /= std::powf(1.1f, delta);
 		context_->posOffset.x = static_cast<int>(context_->posOffset.x);
 		context_->posOffset.y = static_cast<int>(context_->posOffset.y);
+
+		sf::Vector2i cursorPosGridNew = screenToGrid(mousePos);
+		context_->posOffset += ir::Vector::fromSFMLVector(cursorPosGridNew - cursorPosGrid);
 	}
 
-		ir::Vector DrawArea::gridToScreen(sf::Vector2i grid) {
-			grid += sf::Vector2i { context_->posOffset };
-			ir::Vector screen { ir::Vector::fromSFMLVector(grid) };
-			screen *= context_->zoomFactor;
-			return screen;
-		}
+	ir::Vector DrawArea::gridToScreen(sf::Vector2i grid) {
+		grid += sf::Vector2i { context_->posOffset };
+		ir::Vector screen { ir::Vector::fromSFMLVector(grid) };
+		screen *= context_->zoomFactor;
+		return screen;
+	}
 
-		sf::Vector2i DrawArea::screenToGrid(ir::Vector screen) {
-			screen /= context_->zoomFactor;
-			screen -= context_->posOffset;
-			sf::Vector2i grid { static_cast<int>(screen.x), static_cast<int>(screen.y) };
-			return grid;
+	sf::Vector2i DrawArea::screenToGrid(ir::Vector screen) {
+		screen /= context_->zoomFactor;
+		screen -= context_->posOffset;
+		if (screen.x < 0.f) {
+			screen.x -= 1.f;
 		}
+		if (screen.y < 0.f) {
+			screen.y -= 1.f;
+		}
+		sf::Vector2i grid { static_cast<int>(screen.x), static_cast<int>(screen.y) };
+		return grid;
+	}
 }

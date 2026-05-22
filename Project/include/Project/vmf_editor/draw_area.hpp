@@ -14,7 +14,7 @@ namespace vmf {
 
 		void render(ir::render::VertexRenderer& renderer);
 
-		void zoom(float delta);
+		void zoom(float delta, ir::Vector mousePos = ir::Vector { 0.f, 0.f });
 
 	private:
 		

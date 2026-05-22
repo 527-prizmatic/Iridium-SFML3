@@ -2,6 +2,11 @@
 #define PROJECT_VMF_STATE_HPP_
 
 #include "Iridium/state.hpp"
+
+#include "Iridium/rendering/rectangle.hpp"
+#include "Iridium/rendering/model_renderer.hpp"
+#include "Iridium/rendering/text.hpp"
+
 #include "Project/vmf_editor/draw_area.hpp"
 #include "Project/vmf_editor/ui_button.hpp"
 #include "Project/vmf_editor/toolbar.hpp"
@@ -16,6 +21,7 @@ public:
 		modelRenderer_ = std::make_unique<ir::render::ModelRenderer>();
 
 		drawArea_ = std::make_unique<vmf::DrawArea>(&*vmfContext_);
+		vmfContext_->posOffset = context_->appWindow->getSize() * .5f / vmfContext_->zoomFactor;
 
 		toolbar = std::make_unique<vmf::Toolbar>(&*vmfContext_);
 		toolbar->setPosition(ir::Vector { 2.f, 2.f });
@@ -91,7 +97,7 @@ public:
 			
 		} else if (event.is<sf::Event::MouseWheelScrolled>()) {
 			auto e = event.getIf<sf::Event::MouseWheelScrolled>();
-			drawArea_->zoom(e->delta);
+			drawArea_->zoom(e->delta, context_->mouseInput->getCursorPosition());
 			modelRenderer_->setScale(vmfContext_->zoomFactor);
 		}
 		
@@ -126,6 +132,9 @@ public:
 			editingModel_ = std::make_unique<ir::render::Model>();
 
 			LOG_INFO("Discarded model");
+		} else if (evt == vmf::UserEvent::COMPONENT_VALIDATE) {
+			LOG_INFO("Component input validated");
+			vmfContext_->vertexList.clear();
 		}
 	}
 
@@ -141,7 +150,7 @@ public:
 		/*
 		if (vmfContext_->vertexList.size() == 1) {
 			context_->vertexRenderer->reset(sf::PrimitiveType::Lines);
-			context_->vertexRenderer->addPoint(clickPosFloat_, sf::Color::Yellow);
+			context_->vertexRenderer->addPoint(vmfContext_->vertexList[0].getPosition(), sf::Color::Yellow); ///< Need to convert the vertex pos to world space
 			context_->vertexRenderer->addPoint(context_->mouseInput->getCursorPosition(), sf::Color::Yellow);
 			context_->vertexRenderer->flush();
 		}
