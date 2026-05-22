@@ -6,31 +6,28 @@
 namespace vmf {
 	class UiButton {
 	public:
-		UiButton(vmf::Context* context, ir::Vector topLeftCorner, ir::Vector size, std::string_view label, std::function<void(vmf::Context*)> func);
+		UiButton(vmf::Context* context);
 
 		/// @return Whether an event was picked up
 		bool processMouseInput(ir::input::Mouse* mouseInput);
 
 		void render(ir::render::VertexRenderer& renderer);
 
-		void setLabelScale(float scale);
-		float getLabelScale();
+		UiButton& setDimensions(ir::Vector topLeftCorner, ir::Vector size);
+		UiButton& setLabel(std::string_view label);
+		UiButton& setLabelScale(float scale);
+		UiButton& setFunction(std::function<void(vmf::Context*)> func);
 
-		void setLabel(std::string_view label);
+		UiButton& setIsTransparent(bool choice);
+		UiButton& setIdleColor(sf::Color color);
+		UiButton& setActiveColor(sf::Color color);
+		UiButton& setColors(sf::Color idle, sf::Color active);
+
 		std::string getLabel();
-
-		void setIdleColor(sf::Color color) { idleColor_ = color; }
-		sf::Color getIdleColor() { return idleColor_; }
-		void setActiveColor(sf::Color color) { activeColor_ = color; }
-		sf::Color getActiveColor() { return activeColor_; }
-
-		void setColors(sf::Color idle, sf::Color active) {
-			idleColor_ = idle;
-			activeColor_ = active;
-		}
-
-		void setIsTransparent(bool choice) { isTransparent_ = choice; }
+		float getLabelScale();
 		bool getIsTransparent() { return isTransparent_; }
+		sf::Color getIdleColor() { return idleColor_; }
+		sf::Color getActiveColor() { return activeColor_; }
 
 	private:
 	void recenterLabel();

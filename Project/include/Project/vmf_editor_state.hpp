@@ -16,8 +16,11 @@ public:
 
 		drawArea_ = std::make_unique<vmf::DrawArea>(&*vmfContext_);
 
-		buttonDiscard_ = std::make_unique<vmf::UiButton>(&*vmfContext_, ir::Vector { 600.f, 600.f }, ir::Vector { 100.f, 40.f }, "test", [&](vmf::Context* context){ context->events.push_back(vmf::UserEvent::DEBUG); });
+		buttonDiscard_ = std::make_unique<vmf::UiButton>(&*vmfContext_);
+		buttonDiscard_->setDimensions(ir::Vector { 600.f, 600.f }, ir::Vector { 100.f, 40.f });
+		buttonDiscard_->setLabel("test");
 		buttonDiscard_->setLabelScale(2.f);
+		buttonDiscard_->setFunction([&](vmf::Context* context){ context->registerEvent(vmf::UserEvent::DEBUG); });
 		buttonDiscard_->setColors(sf::Color::Red, sf::Color::White);
 		buttonDiscard_->setIsTransparent(true);
 	}
@@ -77,18 +80,23 @@ public:
 
 		/// @todo Move into a proper event processor
 		while (vmfContext_->events.size() != 0) {
-			vmf::UserEvent evt = *vmfContext_->events.begin();
-			if (evt == vmf::UserEvent::DEBUG) {
-				LOG_INFO("Button debug");
-			} else if (evt == vmf::UserEvent::MODEL_SAVE) {
-				LOG_INFO("Saved model");
-				LOG_WARN("Model save not yet implemented, debugging purposes only");
-			} else if (evt == vmf::UserEvent::MODEL_DISCARD) {
-				LOG_INFO("Discarded model");
-				editingModel_ = std::make_unique<ir::render::Model>();
-			} 
+			processUserEvent(vmfContext_->popFirstEvent());
+		}
+	}
 
-			vmfContext_->events.pop_front();
+	void processUserEvent(vmf::UserEvent evt) {
+		if (evt == vmf::UserEvent::DEBUG) {
+			LOG_INFO("Button debug");
+
+		} else if (evt == vmf::UserEvent::MODEL_SAVE) {
+			LOG_WARN("Model save not yet implemented, debugging purposes only");
+
+			LOG_INFO("Saved model");
+
+		} else if (evt == vmf::UserEvent::MODEL_DISCARD) {
+			editingModel_ = std::make_unique<ir::render::Model>();
+
+			LOG_INFO("Discarded model");
 		}
 	}
 

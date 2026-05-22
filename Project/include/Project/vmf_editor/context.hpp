@@ -18,6 +18,14 @@ namespace vmf {
 
 		std::vector<ir::render::Vertex> vertexList;
 		std::list<vmf::UserEvent> events;
+
+		void registerEvent(vmf::UserEvent evt) { events.push_back(evt); }
+
+		vmf::UserEvent popFirstEvent() {
+			vmf::UserEvent evt = *events.begin();
+			events.pop_front();
+			return evt;
+		}
 	};
 }
 
