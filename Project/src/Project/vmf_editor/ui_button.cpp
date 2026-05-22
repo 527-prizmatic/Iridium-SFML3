@@ -69,6 +69,7 @@ namespace vmf {
 	UiButton& UiButton::setDimensions(ir::Vector topLeftCorner, ir::Vector size) {
 		rect_->setPosition(topLeftCorner);
 		rect_->setSize(size);
+		recenterLabel();
 		return *this;
 	}
 

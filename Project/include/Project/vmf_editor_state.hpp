@@ -4,6 +4,7 @@
 #include "Iridium/state.hpp"
 #include "Project/vmf_editor/draw_area.hpp"
 #include "Project/vmf_editor/ui_button.hpp"
+#include "Project/vmf_editor/toolbar.hpp"
 
 class VmfEditorState : public ir::StateBase<VmfEditorState> {
 
@@ -16,13 +17,41 @@ public:
 
 		drawArea_ = std::make_unique<vmf::DrawArea>(&*vmfContext_);
 
-		buttonDiscard_ = std::make_unique<vmf::UiButton>(&*vmfContext_);
-		buttonDiscard_->setDimensions(ir::Vector { 600.f, 600.f }, ir::Vector { 100.f, 40.f });
-		buttonDiscard_->setLabel("test");
-		buttonDiscard_->setLabelScale(2.f);
-		buttonDiscard_->setFunction([&](vmf::Context* context){ context->registerEvent(vmf::UserEvent::DEBUG); });
-		buttonDiscard_->setColors(sf::Color::Red, sf::Color::White);
-		buttonDiscard_->setIsTransparent(true);
+		toolbar = std::make_unique<vmf::Toolbar>(&*vmfContext_);
+		toolbar->setPosition(ir::Vector { 2.f, 2.f });
+		toolbar->setSize(ir::Vector { 1276.f, 46.f });
+		toolbar->setButtonSize(160.f);
+
+		/// @todo This could probably use of a factory
+		{
+			auto buttonDiscard = std::make_unique<vmf::UiButton>(&*vmfContext_);
+			buttonDiscard->setLabel("test");
+			buttonDiscard->setLabelScale(2.f);
+			buttonDiscard->setFunction([&](vmf::Context* context){ context->registerEvent(vmf::UserEvent::DEBUG); });
+			buttonDiscard->setColors(sf::Color::Blue, sf::Color::White);
+			buttonDiscard->setIsTransparent(true);
+			toolbar->addButton(std::move(buttonDiscard));
+		}
+		
+		{
+			auto buttonDiscard = std::make_unique<vmf::UiButton>(&*vmfContext_);
+			buttonDiscard->setLabel("save");
+			buttonDiscard->setLabelScale(2.f);
+			buttonDiscard->setFunction([&](vmf::Context* context){ context->registerEvent(vmf::UserEvent::MODEL_SAVE); });
+			buttonDiscard->setColors(sf::Color::Green, sf::Color::White);
+			buttonDiscard->setIsTransparent(true);
+			toolbar->addButton(std::move(buttonDiscard));
+		}
+		
+		{
+			auto buttonDiscard = std::make_unique<vmf::UiButton>(&*vmfContext_);
+			buttonDiscard->setLabel("discard");
+			buttonDiscard->setLabelScale(2.f);
+			buttonDiscard->setFunction([&](vmf::Context* context){ context->registerEvent(vmf::UserEvent::MODEL_DISCARD); });
+			buttonDiscard->setColors(sf::Color::Red, sf::Color::White);
+			buttonDiscard->setIsTransparent(true);
+			toolbar->addButton(std::move(buttonDiscard));
+		}
 	}
 	
 	void onReceiveEvent(const sf::Event& event) {
@@ -70,7 +99,7 @@ public:
 
 	void onUpdate() {
 		bool canDraw = true;
-		if (buttonDiscard_->processMouseInput(context_->mouseInput)) {
+		if (toolbar->processMouseInput(context_->mouseInput)) {
 			canDraw = false;
 		}
 
@@ -107,7 +136,7 @@ public:
 		modelRenderer_->setPosition((vmfContext_->posOffset + ir::Vector(.5f, .5f)) * vmfContext_->zoomFactor);
 		modelRenderer_->render(*context_->vertexRenderer);
 
-		buttonDiscard_->render(*context_->vertexRenderer);
+		toolbar->render(*context_->vertexRenderer);
 
 		/*
 		if (vmfContext_->vertexList.size() == 1) {
@@ -133,7 +162,7 @@ private:
 	std::unique_ptr<vmf::DrawArea> drawArea_;
 	std::unique_ptr<vmf::Context> vmfContext_;
 
-	std::unique_ptr<vmf::UiButton> buttonDiscard_;
+	std::unique_ptr<vmf::Toolbar> toolbar;
 };
 
 
