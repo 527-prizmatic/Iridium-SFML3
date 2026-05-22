@@ -63,7 +63,7 @@ namespace ir {
 			size_t getComponentCount() const { return components_.size(); }
 			const Component& getComponent(size_t index) const { return components_[index]; }
 
-			void popLastComponent() {
+			void removeLastComponent() {
 				if (components_.size() > 0) {
 					components_.pop_back();
 				}

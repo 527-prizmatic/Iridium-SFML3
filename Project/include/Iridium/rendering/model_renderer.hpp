@@ -21,6 +21,9 @@ namespace ir {
 
 		protected:
 			float scale_ { 1.f };
+			/// @todo Find a way to replace this with a reference or pointer
+			/// This would require a solid memory management system though, to avoid leaks in case the renderer ever gains ownership of the model one way or another
+			/// (Though ideally it should never do so)
 			Model model_;
 
 			virtual void addVertexToBuffer(const Vertex& v, ir::render::VertexRenderer& renderer) const;

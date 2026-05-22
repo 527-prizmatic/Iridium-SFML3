@@ -12,7 +12,9 @@ namespace vmf {
 
 		void processMouseInput(ir::input::Mouse* mouseInput);
 
-		void render(ir::render::VertexRenderer& renderer);
+		void render(ir::render::VertexRenderer& renderer, ir::Vector mousePos);
+
+		void renderQueuedPoints(ir::render::VertexRenderer& renderer, ir::Vector mousePosition);
 
 		void zoom(float delta, ir::Vector mousePos = ir::Vector { 0.f, 0.f });
 

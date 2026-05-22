@@ -10,6 +10,7 @@
 #include "Project/vmf_editor/draw_area.hpp"
 #include "Project/vmf_editor/ui_button.hpp"
 #include "Project/vmf_editor/toolbar.hpp"
+#include "Project/vmf_editor/editor_model.hpp"
 
 class VmfEditorState : public ir::StateBase<VmfEditorState> {
 
@@ -17,9 +18,8 @@ public:
 	void onInitialize() {
 		vmfContext_ = std::make_unique<vmf::Context>();
 
-		editingModel_ = std::make_unique<ir::render::Model>();
-		modelRenderer_ = std::make_unique<ir::render::ModelRenderer>();
-
+		editorModel_ = std::make_unique<vmf::EditorModel>(&*vmfContext_);
+		
 		drawArea_ = std::make_unique<vmf::DrawArea>(&*vmfContext_);
 		vmfContext_->posOffset = context_->appWindow->getSize() * .5f / vmfContext_->zoomFactor;
 
@@ -29,6 +29,7 @@ public:
 		toolbar->setButtonSize(160.f);
 
 		/// @todo This could probably use of a factory
+		/*
 		{
 			auto buttonDiscard = std::make_unique<vmf::UiButton>(&*vmfContext_);
 			buttonDiscard->setLabel("test");
@@ -48,7 +49,7 @@ public:
 			buttonDiscard->setIsTransparent(true);
 			toolbar->addButton(std::move(buttonDiscard));
 		}
-		
+		*/
 		{
 			auto buttonDiscard = std::make_unique<vmf::UiButton>(&*vmfContext_);
 			buttonDiscard->setLabel("discard");
@@ -68,12 +69,17 @@ public:
 				meta_exit();
 			} 
 			if (e->control) {
+				/// Obsolete now that we have a toolbar with real buttons
+				/*
 				if (e->code == sf::Keyboard::Key::Z) {
-					editingModel_->popLastComponent();
+					editorModel_->removeLastComponent();
 				} else if (e->code == sf::Keyboard::Key::D) {
-					editingModel_ = std::make_unique<ir::render::Model>();
+					editorModel_->clear();
 				}
+				*/
 			} else if (e->code == sf::Keyboard::Key::Enter && e->shift) {
+				/// @todo Reimplement this in a proper event processor
+				/*
 				static char id { 'a' };
 				std::string filename { "text_" };
 				filename.push_back(id);
@@ -89,6 +95,7 @@ public:
 					stream.close();
 				}
 				id++;
+				*/
 			}
 
 		} else if (event.is<sf::Event::KeyPressed>()) {
@@ -98,9 +105,8 @@ public:
 		} else if (event.is<sf::Event::MouseWheelScrolled>()) {
 			auto e = event.getIf<sf::Event::MouseWheelScrolled>();
 			drawArea_->zoom(e->delta, context_->mouseInput->getCursorPosition());
-			modelRenderer_->setScale(vmfContext_->zoomFactor);
+		//	modelRenderer_->setScale(vmfContext_->zoomFactor);
 		}
-		
 	}
 
 	void onUpdate() {
@@ -129,32 +135,21 @@ public:
 			LOG_INFO("Saved model");
 
 		} else if (evt == vmf::UserEvent::MODEL_DISCARD) {
-			editingModel_ = std::make_unique<ir::render::Model>();
+			editorModel_->clear();
 
 			LOG_INFO("Discarded model");
 		} else if (evt == vmf::UserEvent::COMPONENT_VALIDATE) {
-			LOG_INFO("Component input validated");
+			editorModel_->addComponent(vmfContext_->inputToComponent());
 			vmfContext_->vertexList.clear();
+
+			LOG_INFO("Component input validated");
 		}
 	}
 
 	void onRender() {
-		drawArea_->render(*context_->vertexRenderer);
-
-		modelRenderer_->setModel(*editingModel_);
-		modelRenderer_->setPosition((vmfContext_->posOffset + ir::Vector(.5f, .5f)) * vmfContext_->zoomFactor);
-		modelRenderer_->render(*context_->vertexRenderer);
-
+		drawArea_->render(*context_->vertexRenderer, context_->mouseInput->getCursorPosition());
+		editorModel_->render(*context_->vertexRenderer);
 		toolbar->render(*context_->vertexRenderer);
-
-		/*
-		if (vmfContext_->vertexList.size() == 1) {
-			context_->vertexRenderer->reset(sf::PrimitiveType::Lines);
-			context_->vertexRenderer->addPoint(vmfContext_->vertexList[0].getPosition(), sf::Color::Yellow); ///< Need to convert the vertex pos to world space
-			context_->vertexRenderer->addPoint(context_->mouseInput->getCursorPosition(), sf::Color::Yellow);
-			context_->vertexRenderer->flush();
-		}
-		*/
 	}
 		
 	void onEnd() {
@@ -162,19 +157,15 @@ public:
 	}
 
 private:
-
 	sf::Vector2i clickPos_ { 128, 128 };
 	ir::Vector clickPosFloat_ { 0.f, 0.f };
 
-	std::unique_ptr<ir::render::Model> editingModel_;
-	std::unique_ptr<ir::render::ModelRenderer> modelRenderer_;
-	std::unique_ptr<vmf::DrawArea> drawArea_;
 	std::unique_ptr<vmf::Context> vmfContext_;
+	
+	std::unique_ptr<vmf::DrawArea> drawArea_;
+	std::unique_ptr<vmf::EditorModel> editorModel_;
 
 	std::unique_ptr<vmf::Toolbar> toolbar;
 };
-
-
-
 
 #endif // PROJECT_VMF_STATE_HPP_

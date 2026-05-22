@@ -49,33 +49,24 @@ namespace vmf {
 
 	void DrawArea::processMouseInput(ir::input::Mouse* mouseInput) {
 		if (mouseInput->isPressed(sf::Mouse::Button::Left)) {
-			sf::Vector2i clickPos { screenToGrid(mouseInput->getCursorPosition()) };
+			sf::Vector2i clickPos { screenToGrid(mouseInput->getCursorPosition() + ir::Vector(.5f, .5f) * context_->zoomFactor) };
 			/// @todo Add color selection
 			context_->vertexList.push_back(ir::render::Vertex(clickPos.x, clickPos.y, sf::Color::White));
 
 			auto tryValidate = [&](size_t count) {
-				/// @todo Implement variants for each component type (to be later selectable)
 				if (context_->vertexList.size() == count) {
-					ir::render::Component cmp {};
-					for (auto& v : context_->vertexList) {
-						cmp.vertices.push_back(std::move(v));
-					}
-					
-					/// @todo Add cmp to edited model
-					// editingModel_->addComponent(ir::render::Component(v1, v2));
-
 					context_->registerEvent(vmf::UserEvent::COMPONENT_VALIDATE);
 				}
 			};
 
-			switch (context_->mode) {
-			case vmf::DrawingMode::POINT:
+			switch (context_->drawingType) {
+			case ir::render::Component::Type::POINT:
 				tryValidate(1);
 				break;
-			case vmf::DrawingMode::LINE:
+			case ir::render::Component::Type::LINE:
 				tryValidate(2);
 				break;
-			case vmf::DrawingMode::TRIANGLE:
+			case ir::render::Component::Type::TRIANGLE:
 				tryValidate(3);
 				break;
 			}
@@ -85,31 +76,33 @@ namespace vmf {
 		}
 	}
 
-	void DrawArea::render(ir::render::VertexRenderer& renderer) {
+	void DrawArea::render(ir::render::VertexRenderer& renderer, ir::Vector mousePos) {
 		gridRenderer_->setScale(context_->zoomFactor);
 		gridRenderer_->setPosition(context_->posOffset * context_->zoomFactor);
 		gridRenderer_->render(renderer);
 
-		/// @todo Temporary solution, clean up this monster later
-		if (context_->vertexList.size() == 1) {
-			renderer.reset(sf::PrimitiveType::Lines);
-
-			auto offset = ir::Vector(.5f, .5f) * context_->zoomFactor;
-			auto pos = gridToScreen(context_->vertexList[0].getPosition()) + offset;
-
-			renderer.addPoint(pos + ir::Vector(10.f, 0.f), sf::Color::Yellow);
-			renderer.addPoint(pos + ir::Vector(0.f, 10.f), sf::Color::Yellow);
-
-			renderer.addPoint(pos + ir::Vector(0.f, 10.f), sf::Color::Yellow);
-			renderer.addPoint(pos - ir::Vector(10.f, 0.f), sf::Color::Yellow);
-
-			renderer.addPoint(pos - ir::Vector(10.f, 0.f), sf::Color::Yellow);
-			renderer.addPoint(pos - ir::Vector(0.f, 10.f), sf::Color::Yellow);
-
-			renderer.addPoint(pos - ir::Vector(0.f, 10.f), sf::Color::Yellow);
-			renderer.addPoint(pos + ir::Vector(10.f, 0.f), sf::Color::Yellow);
-
-			renderer.flush();
+		/// @todo Render drawing preview for points and lines
+		mousePos += ir::Vector(.5f, .5f) * context_->zoomFactor;
+		if (context_->drawingType == ir::render::Component::Type::LINE) {
+			if (context_->vertexList.size() == 1) {
+				renderer.reset();
+				renderer.addPoint(gridToScreen(context_->vertexList[0].getPosition()), sf::Color::Cyan);
+				renderer.addPoint(mousePos, sf::Color::Cyan);
+				renderer.flush();
+			}
+		} else if (context_->drawingType == ir::render::Component::Type::TRIANGLE) {
+				renderer.reset();
+			if (context_->vertexList.size() >= 1) {
+				renderer.addPoint(gridToScreen(context_->vertexList[0].getPosition()), sf::Color::Cyan);
+				renderer.addPoint(gridToScreen(screenToGrid(mousePos)), sf::Color::Cyan);
+			}
+			if (context_->vertexList.size() >= 2) {
+				renderer.addPoint(gridToScreen(context_->vertexList[1].getPosition()), sf::Color::Cyan);
+				renderer.addPoint(gridToScreen(screenToGrid(mousePos)), sf::Color::Cyan);
+				renderer.addPoint(gridToScreen(context_->vertexList[1].getPosition()), sf::Color::Cyan);
+				renderer.addPoint(gridToScreen(context_->vertexList[0].getPosition()), sf::Color::Cyan);
+			}
+				renderer.flush();
 		}
 	}
 

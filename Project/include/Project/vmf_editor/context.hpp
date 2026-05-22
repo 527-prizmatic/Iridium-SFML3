@@ -13,12 +13,6 @@ namespace vmf {
 		COMPONENT_VALIDATE,
 	};
 
-	enum class DrawingMode {
-		POINT,
-		LINE,
-		TRIANGLE
-	};
-
 	struct Context {
 		float zoomFactor { 10.f };
 		ir::Vector posOffset { 0.f, 0.f };
@@ -26,7 +20,7 @@ namespace vmf {
 		std::vector<ir::render::Vertex> vertexList;
 		std::list<vmf::UserEvent> events;
 
-		vmf::DrawingMode mode { vmf::DrawingMode::LINE };
+		ir::render::Component::Type drawingType { ir::render::Component::Type::TRIANGLE };
 
 		void registerEvent(vmf::UserEvent evt) { events.push_back(evt); }
 
@@ -34,6 +28,19 @@ namespace vmf {
 			vmf::UserEvent evt = *events.begin();
 			events.pop_front();
 			return evt;
+		}
+
+		ir::render::Component inputToComponent() {
+			using namespace ir::render;
+			Component cmp {};
+
+			cmp.type = drawingType;
+			cmp.vertices.clear();
+			for (auto& v : vertexList) {
+				cmp.vertices.push_back(v);
+			}
+
+			return cmp;
 		}
 	};
 }
