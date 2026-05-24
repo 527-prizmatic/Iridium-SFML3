@@ -107,20 +107,19 @@ namespace vmf {
 	}
 
 	void DrawArea::zoom(float delta, ir::Vector mousePos) {
-		sf::Vector2i cursorPosGrid = screenToGrid(mousePos);
+		ir::Vector cursorPosGrid = screenToGridFloat(mousePos);
 
 		context_->zoomFactor *= std::powf(1.1f, delta);
 		context_->posOffset /= std::powf(1.1f, delta);
 		context_->posOffset.x = static_cast<int>(context_->posOffset.x);
 		context_->posOffset.y = static_cast<int>(context_->posOffset.y);
 
-		sf::Vector2i cursorPosGridNew = screenToGrid(mousePos);
-		context_->posOffset += ir::Vector::fromSFMLVector(cursorPosGridNew - cursorPosGrid);
+		ir::Vector cursorPosGridNew = screenToGridFloat(mousePos);
+		context_->posOffset += cursorPosGridNew - cursorPosGrid;
 	}
 
 	ir::Vector DrawArea::gridToScreen(sf::Vector2i grid) {
-		grid += sf::Vector2i { context_->posOffset };
-		ir::Vector screen { ir::Vector::fromSFMLVector(grid) };
+		ir::Vector screen { ir::Vector::fromSFMLVector(grid) + context_->posOffset };
 		screen *= context_->zoomFactor;
 		return screen;
 	}
@@ -135,6 +134,19 @@ namespace vmf {
 			screen.y -= 1.f;
 		}
 		sf::Vector2i grid { static_cast<int>(screen.x), static_cast<int>(screen.y) };
+		return grid;
+	}
+
+	ir::Vector DrawArea::screenToGridFloat(ir::Vector screen) {
+		screen /= context_->zoomFactor;
+		screen -= context_->posOffset;
+		if (screen.x < 0.f) {
+			screen.x -= 1.f;
+		}
+		if (screen.y < 0.f) {
+			screen.y -= 1.f;
+		}
+		ir::Vector grid { screen.x, screen.y };
 		return grid;
 	}
 }

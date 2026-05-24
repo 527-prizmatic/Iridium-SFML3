@@ -29,6 +29,7 @@ namespace vmf {
 
 		ir::Vector gridToScreen(sf::Vector2i grid);
 		sf::Vector2i screenToGrid(ir::Vector screen);
+		ir::Vector screenToGridFloat(ir::Vector screen);
 
 	};
 }
