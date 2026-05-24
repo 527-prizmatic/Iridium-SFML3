@@ -36,14 +36,16 @@ namespace vmf {
 	}
 
 	void DrawArea::processKeyboardInput(const sf::Event::KeyPressed* event) {
-		if (event->code == sf::Keyboard::Key::Left) {
-			context_->posOffset.x += 2.f;
-		} else if (event->code == sf::Keyboard::Key::Right) {
-			context_->posOffset.x -= 2.f;
-		} else if (event->code == sf::Keyboard::Key::Up) {
-			context_->posOffset.y += 2.f;
-		} else if (event->code == sf::Keyboard::Key::Down) {
-			context_->posOffset.y -= 2.f;
+		if (!event->control) {
+			if (event->code == sf::Keyboard::Key::Left) {
+				context_->posOffset.x += 2.f;
+			} else if (event->code == sf::Keyboard::Key::Right) {
+				context_->posOffset.x -= 2.f;
+			} else if (event->code == sf::Keyboard::Key::Up) {
+				context_->posOffset.y += 2.f;
+			} else if (event->code == sf::Keyboard::Key::Down) {
+				context_->posOffset.y -= 2.f;
+			}
 		}
 	}
 

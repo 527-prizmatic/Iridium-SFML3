@@ -10,6 +10,21 @@ namespace vmf {
 		model_ = std::make_unique<ir::render::Model>();
 		renderer_ = std::make_unique<ir::render::ModelRenderer>();
 	}
+	
+	void EditorModel::processKeyboardInput(const sf::Event::KeyPressed* event) {
+		int increment = event->shift ? 4 : 1;
+		if (event->control) {
+			if (event->code == sf::Keyboard::Key::Left) {
+				moveModel(-increment, 0);
+			} else if (event->code == sf::Keyboard::Key::Right) {
+				moveModel(increment, 0);
+			} else if (event->code == sf::Keyboard::Key::Up) {
+				moveModel(0, -increment);
+			} else if (event->code == sf::Keyboard::Key::Down) {
+				moveModel(0, increment);
+			}
+		}
+	}
 
 	void EditorModel::render(ir::render::VertexRenderer& renderer) {
 		renderer_->setModel(*model_);
@@ -32,5 +47,18 @@ namespace vmf {
 
 	void EditorModel::clear() {
 		model_ = std::make_unique<ir::render::Model>();
+	}
+
+	void EditorModel::moveModel(int x, int y) {
+		for (auto& cmp : *model_) {
+			for (auto& v : cmp) {
+				v.x += x;
+				v.y += y;
+			}
+		}
+	}
+
+	void EditorModel::moveModel(sf::Vector2i offset) {
+		moveModel(offset.x, offset.y);
 	}
 }

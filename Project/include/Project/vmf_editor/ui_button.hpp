@@ -30,21 +30,21 @@ namespace vmf {
 		sf::Color getActiveColor() { return activeColor_; }
 
 	private:
-	void recenterLabel();
-	void setColor(sf::Color color);
-	
-	vmf::Context* context_;
-	
-	std::unique_ptr<ir::render::Rectangle> rect_;
-	std::unique_ptr<ir::render::Text> label_;
-	std::function<void(vmf::Context*)> func_ {};
+		void recenterLabel();
+		void setColor(sf::Color color);
+		
+		vmf::Context* context_;
+		
+		std::unique_ptr<ir::render::Rectangle> rect_;
+		std::unique_ptr<ir::render::Text> label_;
+		std::function<void(vmf::Context*)> func_ {};
 
-	
-	sf::Color idleColor_ { sf::Color::Red };
-	sf::Color activeColor_ { sf::Color::White };
+		
+		sf::Color idleColor_ { sf::Color::Red };
+		sf::Color activeColor_ { sf::Color::White };
 
-	bool isHeldDown_ { false };
-	bool isTransparent_ { true };
+		bool isHeldDown_ { false };
+		bool isTransparent_ { true };
 	};
 }
 

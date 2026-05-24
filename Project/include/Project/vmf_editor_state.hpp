@@ -13,7 +13,6 @@
 #include "Project/vmf_editor/editor_model.hpp"
 
 class VmfEditorState : public ir::StateBase<VmfEditorState> {
-
 public:
 	void onInitialize() {
 		vmfContext_ = std::make_unique<vmf::Context>();
@@ -69,14 +68,7 @@ public:
 				meta_exit();
 			} 
 			if (e->control) {
-				/// Obsolete now that we have a toolbar with real buttons
-				/*
-				if (e->code == sf::Keyboard::Key::Z) {
-					editorModel_->removeLastComponent();
-				} else if (e->code == sf::Keyboard::Key::D) {
-					editorModel_->clear();
-				}
-				*/
+				
 			} else if (e->code == sf::Keyboard::Key::Enter && e->shift) {
 				/// @todo Reimplement this in a proper event processor
 				/*
@@ -101,6 +93,7 @@ public:
 		} else if (event.is<sf::Event::KeyPressed>()) {
 			auto e = event.getIf<sf::Event::KeyPressed>();
 			drawArea_->processKeyboardInput(e);
+			editorModel_->processKeyboardInput(e);
 			
 		} else if (event.is<sf::Event::MouseWheelScrolled>()) {
 			auto e = event.getIf<sf::Event::MouseWheelScrolled>();

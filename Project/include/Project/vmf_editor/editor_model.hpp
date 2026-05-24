@@ -9,11 +9,16 @@ namespace vmf {
 	public:
 		EditorModel(vmf::Context* context);
 
+		void processKeyboardInput(const sf::Event::KeyPressed* event);
+
 		void render(ir::render::VertexRenderer& renderer);
 
 		void addComponent(ir::render::Component cmp);
 		void removeLastComponent();
 		void clear();
+
+		void moveModel(int x, int y);
+		void moveModel(sf::Vector2i offset);
 
 	private:
 		vmf::Context* context_;
