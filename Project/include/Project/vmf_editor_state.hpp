@@ -8,9 +8,12 @@
 #include "Iridium/rendering/text.hpp"
 
 #include "Project/vmf_editor/draw_area.hpp"
-#include "Project/vmf_editor/ui_button.hpp"
+#include "Project/vmf_editor/text_button.hpp"
+#include "Project/vmf_editor/icon_button.hpp"
 #include "Project/vmf_editor/toolbar.hpp"
 #include "Project/vmf_editor/editor_model.hpp"
+
+#include "Project/vmf_editor/tool_button_factory.hpp"
 
 class VmfEditorState : public ir::StateBase<VmfEditorState> {
 public:
@@ -22,41 +25,50 @@ public:
 		drawArea_ = std::make_unique<vmf::DrawArea>(&*vmfContext_);
 		vmfContext_->posOffset = context_->appWindow->getSize() * .5f / vmfContext_->zoomFactor;
 
-		toolbar = std::make_unique<vmf::Toolbar>(&*vmfContext_);
-		toolbar->setPosition(ir::Vector { 2.f, 2.f });
-		toolbar->setSize(ir::Vector { 1276.f, 46.f });
-		toolbar->setButtonSize(160.f);
+		toolbarTop = std::make_unique<vmf::Toolbar>(&*vmfContext_);
+		toolbarTop->setPosition(ir::Vector { 2.f, 2.f });
+		toolbarTop->setSize(ir::Vector { 1276.f, 46.f });
+		toolbarTop->setButtonSize(160.f);
+
+		toolbarBottom = std::make_unique<vmf::Toolbar>(&*vmfContext_);
+		toolbarBottom->setPosition(ir::Vector { 2.f, 672.f });
+		toolbarBottom->setSize(ir::Vector { 1276.f, 46.f });
+		toolbarBottom->setButtonSize(42.f);
+
+		toolbarBottom->addButton(std::move(vmf::produceToolButton(&*vmfContext_, "ui_point", [&](vmf::Context* context){ context->drawingType = ir::render::Component::Type::POINT; }, sf::Color::Green)));
+		toolbarBottom->addButton(std::move(vmf::produceToolButton(&*vmfContext_, "ui_line", [&](vmf::Context* context){ context->drawingType = ir::render::Component::Type::LINE; }, sf::Color::Cyan)));
+		toolbarBottom->addButton(std::move(vmf::produceToolButton(&*vmfContext_, "ui_tri", [&](vmf::Context* context){ context->drawingType = ir::render::Component::Type::TRIANGLE; }, sf::Color::Blue)));
 
 		/// @todo This could probably use of a factory
 		/*
 		{
-			auto buttonDiscard = std::make_unique<vmf::UiButton>(&*vmfContext_);
+			auto buttonDiscard = std::make_unique<vmf::TextButton>(&*vmfContext_);
 			buttonDiscard->setLabel("test");
 			buttonDiscard->setLabelScale(2.f);
 			buttonDiscard->setFunction([&](vmf::Context* context){ context->registerEvent(vmf::UserEvent::DEBUG); });
 			buttonDiscard->setColors(sf::Color::Blue, sf::Color::White);
 			buttonDiscard->setIsTransparent(true);
-			toolbar->addButton(std::move(buttonDiscard));
+			toolbarTop->addButton(std::move(buttonDiscard));
 		}
 		
 		{
-			auto buttonDiscard = std::make_unique<vmf::UiButton>(&*vmfContext_);
+			auto buttonDiscard = std::make_unique<vmf::TextButton>(&*vmfContext_);
 			buttonDiscard->setLabel("save");
 			buttonDiscard->setLabelScale(2.f);
 			buttonDiscard->setFunction([&](vmf::Context* context){ context->registerEvent(vmf::UserEvent::MODEL_SAVE); });
 			buttonDiscard->setColors(sf::Color::Green, sf::Color::White);
 			buttonDiscard->setIsTransparent(true);
-			toolbar->addButton(std::move(buttonDiscard));
+			toolbarTop->addButton(std::move(buttonDiscard));
 		}
 		*/
 		{
-			auto buttonDiscard = std::make_unique<vmf::UiButton>(&*vmfContext_);
+			auto buttonDiscard = std::make_unique<vmf::TextButton>(&*vmfContext_);
 			buttonDiscard->setLabel("discard");
 			buttonDiscard->setLabelScale(2.f);
 			buttonDiscard->setFunction([&](vmf::Context* context){ context->registerEvent(vmf::UserEvent::MODEL_DISCARD); });
 			buttonDiscard->setColors(sf::Color::Red, sf::Color::White);
 			buttonDiscard->setIsTransparent(true);
-			toolbar->addButton(std::move(buttonDiscard));
+			toolbarTop->addButton(std::move(buttonDiscard));
 		}
 	}
 	
@@ -70,24 +82,7 @@ public:
 			if (e->control) {
 				
 			} else if (e->code == sf::Keyboard::Key::Enter && e->shift) {
-				/// @todo Reimplement this in a proper event processor
-				/*
-				static char id { 'a' };
-				std::string filename { "text_" };
-				filename.push_back(id);
-				std::ofstream stream(filename + "_lower.vmf", std::ios::binary);
-				if (!stream.fail()) {
-					for (size_t i = 0; i < editingModel_->getComponentCount(); i++) {
-						auto cmp = editingModel_->getComponent(i);
-						stream.write(reinterpret_cast<char*>(&cmp.type), 1);
-						for (int j = 0; j <= static_cast<int>(cmp.type); j++) {
-							stream.write(reinterpret_cast<char*>(&cmp.vertices[j]), sizeof(ir::render::Vertex));
-						}
-					}
-					stream.close();
-				}
-				id++;
-				*/
+				editorModel_->save("square");
 			}
 
 		} else if (event.is<sf::Event::KeyPressed>()) {
@@ -98,13 +93,13 @@ public:
 		} else if (event.is<sf::Event::MouseWheelScrolled>()) {
 			auto e = event.getIf<sf::Event::MouseWheelScrolled>();
 			drawArea_->zoom(e->delta, context_->mouseInput->getCursorPosition());
-		//	modelRenderer_->setScale(vmfContext_->zoomFactor);
 		}
 	}
 
 	void onUpdate() {
 		bool canDraw = true;
-		if (toolbar->processMouseInput(context_->mouseInput)) {
+		if (toolbarTop->processMouseInput(context_->mouseInput) ||
+			toolbarBottom->processMouseInput(context_->mouseInput)) {
 			canDraw = false;
 		}
 
@@ -142,7 +137,8 @@ public:
 	void onRender() {
 		drawArea_->render(*context_->vertexRenderer, context_->mouseInput->getCursorPosition());
 		editorModel_->render(*context_->vertexRenderer);
-		toolbar->render(*context_->vertexRenderer);
+		toolbarTop->render(*context_->vertexRenderer);
+		toolbarBottom->render(*context_->vertexRenderer);
 	}
 		
 	void onEnd() {
@@ -158,7 +154,8 @@ private:
 	std::unique_ptr<vmf::DrawArea> drawArea_;
 	std::unique_ptr<vmf::EditorModel> editorModel_;
 
-	std::unique_ptr<vmf::Toolbar> toolbar;
+	std::unique_ptr<vmf::Toolbar> toolbarTop;
+	std::unique_ptr<vmf::Toolbar> toolbarBottom;
 };
 
 #endif // PROJECT_VMF_STATE_HPP_

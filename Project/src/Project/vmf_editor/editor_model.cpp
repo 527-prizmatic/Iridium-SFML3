@@ -26,6 +26,19 @@ namespace vmf {
 		}
 	}
 
+	void EditorModel::save(std::string_view filename) {
+		std::ofstream stream(filename.data() + std::string(".vmf"), std::ios::binary);
+		if (!stream.fail()) {
+			for (auto& cmp : *model_) {
+				stream.write(reinterpret_cast<char*>(&cmp.type), 1);
+				for (int j = 0; j <= static_cast<int>(cmp.type); j++) {
+					stream.write(reinterpret_cast<char*>(&cmp.vertices[j]), sizeof(ir::render::Vertex));
+				}
+			}
+			stream.close();
+		}
+	}
+
 	void EditorModel::render(ir::render::VertexRenderer& renderer) {
 		renderer_->setModel(*model_);
 		renderer_->setPosition(context_->posOffset * context_->zoomFactor);

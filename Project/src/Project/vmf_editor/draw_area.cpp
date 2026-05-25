@@ -89,11 +89,11 @@ namespace vmf {
 			if (context_->vertexList.size() == 1) {
 				renderer.reset();
 				renderer.addPoint(gridToScreen(context_->vertexList[0].getPosition()), sf::Color::Cyan);
-				renderer.addPoint(mousePos, sf::Color::Cyan);
+				renderer.addPoint(gridToScreen(screenToGrid(mousePos)), sf::Color::Cyan);
 				renderer.flush();
 			}
 		} else if (context_->drawingType == ir::render::Component::Type::TRIANGLE) {
-				renderer.reset();
+			renderer.reset();
 			if (context_->vertexList.size() >= 1) {
 				renderer.addPoint(gridToScreen(context_->vertexList[0].getPosition()), sf::Color::Cyan);
 				renderer.addPoint(gridToScreen(screenToGrid(mousePos)), sf::Color::Cyan);

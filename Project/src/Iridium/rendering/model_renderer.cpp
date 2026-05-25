@@ -29,7 +29,7 @@ namespace ir {
 			position = position.rotate(angle_) * scale_;
 			position += position_ - anchor_;
 			
-			renderer.addPoint(position, v.color);
+			renderer.addPoint(position, v.color * color_);
 		}
 
 		ir::Vector ModelRenderer::getBoundingBoxSize() {
