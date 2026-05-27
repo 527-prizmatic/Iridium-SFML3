@@ -26,7 +26,7 @@ namespace vmf {
 		}
 	}
 
-	void EditorModel::save(std::string_view filename) {
+	bool EditorModel::save(std::string_view filename) {
 		std::ofstream stream(filename.data() + std::string(".vmf"), std::ios::binary);
 		if (!stream.fail()) {
 			for (auto& cmp : *model_) {
@@ -36,7 +36,9 @@ namespace vmf {
 				}
 			}
 			stream.close();
+			return true;
 		}
+		return false;
 	}
 
 	void EditorModel::render(ir::render::VertexRenderer& renderer) {

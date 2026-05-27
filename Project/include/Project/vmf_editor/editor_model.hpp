@@ -10,7 +10,7 @@ namespace vmf {
 		EditorModel(vmf::Context* context);
 
 		void processKeyboardInput(const sf::Event::KeyPressed* event);
-		void save(std::string_view filename);
+		bool save(std::string_view filename);
 		
 		void render(ir::render::VertexRenderer& renderer);
 

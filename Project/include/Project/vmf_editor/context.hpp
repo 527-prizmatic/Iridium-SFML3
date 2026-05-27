@@ -11,6 +11,9 @@ namespace vmf {
 		MODEL_SAVE,
 		MODEL_DISCARD,
 		COMPONENT_VALIDATE,
+		CONFIRM_MODEL_SAVE,
+		CANCEL_MODEL_SAVE,
+		
 	};
 
 	struct Context {
@@ -21,6 +24,8 @@ namespace vmf {
 		std::list<vmf::UserEvent> events;
 
 		ir::render::Component::Type drawingType { ir::render::Component::Type::TRIANGLE };
+
+		bool saveMode { false };
 
 		void registerEvent(vmf::UserEvent evt) { events.push_back(evt); }
 

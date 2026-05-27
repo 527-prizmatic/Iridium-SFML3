@@ -13,7 +13,7 @@
 #include "Project/vmf_editor/toolbar.hpp"
 #include "Project/vmf_editor/editor_model.hpp"
 
-#include "Project/vmf_editor/tool_button_factory.hpp"
+#include "Project/vmf_editor/ui_button_factory.hpp"
 
 class VmfEditorState : public ir::StateBase<VmfEditorState> {
 public:
@@ -27,9 +27,12 @@ public:
 
 		toolbarTop = std::make_unique<vmf::Toolbar>(&*vmfContext_);
 		toolbarTop->setPosition(ir::Vector { 2.f, 2.f });
-		toolbarTop->setSize(ir::Vector { 1276.f, 46.f });
-		toolbarTop->setButtonSize(160.f);
+		toolbarTop->setSize(ir::Vector { 1276.f, 36.f });
+		toolbarTop->setButtonSize(120.f);
 
+		toolbarTop->addButton(std::move(vmf::produceTextButton(&*vmfContext_, "Discard", vmf::UserEvent::MODEL_DISCARD, sf::Color::Red)));
+		toolbarTop->addButton(std::move(vmf::produceTextButton(&*vmfContext_, "Save", vmf::UserEvent::MODEL_SAVE, sf::Color::Green)));
+		
 		toolbarBottom = std::make_unique<vmf::Toolbar>(&*vmfContext_);
 		toolbarBottom->setPosition(ir::Vector { 2.f, 672.f });
 		toolbarBottom->setSize(ir::Vector { 1276.f, 46.f });
@@ -39,75 +42,90 @@ public:
 		toolbarBottom->addButton(std::move(vmf::produceToolButton(&*vmfContext_, "ui_line", [&](vmf::Context* context){ context->drawingType = ir::render::Component::Type::LINE; }, sf::Color::Cyan)));
 		toolbarBottom->addButton(std::move(vmf::produceToolButton(&*vmfContext_, "ui_tri", [&](vmf::Context* context){ context->drawingType = ir::render::Component::Type::TRIANGLE; }, sf::Color::Blue)));
 
-		/// @todo This could probably use of a factory
-		/*
-		{
-			auto buttonDiscard = std::make_unique<vmf::TextButton>(&*vmfContext_);
-			buttonDiscard->setLabel("test");
-			buttonDiscard->setLabelScale(2.f);
-			buttonDiscard->setFunction([&](vmf::Context* context){ context->registerEvent(vmf::UserEvent::DEBUG); });
-			buttonDiscard->setColors(sf::Color::Blue, sf::Color::White);
-			buttonDiscard->setIsTransparent(true);
-			toolbarTop->addButton(std::move(buttonDiscard));
-		}
-		
-		{
-			auto buttonDiscard = std::make_unique<vmf::TextButton>(&*vmfContext_);
-			buttonDiscard->setLabel("save");
-			buttonDiscard->setLabelScale(2.f);
-			buttonDiscard->setFunction([&](vmf::Context* context){ context->registerEvent(vmf::UserEvent::MODEL_SAVE); });
-			buttonDiscard->setColors(sf::Color::Green, sf::Color::White);
-			buttonDiscard->setIsTransparent(true);
-			toolbarTop->addButton(std::move(buttonDiscard));
-		}
-		*/
-		{
-			auto buttonDiscard = std::make_unique<vmf::TextButton>(&*vmfContext_);
-			buttonDiscard->setLabel("discard");
-			buttonDiscard->setLabelScale(2.f);
-			buttonDiscard->setFunction([&](vmf::Context* context){ context->registerEvent(vmf::UserEvent::MODEL_DISCARD); });
-			buttonDiscard->setColors(sf::Color::Red, sf::Color::White);
-			buttonDiscard->setIsTransparent(true);
-			toolbarTop->addButton(std::move(buttonDiscard));
-		}
+		toolbarSave = std::make_unique<vmf::Toolbar>(&*vmfContext_);
+		toolbarSave->setPosition(ir::Vector { 2.f, 42.f });
+		toolbarSave->setSize(ir::Vector { 512.f, 36.f });
+		toolbarSave->setButtonSize(80.f);
+
+		toolbarSave->addButton(std::move(vmf::produceTextButton(&*vmfContext_, std::string{}, [](vmf::Context* context){}, sf::Color(192u, 192u, 192u))), 340.f);
+		toolbarSave->addButton(std::move(vmf::produceTextButton(&*vmfContext_, "Save", vmf::UserEvent::CONFIRM_MODEL_SAVE, sf::Color::Green)));
+		toolbarSave->addButton(std::move(vmf::produceTextButton(&*vmfContext_, "Cancel", vmf::UserEvent::CANCEL_MODEL_SAVE, sf::Color::Red)));
+
+		rectOverlay_ = std::make_unique<ir::render::Rectangle>();
+		rectOverlay_->setSize(1280.f, 720.f);
+		rectOverlay_->setColor(sf::Color(0u, 0u, 0u, 64u));
+		rectOverlay_->setMode(ir::render::Mode::SOLID);
 	}
 	
 	void onReceiveEvent(const sf::Event& event) {
 		if (event.is<sf::Event::KeyReleased>()) {
-			auto e = event.getIf<sf::Event::KeyReleased>();
+	//		auto e = event.getIf<sf::Event::KeyReleased>();
 
-			if (e->code == sf::Keyboard::Key::Escape) {
-				meta_exit();
+
+		}
+		else if (event.is<sf::Event::KeyPressed>()) {
+			auto e = event.getIf<sf::Event::KeyPressed>();
+
+			if (e->code == sf::Keyboard::Key::Escape && vmfContext_->saveMode) {
+				vmfContext_->registerEvent(vmf::UserEvent::CANCEL_MODEL_SAVE);
 			} 
+
 			if (e->control) {
-				
-			} else if (e->code == sf::Keyboard::Key::Enter && e->shift) {
-				editorModel_->save("square");
+				if (e->code == sf::Keyboard::Key::S) {
+					vmfContext_->registerEvent(vmf::UserEvent::MODEL_SAVE);
+				}
+			}
+			if (e->code == sf::Keyboard::Key::Escape && e->shift) {
+				meta_exit();
 			}
 
-		} else if (event.is<sf::Event::KeyPressed>()) {
-			auto e = event.getIf<sf::Event::KeyPressed>();
 			drawArea_->processKeyboardInput(e);
 			editorModel_->processKeyboardInput(e);
-			
-		} else if (event.is<sf::Event::MouseWheelScrolled>()) {
+		}
+		else if (event.is<sf::Event::TextEntered>()) {
+			auto e = event.getIf<sf::Event::TextEntered>();
+			vmf::TextButton* saveTextField_ = dynamic_cast<vmf::TextButton*>(toolbarSave->getButton(0));
+			std::string current = saveTextField_->getLabel();
+
+			LOG_INFO(std::to_string(static_cast<int>(e->unicode)));
+
+			if (e->unicode == 13) {
+				vmfContext_->registerEvent(vmf::UserEvent::CONFIRM_MODEL_SAVE);
+			} else if (e->unicode == 8) {
+				if (current.size() > 0) {
+					current.pop_back();
+				}
+			}
+			else {
+				if (current.size() < 32) {
+					current.push_back(e->unicode);
+				}
+			}
+
+			saveTextField_->setLabel(current);
+		}
+		else if (event.is<sf::Event::MouseWheelScrolled>()) {
 			auto e = event.getIf<sf::Event::MouseWheelScrolled>();
 			drawArea_->zoom(e->delta, context_->mouseInput->getCursorPosition());
 		}
 	}
 
 	void onUpdate() {
-		bool canDraw = true;
-		if (toolbarTop->processMouseInput(context_->mouseInput) ||
-			toolbarBottom->processMouseInput(context_->mouseInput)) {
-			canDraw = false;
+		if (!vmfContext_->saveMode) {
+			bool canDraw = true;
+			if (toolbarTop->processMouseInput(context_->mouseInput) ||
+				toolbarBottom->processMouseInput(context_->mouseInput)) {
+				canDraw = false;
+			}
+
+			if (canDraw) {
+				drawArea_->processMouseInput(context_->mouseInput);
+			}
+		}
+		else {
+			toolbarSave->processMouseInput(context_->mouseInput);
 		}
 
-		if (canDraw) {
-			drawArea_->processMouseInput(context_->mouseInput);
-		}
-
-		/// @todo Move into a proper event processor
 		while (vmfContext_->events.size() != 0) {
 			processUserEvent(vmfContext_->popFirstEvent());
 		}
@@ -120,7 +138,9 @@ public:
 		} else if (evt == vmf::UserEvent::MODEL_SAVE) {
 			LOG_WARN("Model save not yet implemented, debugging purposes only");
 
-			LOG_INFO("Saved model");
+			vmfContext_->saveMode = true;
+
+			LOG_INFO("Entering model save mode");
 
 		} else if (evt == vmf::UserEvent::MODEL_DISCARD) {
 			editorModel_->clear();
@@ -132,6 +152,26 @@ public:
 
 			LOG_INFO("Component input validated");
 		}
+		else if (evt == vmf::UserEvent::CONFIRM_MODEL_SAVE) {
+			std::string_view filename = dynamic_cast<vmf::TextButton*>(toolbarSave->getButton(0))->getLabel();
+			if (filename.size() == 0) {
+				filename = "model";
+			}
+			
+			if (editorModel_->save(filename.data())) {
+				LOG_INFO(std::string{"Model saved as "} + filename.data() + std::string{".vmf"});
+			}
+			else {
+				LOG_ERROR(std::string{"Error trying to save model as "} + filename.data() + std::string{".vmf"});
+			}
+
+			vmfContext_->saveMode = false;
+		}
+		else if (evt == vmf::UserEvent::CANCEL_MODEL_SAVE) {
+			vmfContext_->saveMode = false;
+
+			LOG_INFO("File saving canceled");
+		}
 	}
 
 	void onRender() {
@@ -139,6 +179,11 @@ public:
 		editorModel_->render(*context_->vertexRenderer);
 		toolbarTop->render(*context_->vertexRenderer);
 		toolbarBottom->render(*context_->vertexRenderer);
+
+		if (vmfContext_->saveMode) {
+			rectOverlay_->render(*context_->vertexRenderer);
+			toolbarSave->render(*context_->vertexRenderer);
+		}
 	}
 		
 	void onEnd() {
@@ -156,6 +201,9 @@ private:
 
 	std::unique_ptr<vmf::Toolbar> toolbarTop;
 	std::unique_ptr<vmf::Toolbar> toolbarBottom;
+	std::unique_ptr<vmf::Toolbar> toolbarSave;
+
+	std::unique_ptr<ir::render::Rectangle> rectOverlay_;
 };
 
 #endif // PROJECT_VMF_STATE_HPP_

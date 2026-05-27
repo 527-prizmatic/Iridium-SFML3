@@ -29,8 +29,14 @@ namespace vmf {
 		return false;
 	}
 
-	void Toolbar::addButton(std::unique_ptr<vmf::UiButton> button) {
+	void Toolbar::addButton(std::unique_ptr<vmf::UiButton> button, float sizeOverride) {
 		buttonList_.push_back(std::move(button));
+		if (sizeOverride > -1e-6f) {
+			sizeOverrides_.push_back(sizeOverride);
+		}
+		else {
+			sizeOverrides_.push_back({});
+		}
 		recalculateLayout();
 	}
 
@@ -51,18 +57,21 @@ namespace vmf {
 
 #pragma region Private member functions
 	void Toolbar::recalculateLayout() {
+		ir::Vector position { 2.f, 2.f };
 		for (size_t i = 0; i < buttonList_.size(); i++) {
-			ir::Vector position { 2.f, 2.f };
 			ir::Vector size { rect_->getSize() - ir::Vector { 4.f, 4.f } };
+			bool hasOverride = sizeOverrides_[i].has_value();
+			float finalSize = hasOverride ? *sizeOverrides_[i] : buttonSize_;
 			if (direction_ == Direction::HORIZONTAL) {
-				position.x += (buttonSize_ + 4.f) * i;
-				size.x = buttonSize_;
+				size.x = finalSize;
+				buttonList_[i]->setDimensions(position + rect_->getPosition(), size);
+				position.x += finalSize + 4.f;
 			}
 			else if (direction_ == Direction::VERTICAL) {
-				position.y += (buttonSize_ + 4.f) * i;
-				size.y = buttonSize_;
+				size.y = finalSize;
+				buttonList_[i]->setDimensions(position + rect_->getPosition(), size);
+				position.y += finalSize + 4.f;
 			}
-			buttonList_[i]->setDimensions(position + rect_->getPosition(), size);
 		}
 	}
 #pragma endregion
@@ -96,5 +105,12 @@ namespace vmf {
 
 	ir::Vector Toolbar::getPosition() { return rect_->getPosition(); }
 	ir::Vector Toolbar::getSize() { return rect_->getSize(); }
+
+	vmf::UiButton* Toolbar::getButton(size_t index) {
+		if (buttonList_.size() >= index + 1) {
+			return &*buttonList_[index];
+		}
+		return nullptr;
+	}
 #pragma endregion
 }

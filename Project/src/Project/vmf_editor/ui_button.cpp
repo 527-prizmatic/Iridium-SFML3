@@ -23,7 +23,13 @@ namespace vmf {
 			}
 			else if (mouseInput->isReleased(sf::Mouse::Button::Left)) {
 				if (isHeldDown_) {
-					func_(context_);
+					if (event_.has_value()) {
+						context_->registerEvent(*event_);
+					}
+					else {
+						func_(context_);
+					}
+					
 					isHeldDown_ = false;
 					return true;
 				}

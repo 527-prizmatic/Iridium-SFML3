@@ -20,7 +20,7 @@ namespace vmf {
 
 		void render(ir::render::VertexRenderer& renderer);
 
-		void addButton(std::unique_ptr<vmf::UiButton> button);
+		void addButton(std::unique_ptr<vmf::UiButton> button, float sizeOverride = -1.f);
 		
 		void setDimensions(ir::Vector topLeftCorner, ir::Vector size);
 		void setPosition(ir::Vector topLeftCorner);
@@ -33,12 +33,15 @@ namespace vmf {
 		Direction getDirection() { return direction_; }
 		float getButtonSize() { return buttonSize_; }
 
+		vmf::UiButton* getButton(size_t index);
+
 	private:
 		void recalculateLayout();
 
 		vmf::Context* context_;
 		std::unique_ptr<ir::render::Rectangle> rect_;
 		std::vector<std::unique_ptr<vmf::UiButton>> buttonList_;
+		std::vector<std::optional<float>> sizeOverrides_;
 
 		float buttonSize_ { 50.f };
 		Direction direction_ { Direction::HORIZONTAL };

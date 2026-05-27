@@ -22,6 +22,9 @@ namespace vmf {
 		void setActiveColor(sf::Color color);
 		void setColors(sf::Color idle, sf::Color active);
 
+		void setEvent(vmf::UserEvent event) { event_ = event; }
+		void clearEvent() { event_ = {}; }
+
 		bool getIsTransparent() { return isTransparent_; }
 		sf::Color getIdleColor() { return idleColor_; }
 		sf::Color getActiveColor() { return activeColor_; }
@@ -36,6 +39,7 @@ namespace vmf {
 		
 		std::unique_ptr<ir::render::Rectangle> rect_;
 		std::function<void(vmf::Context*)> func_ {};
+		std::optional<vmf::UserEvent> event_;
 
 		sf::Color idleColor_ { sf::Color::Red };
 		sf::Color activeColor_ { sf::Color::White };
