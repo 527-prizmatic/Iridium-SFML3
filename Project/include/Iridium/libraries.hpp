@@ -14,6 +14,7 @@
 // SFML
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
+#include <SFML/Audio.hpp>
 
 // GSL
 #include <gsl/gsl>

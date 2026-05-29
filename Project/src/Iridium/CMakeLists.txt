@@ -19,3 +19,5 @@ target_sources(${PROJECT_NAME} PRIVATE "rendering/vertex_renderer.cpp")
 target_sources(${PROJECT_NAME} PRIVATE "rendering/text.cpp")
 
 target_sources(${PROJECT_NAME} PRIVATE "input/mouse.cpp")
+
+target_sources(${PROJECT_NAME} PRIVATE "assets/asset_manager.cpp")
