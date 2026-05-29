@@ -1,7 +1,7 @@
 add_executable(${PROJECT_NAME} "main.cpp")
 target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic -Werror)
 
-target_link_libraries(${PROJECT_NAME} PRIVATE sfml-graphics sfml-system sfml-window)
+target_link_libraries(${PROJECT_NAME} PRIVATE sfml-graphics sfml-system sfml-window sfml-audio)
 target_link_libraries(${PROJECT_NAME} PRIVATE GSL)
 # target_link_libraries(${PROJECT_NAME} PRIVATE nlohmann::json)
 

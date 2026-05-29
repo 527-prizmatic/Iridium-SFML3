@@ -6,6 +6,9 @@
 #include "Iridium/rendering/model_renderer.hpp"
 #include "Iridium/rendering/text.hpp"
 
+#include "Iridium/assets/asset_manager.hpp"
+#include "Iridium/assets/sound_manager.hpp"
+
 class CoreState : public ir::StateBase<CoreState> {
 public:
 	void onInitialize() {
@@ -18,7 +21,7 @@ public:
 
 		modelRenderer_ = std::make_unique<ir::render::ModelRenderer>();
 	//	modelRenderer_->setModel(ir::render::Model::testTriangle());
-		modelRenderer_->setModel(ir::render::Model::loadFromFile("text"));
+		modelRenderer_->setModel(ir::render::Model::loadFromFile("..\\text\\text_g_lower"));
 		modelRenderer_->setScale(10.f);
 
 		text_ = std::make_unique<ir::render::Text>();
@@ -26,6 +29,8 @@ public:
 	//	text_->setString("abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ");
 		text_->setPosition(ir::Vector{ 10.f, 10.f });
 		text_->setScale(3.f);
+
+		sfx_ = context_->assetManager->registerAsset<ir::SoundAsset, ir::SoundHandle>("linnk.wav");
 	}
 	
 	void onReceiveEvent(const sf::Event& event) {
@@ -35,6 +40,8 @@ public:
 			} else {
 				modelRenderer_->setAngle(modelRenderer_->getAngle() + ir::math::pi * .1f);
 				LOG_INFO(std::to_string(modelRenderer_->getAngle()));
+
+				context_->soundManager->playSound(sfx_);
 			}
 		}
 	}
@@ -56,6 +63,8 @@ private:
 	std::unique_ptr<ir::render::Rectangle> rec_;
 	std::unique_ptr<ir::render::ModelRenderer> modelRenderer_;
 	std::unique_ptr<ir::render::Text> text_;
+
+	ir::SoundHandle sfx_ {};
 };
 
 #endif // PROJECT_TESTSTATE_HPP_

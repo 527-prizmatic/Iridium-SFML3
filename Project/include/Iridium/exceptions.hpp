@@ -10,11 +10,21 @@ namespace ir {
 			const char * what() { return "Attempted to use invalid render target"; }
 		};
 		
-		class BadResourceID : public std::exception {
+		class BadAssetHandle : public std::exception {
 		public:
-			BadResourceID(std::string what) : what_ { what } {}
+			BadAssetHandle(std::string what) : what_ { what } {}
 
 			const char * what() { return std::string{ "Requested resource ID \"" + what_ + "\" does not exist" }.c_str(); }
+
+		private:
+			std::string what_ {};
+		};
+		
+		class BadAssetType : public std::exception {
+		public:
+			BadAssetType(std::string what) : what_ { what } {}
+
+			const char * what() { return std::string{ "Provided type \"" + what_ + "\" is not an asset type" }.c_str(); }
 
 		private:
 			std::string what_ {};
