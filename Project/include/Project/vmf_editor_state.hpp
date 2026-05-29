@@ -12,6 +12,7 @@
 #include "Project/vmf_editor/icon_button.hpp"
 #include "Project/vmf_editor/toolbar.hpp"
 #include "Project/vmf_editor/editor_model.hpp"
+#include "Project/vmf_editor/color_picker.hpp"
 
 #include "Project/vmf_editor/ui_button_factory.hpp"
 
@@ -25,36 +26,39 @@ public:
 		drawArea_ = std::make_unique<vmf::DrawArea>(&*vmfContext_);
 		vmfContext_->posOffset = context_->appWindow->getSize() * .5f / vmfContext_->zoomFactor;
 
-		toolbarTop = std::make_unique<vmf::Toolbar>(&*vmfContext_);
-		toolbarTop->setPosition(ir::Vector { 2.f, 2.f });
-		toolbarTop->setSize(ir::Vector { 1276.f, 36.f });
-		toolbarTop->setButtonSize(120.f);
+		toolbarTop_ = std::make_unique<vmf::Toolbar>(&*vmfContext_);
+		toolbarTop_->setPosition(ir::Vector { 2.f, 2.f });
+		toolbarTop_->setSize(ir::Vector { 1276.f, 36.f });
+		toolbarTop_->setButtonSize(120.f);
 
-		toolbarTop->addButton(std::move(vmf::produceTextButton(&*vmfContext_, "Discard", vmf::UserEvent::MODEL_DISCARD, sf::Color::Red)));
-		toolbarTop->addButton(std::move(vmf::produceTextButton(&*vmfContext_, "Save", vmf::UserEvent::MODEL_SAVE, sf::Color::Green)));
+		toolbarTop_->addButton(std::move(vmf::produceTextButton(&*vmfContext_, "Discard", vmf::UserEvent::MODEL_DISCARD, sf::Color::Red)));
+		toolbarTop_->addButton(std::move(vmf::produceTextButton(&*vmfContext_, "Save", vmf::UserEvent::MODEL_SAVE, sf::Color::Green)));
 		
-		toolbarBottom = std::make_unique<vmf::Toolbar>(&*vmfContext_);
-		toolbarBottom->setPosition(ir::Vector { 2.f, 672.f });
-		toolbarBottom->setSize(ir::Vector { 1276.f, 46.f });
-		toolbarBottom->setButtonSize(42.f);
+		toolbarBottom_ = std::make_unique<vmf::Toolbar>(&*vmfContext_);
+		toolbarBottom_->setPosition(ir::Vector { 2.f, 672.f });
+		toolbarBottom_->setSize(ir::Vector { 1276.f, 46.f });
+		toolbarBottom_->setButtonSize(42.f);
 
-		toolbarBottom->addButton(std::move(vmf::produceToolButton(&*vmfContext_, "ui_point", [&](vmf::Context* context){ context->drawingType = ir::render::Component::Type::POINT; }, sf::Color::Green)));
-		toolbarBottom->addButton(std::move(vmf::produceToolButton(&*vmfContext_, "ui_line", [&](vmf::Context* context){ context->drawingType = ir::render::Component::Type::LINE; }, sf::Color::Cyan)));
-		toolbarBottom->addButton(std::move(vmf::produceToolButton(&*vmfContext_, "ui_tri", [&](vmf::Context* context){ context->drawingType = ir::render::Component::Type::TRIANGLE; }, sf::Color::Blue)));
+		toolbarBottom_->addButton(std::move(vmf::produceToolButton(&*vmfContext_, "ui_point", [&](vmf::Context* context){ context->drawingType = ir::render::Component::Type::POINT; }, sf::Color::Green)));
+		toolbarBottom_->addButton(std::move(vmf::produceToolButton(&*vmfContext_, "ui_line", [&](vmf::Context* context){ context->drawingType = ir::render::Component::Type::LINE; }, sf::Color::Cyan)));
+		toolbarBottom_->addButton(std::move(vmf::produceToolButton(&*vmfContext_, "ui_tri", [&](vmf::Context* context){ context->drawingType = ir::render::Component::Type::TRIANGLE; }, sf::Color::Blue)));
 
-		toolbarSave = std::make_unique<vmf::Toolbar>(&*vmfContext_);
-		toolbarSave->setPosition(ir::Vector { 2.f, 42.f });
-		toolbarSave->setSize(ir::Vector { 512.f, 36.f });
-		toolbarSave->setButtonSize(80.f);
+		toolbarSave_ = std::make_unique<vmf::Toolbar>(&*vmfContext_);
+		toolbarSave_->setPosition(ir::Vector { 2.f, 42.f });
+		toolbarSave_->setSize(ir::Vector { 512.f, 36.f });
+		toolbarSave_->setButtonSize(80.f);
 
-		toolbarSave->addButton(std::move(vmf::produceTextButton(&*vmfContext_, std::string{}, [](vmf::Context* context){}, sf::Color(192u, 192u, 192u))), 340.f);
-		toolbarSave->addButton(std::move(vmf::produceTextButton(&*vmfContext_, "Save", vmf::UserEvent::CONFIRM_MODEL_SAVE, sf::Color::Green)));
-		toolbarSave->addButton(std::move(vmf::produceTextButton(&*vmfContext_, "Cancel", vmf::UserEvent::CANCEL_MODEL_SAVE, sf::Color::Red)));
+		toolbarSave_->addButton(std::move(vmf::produceTextButton(&*vmfContext_, std::string{}, [](vmf::Context* context){}, sf::Color(192u, 192u, 192u))), 340.f);
+		toolbarSave_->addButton(std::move(vmf::produceTextButton(&*vmfContext_, "Save", vmf::UserEvent::CONFIRM_MODEL_SAVE, sf::Color::Green)));
+		toolbarSave_->addButton(std::move(vmf::produceTextButton(&*vmfContext_, "Cancel", vmf::UserEvent::CANCEL_MODEL_SAVE, sf::Color::Red)));
 
 		rectOverlay_ = std::make_unique<ir::render::Rectangle>();
 		rectOverlay_->setSize(1280.f, 720.f);
 		rectOverlay_->setColor(sf::Color(0u, 0u, 0u, 64u));
 		rectOverlay_->setMode(ir::render::Mode::SOLID);
+
+		colorPicker_ = std::make_unique<vmf::ColorPicker>(&*vmfContext_);
+		colorPicker_->setPosition(ir::Vector{ 2.f, 572.f });
 	}
 	
 	void onReceiveEvent(const sf::Event& event) {
@@ -84,10 +88,8 @@ public:
 		}
 		else if (event.is<sf::Event::TextEntered>()) {
 			auto e = event.getIf<sf::Event::TextEntered>();
-			vmf::TextButton* saveTextField_ = dynamic_cast<vmf::TextButton*>(toolbarSave->getButton(0));
+			vmf::TextButton* saveTextField_ = dynamic_cast<vmf::TextButton*>(toolbarSave_->getButton(0));
 			std::string current = saveTextField_->getLabel();
-
-			LOG_INFO(std::to_string(static_cast<int>(e->unicode)));
 
 			if (e->unicode == 13) {
 				vmfContext_->registerEvent(vmf::UserEvent::CONFIRM_MODEL_SAVE);
@@ -113,8 +115,9 @@ public:
 	void onUpdate() {
 		if (!vmfContext_->saveMode) {
 			bool canDraw = true;
-			if (toolbarTop->processMouseInput(context_->mouseInput) ||
-				toolbarBottom->processMouseInput(context_->mouseInput)) {
+			if (toolbarTop_->processMouseInput(context_->mouseInput) ||
+				toolbarBottom_->processMouseInput(context_->mouseInput) ||
+				colorPicker_->processMouseInput(context_->mouseInput)) {
 				canDraw = false;
 			}
 
@@ -123,7 +126,7 @@ public:
 			}
 		}
 		else {
-			toolbarSave->processMouseInput(context_->mouseInput);
+			toolbarSave_->processMouseInput(context_->mouseInput);
 		}
 
 		while (vmfContext_->events.size() != 0) {
@@ -139,6 +142,7 @@ public:
 			LOG_WARN("Model save not yet implemented, debugging purposes only");
 
 			vmfContext_->saveMode = true;
+			dynamic_cast<vmf::TextButton*>(toolbarSave_->getButton(0))->setLabel("");
 
 			LOG_INFO("Entering model save mode");
 
@@ -153,7 +157,7 @@ public:
 			LOG_INFO("Component input validated");
 		}
 		else if (evt == vmf::UserEvent::CONFIRM_MODEL_SAVE) {
-			std::string_view filename = dynamic_cast<vmf::TextButton*>(toolbarSave->getButton(0))->getLabel();
+			std::string_view filename = dynamic_cast<vmf::TextButton*>(toolbarSave_->getButton(0))->getLabel();
 			if (filename.size() == 0) {
 				filename = "model";
 			}
@@ -177,12 +181,13 @@ public:
 	void onRender() {
 		drawArea_->render(*context_->vertexRenderer, context_->mouseInput->getCursorPosition());
 		editorModel_->render(*context_->vertexRenderer);
-		toolbarTop->render(*context_->vertexRenderer);
-		toolbarBottom->render(*context_->vertexRenderer);
+		toolbarTop_->render(*context_->vertexRenderer);
+		toolbarBottom_->render(*context_->vertexRenderer);
+		colorPicker_->render(*context_->vertexRenderer);
 
 		if (vmfContext_->saveMode) {
 			rectOverlay_->render(*context_->vertexRenderer);
-			toolbarSave->render(*context_->vertexRenderer);
+			toolbarSave_->render(*context_->vertexRenderer);
 		}
 	}
 		
@@ -199,9 +204,11 @@ private:
 	std::unique_ptr<vmf::DrawArea> drawArea_;
 	std::unique_ptr<vmf::EditorModel> editorModel_;
 
-	std::unique_ptr<vmf::Toolbar> toolbarTop;
-	std::unique_ptr<vmf::Toolbar> toolbarBottom;
-	std::unique_ptr<vmf::Toolbar> toolbarSave;
+	std::unique_ptr<vmf::Toolbar> toolbarTop_;
+	std::unique_ptr<vmf::Toolbar> toolbarBottom_;
+	std::unique_ptr<vmf::Toolbar> toolbarSave_;
+
+	std::unique_ptr<vmf::ColorPicker> colorPicker_;
 
 	std::unique_ptr<ir::render::Rectangle> rectOverlay_;
 };

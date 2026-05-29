@@ -53,7 +53,7 @@ namespace vmf {
 		if (mouseInput->isPressed(sf::Mouse::Button::Left)) {
 			sf::Vector2i clickPos { screenToGrid(mouseInput->getCursorPosition() + ir::Vector(.5f, .5f) * context_->zoomFactor) };
 			/// @todo Add color selection
-			context_->vertexList.push_back(ir::render::Vertex(clickPos.x, clickPos.y, sf::Color::White));
+			context_->vertexList.push_back(ir::render::Vertex(clickPos.x, clickPos.y, context_->drawColor));
 
 			auto tryValidate = [&](size_t count) {
 				if (context_->vertexList.size() == count) {

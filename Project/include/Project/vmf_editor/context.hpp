@@ -13,7 +13,6 @@ namespace vmf {
 		COMPONENT_VALIDATE,
 		CONFIRM_MODEL_SAVE,
 		CANCEL_MODEL_SAVE,
-		
 	};
 
 	struct Context {
@@ -24,6 +23,8 @@ namespace vmf {
 		std::list<vmf::UserEvent> events;
 
 		ir::render::Component::Type drawingType { ir::render::Component::Type::TRIANGLE };
+
+		sf::Color drawColor { sf::Color::White };
 
 		bool saveMode { false };
 

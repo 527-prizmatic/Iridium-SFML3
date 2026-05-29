@@ -2,7 +2,6 @@
 #include "Project/vmf_editor/ui_button.hpp"
 
 #include "Iridium/rendering/rectangle.hpp"
-#include "Iridium/rendering/vertex_renderer.hpp"
 #include "Iridium/rendering/text.hpp"
 #include "Iridium/input/mouse.hpp"
 

@@ -51,9 +51,13 @@ namespace ir::render {
 		if (c >= 'a' && c <= 'z') {
 			sstr << "text_" << static_cast<char>(c);
 			sstr << "_lower";
-		} else if (c >= 'A' && c <= 'Z') {
+		}
+		else if (c >= 'A' && c <= 'Z') {
 			sstr << "text_" << static_cast<char>(c + 32u);
 			sstr << "_upper";
+		}
+		else if (c >= '0' && c <= '9') {
+			sstr << c;
 		}
 		else {
 			sstr << "lol_no";
