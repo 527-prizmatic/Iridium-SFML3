@@ -15,7 +15,7 @@ namespace ir {
 	}
 
 	void SoundManager::playSound(ir::SoundHandle handle) {
-		sf::SoundBuffer* buf = manager_->getAsset<ir::SoundAsset>(handle);
+		sf::SoundBuffer* buf = manager_->getSound(handle);
 		if (buf) {
 			playBuffer_.push_front(sf::Sound{ *buf });
 			playBuffer_.begin()->play();

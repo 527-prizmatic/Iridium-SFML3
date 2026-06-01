@@ -50,4 +50,27 @@ namespace ir {
 	ir::SoundHandle AssetManager::registerSound(std::string_view name) { return registerAsset<ir::SoundAsset, ir::SoundHandle>(name); }
 	ir::SoundAsset* AssetManager::getSound(ir::SoundHandle name) { return getAsset<ir::SoundAsset, ir::SoundHandle>(name); }
 #pragma endregion
+
+#pragma region sf::Music
+	template <>
+	ir::MusicHandle AssetManager::registerAsset<ir::MusicAsset, ir::MusicHandle>(std::string_view name) {
+		ir::MusicHandle handle = std::hash<std::string>{}(name.data());
+		if (musics_.find(handle) != musics_.end()) {
+			throw name.data();
+		}
+		musics_[handle] = std::make_unique<ir::MusicAsset>("..\\resources\\sounds\\" + std::string(name.data()));
+		return handle;
+	}
+
+	template <>
+	ir::MusicAsset* AssetManager::getAsset<ir::MusicAsset, ir::MusicHandle>(ir::MusicHandle handle) {
+		if (musics_.find(handle) == musics_.end()) {
+			return nullptr;
+		}
+		return &*musics_.at(handle);
+	}
+	
+	ir::MusicHandle AssetManager::registerMusic(std::string_view name) { return registerAsset<ir::MusicAsset, ir::MusicHandle>(name); }
+	ir::MusicAsset* AssetManager::getMusic(ir::MusicHandle name) { return getAsset<ir::MusicAsset, ir::MusicHandle>(name); }
+#pragma endregion
 }

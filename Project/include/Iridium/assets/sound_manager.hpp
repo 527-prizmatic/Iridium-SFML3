@@ -10,6 +10,10 @@ namespace ir {
 	public:
 		SoundManager(ir::AssetManager* manager);
 
+		~SoundManager() {
+			stopAllSounds();
+		}
+
 		void update();
 
 		void playSound(ir::SoundHandle handle);

@@ -30,7 +30,7 @@ public:
 		text_->setPosition(ir::Vector{ 10.f, 10.f });
 		text_->setScale(3.f);
 
-		sfx_ = context_->assetManager->registerAsset<ir::SoundAsset, ir::SoundHandle>("linnk.wav");
+		sfx_ = context_->assetManager->registerSound("linnk.wav");
 	}
 	
 	void onReceiveEvent(const sf::Event& event) {
