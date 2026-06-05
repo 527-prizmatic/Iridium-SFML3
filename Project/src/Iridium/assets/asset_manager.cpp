@@ -25,7 +25,7 @@ namespace ir {
 	}
 	
 	ir::TextureHandle AssetManager::registerTexture(std::string_view name) { return registerAsset<ir::TextureAsset, ir::TextureHandle>(name); }
-	ir::TextureAsset* AssetManager::getTexture(ir::TextureHandle name) { return getAsset<ir::TextureAsset, ir::TextureHandle>(name); }
+	ir::TextureAsset* AssetManager::getTexture(ir::TextureHandle handle) { return getAsset<ir::TextureAsset, ir::TextureHandle>(handle); }
 #pragma endregion
 
 #pragma region sf::SoundBuffer
@@ -48,7 +48,7 @@ namespace ir {
 	}
 	
 	ir::SoundHandle AssetManager::registerSound(std::string_view name) { return registerAsset<ir::SoundAsset, ir::SoundHandle>(name); }
-	ir::SoundAsset* AssetManager::getSound(ir::SoundHandle name) { return getAsset<ir::SoundAsset, ir::SoundHandle>(name); }
+	ir::SoundAsset* AssetManager::getSound(ir::SoundHandle handle) { return getAsset<ir::SoundAsset, ir::SoundHandle>(handle); }
 #pragma endregion
 
 #pragma region sf::Music
@@ -58,7 +58,7 @@ namespace ir {
 		if (musics_.find(handle) != musics_.end()) {
 			throw name.data();
 		}
-		musics_[handle] = std::make_unique<ir::MusicAsset>("..\\resources\\sounds\\" + std::string(name.data()));
+		musics_[handle] = std::make_unique<ir::MusicAsset>("..\\resources\\music\\" + std::string(name.data()));
 		return handle;
 	}
 
@@ -71,6 +71,48 @@ namespace ir {
 	}
 	
 	ir::MusicHandle AssetManager::registerMusic(std::string_view name) { return registerAsset<ir::MusicAsset, ir::MusicHandle>(name); }
-	ir::MusicAsset* AssetManager::getMusic(ir::MusicHandle name) { return getAsset<ir::MusicAsset, ir::MusicHandle>(name); }
+	ir::MusicAsset* AssetManager::getMusic(ir::MusicHandle handle) { return getAsset<ir::MusicAsset, ir::MusicHandle>(handle); }
+#pragma endregion
+
+#pragma region Music playback
+	void AssetManager::playMusic(ir::MusicHandle handle) {
+		auto music = getMusic(handle);
+		if (music == nullptr) {
+			throw ir::Exceptions::BadAssetHandle(std::to_string(handle));
+		}
+		music->play();
+	}
+
+	void AssetManager::pauseMusic(ir::MusicHandle handle) {
+		auto music = getMusic(handle);
+		if (music == nullptr) {
+			throw ir::Exceptions::BadAssetHandle(std::to_string(handle));
+		}
+		music->pause();
+	}
+	
+	void AssetManager::stopMusic(ir::MusicHandle handle) {
+		auto music = getMusic(handle);
+		if (music == nullptr) {
+			throw ir::Exceptions::BadAssetHandle(std::to_string(handle));
+		}
+		music->stop();
+	}
+	
+	void AssetManager::setMusicVolume(ir::MusicHandle handle, float volume) {
+		auto music = getMusic(handle);
+		if (music == nullptr) {
+			throw ir::Exceptions::BadAssetHandle(std::to_string(handle));
+		}
+		music->setVolume(ir::math::clamp(volume, 0.f, 100.f));
+	}
+
+	sf::Music::Status AssetManager::getMusicStatus(ir::MusicHandle handle) {
+		auto music = getMusic(handle);
+		if (music == nullptr) {
+			throw ir::Exceptions::BadAssetHandle(std::to_string(handle));
+		}
+		return music->getStatus();
+	}
 #pragma endregion
 }

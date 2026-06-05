@@ -31,13 +31,35 @@ public:
 		text_->setScale(3.f);
 
 		sfx_ = context_->assetManager->registerSound("linnk.wav");
+		music1_ = context_->assetManager->registerMusic("bonk.ogg");
+		music2_ = context_->assetManager->registerMusic("capaphonk.ogg");
 	}
 	
 	void onReceiveEvent(const sf::Event& event) {
 		if (event.is<sf::Event::KeyReleased>()) {
-			if (event.getIf<sf::Event::KeyReleased>()->code == sf::Keyboard::Key::Escape) {
+			auto code = event.getIf<sf::Event::KeyReleased>()->code;
+			if (code == sf::Keyboard::Key::Escape) {
 				meta_exit();
-			} else {
+			}
+			else if (code == sf::Keyboard::Key::Numpad1) {
+				context_->assetManager->playMusic(music1_);
+			}
+			else if (code == sf::Keyboard::Key::Numpad2) {
+				context_->assetManager->playMusic(music2_);
+			}
+			else if (code == sf::Keyboard::Key::Numpad4) {
+				context_->assetManager->pauseMusic(music1_);
+			}
+			else if (code == sf::Keyboard::Key::Numpad5) {
+				context_->assetManager->pauseMusic(music2_);
+			}
+			else if (code == sf::Keyboard::Key::Numpad7) {
+				context_->assetManager->stopMusic(music1_);
+			}
+			else if (code == sf::Keyboard::Key::Numpad8) {
+				context_->assetManager->stopMusic(music2_);
+			}
+			else {
 				modelRenderer_->setAngle(modelRenderer_->getAngle() + ir::math::pi * .1f);
 				LOG_INFO(std::to_string(modelRenderer_->getAngle()));
 
@@ -65,6 +87,9 @@ private:
 	std::unique_ptr<ir::render::Text> text_;
 
 	ir::SoundHandle sfx_ {};
+
+	ir::MusicHandle music1_ {};
+	ir::MusicHandle music2_ {};
 };
 
 #endif // PROJECT_TESTSTATE_HPP_

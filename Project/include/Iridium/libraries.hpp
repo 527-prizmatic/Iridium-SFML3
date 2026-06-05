@@ -24,6 +24,7 @@
 
 // Base-level Iridium components
 #include "Iridium/log.hpp"
+#include "Iridium/math.hpp"
 
 namespace ir {
 	using TextureHandle = uint32_t;

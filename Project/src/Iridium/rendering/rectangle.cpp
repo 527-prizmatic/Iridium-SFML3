@@ -1,5 +1,4 @@
 #include "Iridium/rendering/rectangle.hpp"
-#include "Iridium/math.hpp"
 #include "Iridium/rendering/vertex_renderer.hpp"
 
 namespace ir {

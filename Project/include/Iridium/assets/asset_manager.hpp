@@ -13,13 +13,19 @@ namespace ir {
 		void deleteAsset(T handle) {}
 
 		ir::TextureHandle registerTexture(std::string_view name);
-		ir::TextureAsset* getTexture(ir::TextureHandle name);
+		ir::TextureAsset* getTexture(ir::TextureHandle handle);
 
 		ir::SoundHandle registerSound(std::string_view name);
-		ir::SoundAsset* getSound(ir::SoundHandle name);
+		ir::SoundAsset* getSound(ir::SoundHandle handle);
 		
 		ir::MusicHandle registerMusic(std::string_view name);
-		ir::MusicAsset* getMusic(ir::MusicHandle name);
+		ir::MusicAsset* getMusic(ir::MusicHandle handle);
+
+		void playMusic(ir::MusicHandle handle);
+		void pauseMusic(ir::MusicHandle handle);
+		void stopMusic(ir::MusicHandle handle);
+		void setMusicVolume(ir::MusicHandle handle, float volume);
+		sf::Music::Status getMusicStatus(ir::MusicHandle handle);
 
 	private:
 		/// @brief Generic template for registering new assets to resource buffers.
@@ -50,7 +56,6 @@ namespace ir {
 
 	template <> ir::MusicHandle AssetManager::registerAsset<ir::MusicAsset, ir::MusicHandle>(std::string_view name);
 	template <> ir::MusicAsset* AssetManager::getAsset<ir::MusicAsset, ir::MusicHandle>(ir::MusicHandle handle);
-
 }
 
 #endif // IRIDIUM_ASSET_MANAGER_HPP_
