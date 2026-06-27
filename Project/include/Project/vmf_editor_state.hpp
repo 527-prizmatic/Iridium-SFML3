@@ -176,6 +176,11 @@ public:
 
 			LOG_INFO("File saving canceled");
 		}
+		else if (evt == vmf::UserEvent::ADD_CURRENT_TO_PALETTE) {
+			colorPicker_->addToPalette();
+
+			LOG_INFO("Added current color to palette");
+		}
 	}
 
 	void onRender() {

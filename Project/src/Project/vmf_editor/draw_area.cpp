@@ -8,15 +8,18 @@ namespace vmf {
 		context_ = context;
 		gridRenderer_ = std::make_unique<ir::render::ModelRenderer>();
 		gridRenderer_->setModel(std::move(assembleGridModel()));
+
+		createGuide(vmf::DrawGuide::Orientation::VERTICAL, 4);
+		createGuide(vmf::DrawGuide::Orientation::VERTICAL, 8);
+		createGuide(vmf::DrawGuide::Orientation::HORIZONTAL, 2);
+		createGuide(vmf::DrawGuide::Orientation::HORIZONTAL, 6);
+		createGuide(vmf::DrawGuide::Orientation::HORIZONTAL, 10);
+		createGuide(vmf::DrawGuide::Orientation::HORIZONTAL, 14);
 	}
 
 	ir::render::Model DrawArea::assembleGridModel() {
 		using namespace ir::render;
 		Model model {};
-
-		static const sf::Color colorGridBase { 255u, 255u, 255u, 16u };
-		static const sf::Color colorGridMedium { 255u, 224u, 224u, 64u };
-		static const sf::Color colorGridAxes { 255u, 0u, 0u, 255u };
 
 		auto addAxesComponents = [&](short offset, sf::Color clr) {
 			model.addComponent(std::move(Component { Vertex(-128, offset, clr), Vertex(128, offset, clr) }));
@@ -24,13 +27,13 @@ namespace vmf {
 		};
 
 		for (short i = -128; i < 128; i++) {
-			addAxesComponents(i, colorGridBase);
+			addAxesComponents(i, colors_.gridBase);
 			if (i % 4 == 0) {
-				addAxesComponents(i, colorGridMedium);
+				addAxesComponents(i, colors_.gridMedium);
 			}
 		}
 
-		addAxesComponents(0, colorGridAxes);
+		addAxesComponents(0, colors_.gridAxes);
 
 		return model;
 	}
@@ -58,6 +61,7 @@ namespace vmf {
 			auto tryValidate = [&](size_t count) {
 				if (context_->vertexList.size() == count) {
 					context_->registerEvent(vmf::UserEvent::COMPONENT_VALIDATE);
+					context_->registerEvent(vmf::UserEvent::ADD_CURRENT_TO_PALETTE);
 				}
 			};
 
@@ -83,33 +87,50 @@ namespace vmf {
 		gridRenderer_->setPosition(context_->posOffset * context_->zoomFactor);
 		gridRenderer_->render(renderer);
 
+		drawGuides(renderer);
+
 		/// @todo Render drawing preview for points and lines
 		mousePos += ir::Vector(.5f, .5f) * context_->zoomFactor;
 		if (context_->drawingType == ir::render::Component::Type::LINE) {
 			if (context_->vertexList.size() == 1) {
 				renderer.reset();
-				renderer.addPoint(gridToScreen(context_->vertexList[0].getPosition()), sf::Color::Cyan);
-				renderer.addPoint(gridToScreen(screenToGrid(mousePos)), sf::Color::Cyan);
+				renderer.addPoint(gridToScreen(context_->vertexList[0].getPosition()), colors_.drawPreview);
+				renderer.addPoint(gridToScreen(screenToGrid(mousePos)), colors_.drawPreview);
 				renderer.flush();
 			}
 		} else if (context_->drawingType == ir::render::Component::Type::TRIANGLE) {
 			renderer.reset();
 			if (context_->vertexList.size() >= 1) {
-				renderer.addPoint(gridToScreen(context_->vertexList[0].getPosition()), sf::Color::Cyan);
-				renderer.addPoint(gridToScreen(screenToGrid(mousePos)), sf::Color::Cyan);
+				renderer.addPoint(gridToScreen(context_->vertexList[0].getPosition()), colors_.drawPreview);
+				renderer.addPoint(gridToScreen(screenToGrid(mousePos)), colors_.drawPreview);
 			}
 			if (context_->vertexList.size() >= 2) {
-				renderer.addPoint(gridToScreen(context_->vertexList[1].getPosition()), sf::Color::Cyan);
-				renderer.addPoint(gridToScreen(screenToGrid(mousePos)), sf::Color::Cyan);
-				renderer.addPoint(gridToScreen(context_->vertexList[1].getPosition()), sf::Color::Cyan);
-				renderer.addPoint(gridToScreen(context_->vertexList[0].getPosition()), sf::Color::Cyan);
+				renderer.addPoint(gridToScreen(context_->vertexList[1].getPosition()), colors_.drawPreview);
+				renderer.addPoint(gridToScreen(screenToGrid(mousePos)), colors_.drawPreview);
+				renderer.addPoint(gridToScreen(context_->vertexList[1].getPosition()), colors_.drawPreview);
+				renderer.addPoint(gridToScreen(context_->vertexList[0].getPosition()), colors_.drawPreview);
 			}
-				renderer.flush();
+			renderer.flush();
 		}
 	}
 
+	void DrawArea::drawGuides(ir::render::VertexRenderer& renderer) {
+		renderer.reset();
+		for (auto guide : guides_) {
+			if (guide.orientation == vmf::DrawGuide::Orientation::HORIZONTAL) {
+				renderer.addPoint(gridToScreen(sf::Vector2i { -128, guide.position }), colors_.guides);
+				renderer.addPoint(gridToScreen(sf::Vector2i { 128, guide.position }), colors_.guides);
+			}
+			else if (guide.orientation == vmf::DrawGuide::Orientation::VERTICAL) {
+				renderer.addPoint(gridToScreen(sf::Vector2i { guide.position, -128 }), colors_.guides);
+				renderer.addPoint(gridToScreen(sf::Vector2i { guide.position, 128 }), colors_.guides);
+			}
+		}
+		renderer.flush();
+	}
+
 	void DrawArea::zoom(float delta, ir::Vector mousePos) {
-		ir::Vector cursorPosGrid = screenToGridFloat(mousePos);
+		ir::Vector cursorPosGrid { screenToGridFloat(mousePos) };
 
 		context_->zoomFactor *= std::powf(1.1f, delta);
 		context_->posOffset /= std::powf(1.1f, delta);
@@ -150,5 +171,9 @@ namespace vmf {
 		}
 		ir::Vector grid { screen.x, screen.y };
 		return grid;
+	}
+
+	void DrawArea::createGuide(DrawGuide::Orientation orientation, short position) {
+		guides_.push_back(vmf::DrawGuide { orientation, position });
 	}
 }

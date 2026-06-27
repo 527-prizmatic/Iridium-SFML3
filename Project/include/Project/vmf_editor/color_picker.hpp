@@ -15,8 +15,12 @@ namespace vmf {
 
 		void setPosition(ir::Vector topLeftCorner);
 
+		void addToPalette();
+		void addToPalette(sf::Color clr);
+
 	private:
 
+		std::vector<sf::Color> palette_;
 
 		std::array<ir::Vector, 4> knobPos_ { };
 		
@@ -31,6 +35,9 @@ namespace vmf {
 		char selected { -1 };
 
 		void computeKnobPositions();
+
+		void drawPalette(ir::render::VertexRenderer& renderer);
+		void drawPaletteColor(ir::render::VertexRenderer& renderer, sf::Color clr, unsigned int pos);
 	};
 }
 

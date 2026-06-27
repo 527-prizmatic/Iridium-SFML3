@@ -23,6 +23,10 @@ namespace vmf {
 			} else if (event->code == sf::Keyboard::Key::Down) {
 				moveModel(0, increment);
 			}
+
+			else if (event->code == sf::Keyboard::Key::Z) {
+				removeLastComponent();
+			}
 		}
 	}
 

@@ -13,6 +13,7 @@ namespace vmf {
 		COMPONENT_VALIDATE,
 		CONFIRM_MODEL_SAVE,
 		CANCEL_MODEL_SAVE,
+		ADD_CURRENT_TO_PALETTE,
 	};
 
 	struct Context {
