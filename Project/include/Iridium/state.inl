@@ -49,7 +49,7 @@ namespace ir {
 				}
 
 				void onEnd() override {
-					value.onInitialize();
+					value.onEnd();
 				}
 
 				void meta_setStateMachine(ir::StateMachine* stateMachine) override {
@@ -88,7 +88,7 @@ namespace ir {
 			}
 
 			void onEnd() {
-				self_->onInitialize();
+				self_->onEnd();
 			}
 
 			void meta_setStateMachine(ir::StateMachine* stateMachine) {

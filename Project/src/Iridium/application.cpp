@@ -12,12 +12,17 @@ namespace ir {
 
 		initializeComponent(mouseInput_);
 
+		initializeComponent(assetManager_);
+		initializeComponent(soundManager_, &*assetManager_);
+
 		initializeComponent(stateMachine_);
 
 		context_.appWindow = &*appWindow_;
 		context_.gameClock = &*gameClock_;
 		context_.mouseInput = &*mouseInput_;
 		context_.vertexRenderer = &*vertexRenderer_;
+		context_.assetManager = &*assetManager_;
+		context_.soundManager = &*soundManager_;
 		
 		stateMachine_->registerContext(&context_);
 	}
@@ -35,6 +40,8 @@ namespace ir {
 			stateMachine_->handleEvents();
 			stateMachine_->update();
 			stateMachine_->render();
+
+			soundManager_->update();
 		}
 
 		stateMachine_->unload();
