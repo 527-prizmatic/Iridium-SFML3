@@ -138,7 +138,8 @@ public:
 		if (evt == vmf::UserEvent::DEBUG) {
 			LOG_INFO("Button debug");
 
-		} else if (evt == vmf::UserEvent::MODEL_SAVE) {
+		}
+		else if (evt == vmf::UserEvent::MODEL_SAVE) {
 			LOG_WARN("Model save not yet implemented, debugging purposes only");
 
 			vmfContext_->saveMode = true;
@@ -146,13 +147,21 @@ public:
 
 			LOG_INFO("Entering model save mode");
 
-		} else if (evt == vmf::UserEvent::MODEL_DISCARD) {
+		}
+		else if (evt == vmf::UserEvent::MODEL_DISCARD) {
 			editorModel_->clear();
+				vmfContext_->vertexList.clear();
 
 			LOG_INFO("Discarded model");
-		} else if (evt == vmf::UserEvent::COMPONENT_VALIDATE) {
+		}
+		else if (evt == vmf::UserEvent::COMPONENT_VALIDATE) {
 			editorModel_->addComponent(vmfContext_->inputToComponent());
-			vmfContext_->vertexList.clear();
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift)) {
+				vmfContext_->vertexList.erase(vmfContext_->vertexList.begin());
+			}
+			else {
+				vmfContext_->vertexList.clear();
+			}
 
 			LOG_INFO("Component input validated");
 		}
