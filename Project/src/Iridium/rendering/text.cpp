@@ -20,9 +20,12 @@ namespace ir::render {
 					}
 					model_.addComponent(std::move(cmp));
 				}
+					offset += letter.getWidth() + 1.f;
+			}
+			else {
+				offset += 5.f;
 			}
 
-			offset += 5.f;
 		}
 	}
 
@@ -49,15 +52,18 @@ namespace ir::render {
 		std::stringstream sstr;
 
 		if (c >= 'a' && c <= 'z') {
-			sstr << "text_" << static_cast<char>(c);
+			sstr << static_cast<char>(c);
 			sstr << "_lower";
 		}
 		else if (c >= 'A' && c <= 'Z') {
-			sstr << "text_" << static_cast<char>(c + 32u);
+			sstr << static_cast<char>(c + 32u);
 			sstr << "_upper";
 		}
 		else if (c >= '0' && c <= '9') {
 			sstr << c;
+		}
+		else if (c == '_') {
+			sstr << "underscore";
 		}
 		else {
 			sstr << "lol_no";

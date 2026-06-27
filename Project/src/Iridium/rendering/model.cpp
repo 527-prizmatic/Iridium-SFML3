@@ -84,5 +84,40 @@ namespace ir {
 
 			return model;
 		}
+		
+		float Model::getWidth() {
+			short min { 32767 }, max { -32768 };
+			
+			for (auto& c : components_) {
+				for (auto& v : c) {
+					if (v.x < min) {
+						min = v.x;
+					}
+					if (v.x > max) {
+						max = v.x;
+					}
+				}
+			}	
+
+			return max - min;
+
+		}
+
+		float Model::getHeight() {
+			short min { 32767 }, max { -32768 };
+
+			for (auto& c : components_) {
+				for (auto& v : c) {
+					if (v.y < min) {
+						min = v.y;
+					}
+					if (v.y > max) {
+						max = v.y;
+					}
+				}
+			}	
+
+			return max - min;
+		}
 	}
 }

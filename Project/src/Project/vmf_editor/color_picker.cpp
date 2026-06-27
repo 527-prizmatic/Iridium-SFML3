@@ -23,7 +23,7 @@ namespace vmf {
 		setPosition(ir::Vector{ 0.f, 50.f });
 
 		addToPalette(sf::Color::White);
-		addToPalette(sf::Color{ 255u, 255u, 255u, 128u });
+		addToPalette(sf::Color{ 255u, 255u, 255u, 64u });
 	}
 
 	bool ColorPicker::processMouseInput(ir::input::Mouse* mouseInput) {

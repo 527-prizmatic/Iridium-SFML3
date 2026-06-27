@@ -9,12 +9,13 @@ namespace vmf {
 		gridRenderer_ = std::make_unique<ir::render::ModelRenderer>();
 		gridRenderer_->setModel(std::move(assembleGridModel()));
 
-		createGuide(vmf::DrawGuide::Orientation::VERTICAL, 4);
-		createGuide(vmf::DrawGuide::Orientation::VERTICAL, 8);
-		createGuide(vmf::DrawGuide::Orientation::HORIZONTAL, 2);
-		createGuide(vmf::DrawGuide::Orientation::HORIZONTAL, 6);
+		createGuide(vmf::DrawGuide::Orientation::VERTICAL, 3);
+		createGuide(vmf::DrawGuide::Orientation::VERTICAL, 6);
+		createGuide(vmf::DrawGuide::Orientation::HORIZONTAL, 1);
+		createGuide(vmf::DrawGuide::Orientation::HORIZONTAL, 4);
+		createGuide(vmf::DrawGuide::Orientation::HORIZONTAL, 7);
 		createGuide(vmf::DrawGuide::Orientation::HORIZONTAL, 10);
-		createGuide(vmf::DrawGuide::Orientation::HORIZONTAL, 14);
+		createGuide(vmf::DrawGuide::Orientation::HORIZONTAL, 13);
 	}
 
 	ir::render::Model DrawArea::assembleGridModel() {
