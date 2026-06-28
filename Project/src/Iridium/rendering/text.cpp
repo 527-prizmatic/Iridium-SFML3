@@ -1,4 +1,5 @@
 #include "Iridium/rendering/text.hpp"
+#include "Iridium/exceptions.hpp"
 #include <sstream>
 
 namespace ir::render {
@@ -6,6 +7,7 @@ namespace ir::render {
 
 	std::string charToModelName(unsigned char c);
 	unsigned char modelNameToChar(std::string name);
+	Model placeholderLetter();
 
 	void Text::setString(std::string str) {
 		string_ = str;
@@ -40,9 +42,15 @@ namespace ir::render {
 		unsigned char c = ' ';
 		while (c != 255u) {
 			std::string name = charToModelName(c);
-			if (name != "lol_no") {
-				Model model { Model::loadFromFile(folder + name) };
-				modelSet_.emplace(c, std::make_unique<ir::render::Model>(std::move(model)));
+			if (name != "none") {
+				try {
+					Model model { Model::loadFromFile(folder + name) };
+					modelSet_.emplace(c, std::make_unique<ir::render::Model>(std::move(model)));
+				}
+				catch (ir::Exceptions::BadModelName& exc) {
+					LOG_ERROR(exc.what());
+					modelSet_.emplace(c, std::make_unique<ir::render::Model>(std::move(placeholderLetter())));
+				}
 			}
 			c++;
 		}
@@ -60,18 +68,57 @@ namespace ir::render {
 			sstr << "_upper";
 		}
 		else if (c >= '0' && c <= '9') {
-			sstr << c;
+			sstr << "digit_" << c;
 		}
 		else if (c == '_') {
 			sstr << "underscore";
 		}
+		else if (c == '.') {
+			sstr << "period";
+		}
+		else if (c == ',') {
+			sstr << "comma";
+		}
+		else if (c == '-') {
+			sstr << "hyphen";
+		}
+		else if (c == '!') {
+			sstr << "excl";
+		}
+		else if (c == '?') {
+			sstr << "question";
+		}
+		else if (c == '(') {
+			sstr << "l_bracket";
+		}
+		else if (c == ')') {
+			sstr << "r_bracket";
+		}
+		else if (c == ':') {
+			sstr << "colon";
+		}
+		else if (c == ';') {
+			sstr << "semicolon";
+		}
+		else if (c == '/') {
+			sstr << "slash";
+		}
 		else {
-			sstr << "lol_no";
+			sstr << "none";
 		}
 		return sstr.str();
 	}
 
 	unsigned char modelNameToChar(std::string name) {
 		return 'a';
+	}
+
+	Model placeholderLetter() {
+		Model model {};
+		model.addComponent(ir::render::Component(ir::render::Vertex{ 0, 2, sf::Color::White }, ir::render::Vertex{ 6, 2, sf::Color::White }));
+		model.addComponent(ir::render::Component(ir::render::Vertex{ 0, 2, sf::Color::White }, ir::render::Vertex{ 0, 11, sf::Color::White }));
+		model.addComponent(ir::render::Component(ir::render::Vertex{ 0, 11, sf::Color::White }, ir::render::Vertex{ 6, 11, sf::Color::White }));
+		model.addComponent(ir::render::Component(ir::render::Vertex{ 6, 2, sf::Color::White }, ir::render::Vertex{ 6, 11, sf::Color::White }));
+		return model;
 	}
 }

@@ -14,7 +14,7 @@ namespace ir {
 		public:
 			BadResourceID(std::string what) : what_ { what } {}
 
-			const char * what() { return std::string{ "Requested resource ID \"" + what_ + "\" does not exist" }.c_str(); }
+			const char * what() { return std::string { "Requested resource ID \"" + what_ + "\" does not exist" }.c_str(); }
 
 		private:
 			std::string what_ {};
@@ -24,7 +24,7 @@ namespace ir {
 		public:
 			BadStateID(std::string what) : what_ { what } {}
 
-			const char * what() { return std::string{ "State machine attempted to update nonexistent state \"" + what_ + "\"" }.c_str(); }
+			const char * what() { return std::string { "State machine attempted to update nonexistent state \"" + what_ + "\"" }.c_str(); }
 
 		private:
 			std::string what_ {};
@@ -34,7 +34,17 @@ namespace ir {
 		public:
 			InitializationError(std::string what) : what_ { what } {}
 
-			const char * what() { return std::string{ what_ + " failed to initialize properly" }.c_str(); }
+			const char * what() { return std::string { what_ + " failed to initialize properly" }.c_str(); }
+
+		private:
+			std::string what_ {};
+		};
+
+		class BadModelName : public std::exception {
+		public:
+			BadModelName(std::string what) : what_ { "Attempted to load unknown VMF file \"" + what + "\"" } {}
+
+			const char * what() { return what_.c_str(); }
 
 		private:
 			std::string what_ {};

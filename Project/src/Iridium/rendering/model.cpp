@@ -1,4 +1,5 @@
 #include "Iridium/rendering/model.hpp"
+#include "Iridium/exceptions.hpp"
 
 namespace ir {
 	namespace render {
@@ -37,7 +38,7 @@ namespace ir {
 			std::ifstream stream(path, std::ios::binary);
 			LOG_INFO(path.string());
 			if (stream.fail()) {
-				throw "pavouk";
+				throw ir::Exceptions::BadModelName(file);
 			}
 
 			Model model;
