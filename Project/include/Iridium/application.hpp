@@ -5,14 +5,21 @@
 #include "Iridium/time.hpp"
 #include "Iridium/input/mouse.hpp"
 #include "Iridium/rendering/vertex_renderer.hpp"
+#include "Iridium/assets/asset_manager.hpp"
+#include "Iridium/assets/sound_manager.hpp"
 #include "Iridium/exceptions.hpp"
 
 namespace ir {
+	class AssetManager;
+	class SoundManager;
+
 	struct ApplicationContext {
 		ir::ApplicationWindow* appWindow {};
 		ir::GameClock* gameClock {};
 		ir::input::Mouse* mouseInput {};
 		ir::render::VertexRenderer* vertexRenderer {};
+		ir::AssetManager* assetManager {};
+		ir::SoundManager* soundManager {};
 
 		float deltaTime() {
 			return gameClock->getDeltaTime();
@@ -42,6 +49,8 @@ namespace ir {
 		std::unique_ptr<ir::GameClock> gameClock_;
 		std::unique_ptr<ir::input::Mouse> mouseInput_;
 		std::unique_ptr<ir::render::VertexRenderer> vertexRenderer_;
+		std::unique_ptr<ir::AssetManager> assetManager_;
+		std::unique_ptr<ir::SoundManager> soundManager_;
 
 		template <typename T, typename... Args>
 		void initializeComponent(std::unique_ptr<T>& component, Args... args) {

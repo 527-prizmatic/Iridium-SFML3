@@ -5,6 +5,7 @@
 #include "Iridium/rendering/vertex_renderer.hpp"
 
 #include "Iridium/input/mouse.hpp"
+#include "Iridium/math.hpp"
 
 namespace vmf {
 	namespace {
@@ -74,10 +75,10 @@ namespace vmf {
 			}
 		}
 
-		context_->drawColor.r = ir::math::clamp(sliderPosToChar(knobPos_[0].x - 6.f + sliderSize_.x * .5f - position_.x), 0u, 255u);
-		context_->drawColor.g = ir::math::clamp(sliderPosToChar(knobPos_[1].x - 6.f + sliderSize_.x * .5f - position_.x), 0u, 255u);
-		context_->drawColor.b = ir::math::clamp(sliderPosToChar(knobPos_[2].x - 6.f + sliderSize_.x * .5f - position_.x), 0u, 255u);
-		context_->drawColor.a = ir::math::clamp(sliderPosToChar(knobPos_[3].x - 6.f + sliderSize_.x * .5f - position_.x), 0u, 255u);
+		context_->drawColor.r = ir::math::clamp(static_cast<unsigned int>(sliderPosToChar(knobPos_[0].x - 6.f + sliderSize_.x * .5f - position_.x)), 0u, 255u);
+		context_->drawColor.g = ir::math::clamp(static_cast<unsigned int>(sliderPosToChar(knobPos_[1].x - 6.f + sliderSize_.x * .5f - position_.x)), 0u, 255u);
+		context_->drawColor.b = ir::math::clamp(static_cast<unsigned int>(sliderPosToChar(knobPos_[2].x - 6.f + sliderSize_.x * .5f - position_.x)), 0u, 255u);
+		context_->drawColor.a = ir::math::clamp(static_cast<unsigned int>(sliderPosToChar(knobPos_[3].x - 6.f + sliderSize_.x * .5f - position_.x)), 0u, 255u);
 
 		return	mousePos.x >= position_.x &&
 				mousePos.y >= position_.y &&

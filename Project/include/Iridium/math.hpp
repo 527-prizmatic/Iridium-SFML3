@@ -42,11 +42,11 @@ namespace ir {
 		template <Number T> [[nodiscard]] constexpr T pow3(const T a) { return a * a * a; }
 
 		/// @brief Clamps a value between two bounds.
-		template <Number T, Number U, Number V> [[nodiscard]] constexpr T clamp(const T val, const U lower, const V upper) noexcept {
-			if (static_cast<T>(lower) > static_cast<T>(upper)) [[unlikely]] return val;
-			if (static_cast<T>(lower) == static_cast<T>(upper)) [[unlikely]] return static_cast<T>(lower);
-			if (val < static_cast<T>(lower)) return static_cast<T>(lower); 
-			if (val > static_cast<T>(upper)) return static_cast<T>(upper);
+		template <Number T> [[nodiscard]] constexpr T clamp(const T val, const T lower, const T upper) noexcept {
+			if (lower > upper) [[unlikely]] return val;
+			if (lower == upper) [[unlikely]] return lower;
+			if (val < lower) return lower; 
+			if (val > upper) return upper;
 			return val;
 		}
 
