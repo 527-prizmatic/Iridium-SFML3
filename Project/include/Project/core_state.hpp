@@ -9,6 +9,8 @@
 #include "Iridium/assets/asset_manager.hpp"
 #include "Iridium/assets/sound_manager.hpp"
 
+#include "Iridium/vgui/element.hpp"
+
 class CoreState : public ir::StateBase<CoreState> {
 public:
 	void onInitialize() {
@@ -33,6 +35,13 @@ public:
 		sfx_ = context_->assetManager->registerSound("linnk.wav");
 		music1_ = context_->assetManager->registerMusic("bonk.ogg");
 		music2_ = context_->assetManager->registerMusic("capaphonk.ogg");
+
+		root_ = std::make_unique<ir::vgui::Element>();
+		root_->setPosition(ir::Vector { 100.f, 100.f });
+
+		root_->addChildElement("child1", std::make_unique<ir::vgui::Element>());
+		(*root_)["child1"]->setPosition(ir::Vector { 10.f, 10.f });
+		(*root_)["child1"]->setSize(ir::Vector { 20.f, 80.f });
 	}
 	
 	void onReceiveEvent(const sf::Event& event) {
@@ -72,11 +81,15 @@ public:
 		ir::Vector pos = modelRenderer_->getPosition();
 		pos.x += 100.f * context_->deltaTime();
 		modelRenderer_->setPosition(context_->mouseInput->getCursorPosition());
+
+		root_->update();
 	}
 
 	void onRender() {
 		modelRenderer_->render(*context_->vertexRenderer);
 		text_->render(*context_->vertexRenderer);
+
+		root_->render(*context_->vertexRenderer);
 	}
 		
 	void onEnd() { }
@@ -85,11 +98,13 @@ private:
 	std::unique_ptr<ir::render::Rectangle> rec_;
 	std::unique_ptr<ir::render::ModelRenderer> modelRenderer_;
 	std::unique_ptr<ir::render::Text> text_;
+	std::unique_ptr<ir::vgui::Element> root_;
 
 	ir::SoundHandle sfx_ {};
 
 	ir::MusicHandle music1_ {};
 	ir::MusicHandle music2_ {};
+
 };
 
 #endif // PROJECT_TESTSTATE_HPP_

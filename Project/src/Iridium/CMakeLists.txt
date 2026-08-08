@@ -22,3 +22,5 @@ target_sources(${PROJECT_NAME} PRIVATE "input/mouse.cpp")
 
 target_sources(${PROJECT_NAME} PRIVATE "assets/asset_manager.cpp")
 target_sources(${PROJECT_NAME} PRIVATE "assets/sound_manager.cpp")
+
+target_sources(${PROJECT_NAME} PRIVATE "vgui/element.cpp")
