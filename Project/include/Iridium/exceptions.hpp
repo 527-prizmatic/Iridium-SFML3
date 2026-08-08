@@ -49,6 +49,16 @@ namespace ir {
 		private:
 			std::string what_ {};
 		};
+		
+		class BadModelName : public std::exception {
+		public:
+			BadModelName(std::string what) : what_ { "Attempted to load unknown VMF file \"" + what + "\"" } {}
+
+			const char * what() { return what_.c_str(); }
+
+		private:
+			std::string what_ {};
+		};
 	}
 }
 

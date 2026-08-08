@@ -26,7 +26,7 @@ public:
 
 		text_ = std::make_unique<ir::render::Text>();
 		text_->setColor(sf::Color::Green);
-	//	text_->setString("abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+		text_->setString("abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789");
 		text_->setPosition(ir::Vector{ 10.f, 10.f });
 		text_->setScale(3.f);
 

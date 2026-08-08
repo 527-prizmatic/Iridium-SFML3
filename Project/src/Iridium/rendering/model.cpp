@@ -1,4 +1,5 @@
 #include "Iridium/rendering/model.hpp"
+#include "Iridium/exceptions.hpp"
 
 namespace ir {
 	namespace render {
@@ -37,7 +38,7 @@ namespace ir {
 			std::ifstream stream(path, std::ios::binary);
 			LOG_INFO(path.string());
 			if (stream.fail()) {
-				throw "pavouk";
+				throw ir::Exceptions::BadModelName(file);
 			}
 
 			Model model;
@@ -83,6 +84,41 @@ namespace ir {
 			model.addComponent(std::move(Component(v1, v3)));
 
 			return model;
+		}
+		
+		float Model::getWidth() {
+			short min { 32767 }, max { -32768 };
+			
+			for (auto& c : components_) {
+				for (auto& v : c) {
+					if (v.x < min) {
+						min = v.x;
+					}
+					if (v.x > max) {
+						max = v.x;
+					}
+				}
+			}	
+
+			return max - min;
+
+		}
+
+		float Model::getHeight() {
+			short min { 32767 }, max { -32768 };
+
+			for (auto& c : components_) {
+				for (auto& v : c) {
+					if (v.y < min) {
+						min = v.y;
+					}
+					if (v.y > max) {
+						max = v.y;
+					}
+				}
+			}	
+
+			return max - min;
 		}
 	}
 }

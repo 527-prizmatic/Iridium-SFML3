@@ -74,6 +74,9 @@ namespace ir {
 			auto end() { return components_.end(); }
 			auto end() const { return components_.end(); }
 
+			float getWidth();
+			float getHeight();
+
 		private:
 			std::vector<Component> components_;
 		};
