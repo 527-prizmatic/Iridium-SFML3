@@ -6,6 +6,10 @@
 #include "Iridium/vector.hpp"
 
 namespace ir {
+	namespace input {
+		class Mouse;
+	}
+
 	namespace render {
 		class VertexRenderer;
 		class Rectangle;
@@ -17,7 +21,7 @@ namespace ir {
 		public:
 			Element();
 
-			virtual bool update() { return false; }
+			virtual bool update(ir::input::Mouse& mouseInput);
 
 			virtual void render(ir::render::VertexRenderer& renderer) const;
 
@@ -28,13 +32,24 @@ namespace ir {
 			void setPosition(ir::Vector pos);
 			void setSize(ir::Vector size);
 
-			ir::Vector getPosition();
-			ir::Vector getSize();
+			ir::Vector getPosition() const;
+			ir::Vector getSize() const;
+			ir::Vector getAbsolutePosition() const;
 
 			void addChildElement(std::string key, std::unique_ptr<ir::vgui::Element> child);
 		//	void removeChildElement(std::string key);
 		//	void removeChildElement(ir::vgui::Element* child);
 		//	void removeParent();
+
+		/// @brief Function to execute every frame when the item is not being hovered by the mouse.
+		virtual void onIdle();
+
+		/// @brief Function to execute every frame when the item is being hovered by the mouse.
+		virtual void onHover();
+
+		/// @brief Function to execute at the frame the item is being clicked on.
+		virtual void onClick();
+
 			
 		protected:
 			void renderFrame(ir::render::VertexRenderer& renderer) const;

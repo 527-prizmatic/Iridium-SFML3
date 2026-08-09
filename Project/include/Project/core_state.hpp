@@ -10,21 +10,12 @@
 #include "Iridium/assets/sound_manager.hpp"
 
 #include "Iridium/vgui/element.hpp"
+#include "Iridium/vgui/checkbox.hpp"
 
 class CoreState : public ir::StateBase<CoreState> {
 public:
 	void onInitialize() {
 		ir::render::Text::loadModels();
-
-		rec_ = std::make_unique<ir::render::Rectangle>();
-		rec_->setCorners(ir::Vector(100.f, 100.f), ir::Vector(150.f, 150.f));
-		rec_->setColor(sf::Color::Red);
-		rec_->setMode(ir::render::Mode::WIREFRAME);
-
-		modelRenderer_ = std::make_unique<ir::render::ModelRenderer>();
-	//	modelRenderer_->setModel(ir::render::Model::testTriangle());
-		modelRenderer_->setModel(ir::render::Model::loadFromFile("..\\text\\text_g_lower"));
-		modelRenderer_->setScale(10.f);
 
 		text_ = std::make_unique<ir::render::Text>();
 		text_->setColor(sf::Color::Green);
@@ -32,16 +23,16 @@ public:
 		text_->setPosition(ir::Vector{ 10.f, 10.f });
 		text_->setScale(3.f);
 
-		sfx_ = context_->assetManager->registerSound("linnk.wav");
-		music1_ = context_->assetManager->registerMusic("bonk.ogg");
-		music2_ = context_->assetManager->registerMusic("capaphonk.ogg");
-
 		root_ = std::make_unique<ir::vgui::Element>();
 		root_->setPosition(ir::Vector { 100.f, 100.f });
 
 		root_->addChildElement("child1", std::make_unique<ir::vgui::Element>());
 		(*root_)["child1"]->setPosition(ir::Vector { 10.f, 10.f });
 		(*root_)["child1"]->setSize(ir::Vector { 20.f, 80.f });
+		
+		root_->addChildElement("checkbox", std::make_unique<ir::vgui::Checkbox>());
+		(*root_)["checkbox"]->setPosition(ir::Vector { 40.f, 40.f });
+		(*root_)["checkbox"]->setSize(ir::Vector { 25.f, 25.f });
 	}
 	
 	void onReceiveEvent(const sf::Event& event) {
@@ -50,61 +41,30 @@ public:
 			if (code == sf::Keyboard::Key::Escape) {
 				meta_exit();
 			}
-			else if (code == sf::Keyboard::Key::Numpad1) {
-				context_->assetManager->playMusic(music1_);
-			}
-			else if (code == sf::Keyboard::Key::Numpad2) {
-				context_->assetManager->playMusic(music2_);
-			}
-			else if (code == sf::Keyboard::Key::Numpad4) {
-				context_->assetManager->pauseMusic(music1_);
-			}
-			else if (code == sf::Keyboard::Key::Numpad5) {
-				context_->assetManager->pauseMusic(music2_);
-			}
-			else if (code == sf::Keyboard::Key::Numpad7) {
-				context_->assetManager->stopMusic(music1_);
-			}
-			else if (code == sf::Keyboard::Key::Numpad8) {
-				context_->assetManager->stopMusic(music2_);
-			}
-			else {
-				modelRenderer_->setAngle(modelRenderer_->getAngle() + ir::math::pi * .1f);
-				LOG_INFO(std::to_string(modelRenderer_->getAngle()));
-
-				context_->soundManager->playSound(sfx_);
-			}
 		}
 	}
 
 	void onUpdate() {
-		ir::Vector pos = modelRenderer_->getPosition();
-		pos.x += 100.f * context_->deltaTime();
-		modelRenderer_->setPosition(context_->mouseInput->getCursorPosition());
+		root_->update(*context_->mouseInput);
 
-		root_->update();
+		if (dynamic_cast<ir::vgui::Checkbox*>((*root_)["checkbox"])->isEnabled()) {
+			text_->setColor(sf::Color::Cyan);
+		}
+		else {
+			text_->setColor(sf::Color::Green);
+		}
 	}
 
 	void onRender() {
-		modelRenderer_->render(*context_->vertexRenderer);
 		text_->render(*context_->vertexRenderer);
-
 		root_->render(*context_->vertexRenderer);
 	}
 		
 	void onEnd() { }
 
 private:
-	std::unique_ptr<ir::render::Rectangle> rec_;
-	std::unique_ptr<ir::render::ModelRenderer> modelRenderer_;
 	std::unique_ptr<ir::render::Text> text_;
 	std::unique_ptr<ir::vgui::Element> root_;
-
-	ir::SoundHandle sfx_ {};
-
-	ir::MusicHandle music1_ {};
-	ir::MusicHandle music2_ {};
-
 };
 
 #endif // PROJECT_TESTSTATE_HPP_

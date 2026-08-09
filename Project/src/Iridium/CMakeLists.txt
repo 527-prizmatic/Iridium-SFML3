@@ -24,3 +24,4 @@ target_sources(${PROJECT_NAME} PRIVATE "assets/asset_manager.cpp")
 target_sources(${PROJECT_NAME} PRIVATE "assets/sound_manager.cpp")
 
 target_sources(${PROJECT_NAME} PRIVATE "vgui/element.cpp")
+target_sources(${PROJECT_NAME} PRIVATE "vgui/checkbox.cpp")

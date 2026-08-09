@@ -2,6 +2,8 @@
 #include "Iridium/rendering/rectangle.hpp"
 #include "Iridium/rendering/vertex_renderer.hpp"
 
+#include "Iridium/input/mouse.hpp"
+
 namespace ir::vgui {
 	std::unique_ptr<ir::render::Rectangle> Element::rect_;
 
@@ -18,6 +20,30 @@ namespace ir::vgui {
 			rect_->setPosition(ir::Vector { 0.f, 0.f });
 			rect_->setSize(ir::Vector { 100.f, 100.f });
 		}
+	}
+
+	bool Element::update(ir::input::Mouse& mouseInput) {
+		ir::Vector posAbsolute = getAbsolutePosition();
+		bool isInArea = mouseInput.getCursorPosition().isInArea(posAbsolute, posAbsolute + size_);
+
+		bool anyChildrenUpdated = false;
+		for (auto& child : children_) {
+			anyChildrenUpdated |= child.second->update(mouseInput);
+		}
+
+		if (!anyChildrenUpdated && isInArea) {
+			if (mouseInput.isPressed(sf::Mouse::Button::Left)) {
+				onClick();
+			}
+			else {
+				onHover();
+			}
+		}
+		else {
+			onIdle();
+		}
+
+		return anyChildrenUpdated || isInArea;
 	}
 
 	void Element::render(ir::render::VertexRenderer& renderer) const {
@@ -58,13 +84,9 @@ namespace ir::vgui {
 		size_ = size;
 	}
 
-	ir::Vector Element::getPosition() {
-		return pos_;
-	}
-
-	ir::Vector Element::getSize() {
-		return size_;
-	}
+	ir::Vector Element::getPosition() const { return pos_; }
+	ir::Vector Element::getSize() const { return size_; }
+	ir::Vector Element::getAbsolutePosition() const { return parent_ != nullptr ? pos_ + parent_->pos_ : pos_; }
 
 	void Element::resizeRectangle() const {
 		if (rect_) {
@@ -74,6 +96,7 @@ namespace ir::vgui {
 	}
 
 	void Element::renderFrame(ir::render::VertexRenderer& renderer) const {
+		createRect();
 		if (rect_) {
 			resizeRectangle();
 
@@ -85,5 +108,17 @@ namespace ir::vgui {
 			rect_->setColor(clrBorder_);
 			rect_->render(renderer);
 		}
+	}
+
+	void Element::onIdle() {
+		clrBackground_ = sf::Color::Blue;
+	}
+	
+	void Element::onHover() {
+		clrBackground_ = sf::Color::Red;
+	}
+
+	void Element::onClick() {
+		LOG_INFO("UI element clicked");
 	}
 }
