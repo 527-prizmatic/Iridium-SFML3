@@ -17,6 +17,11 @@ namespace ir::render {
 		void setModel(Model&& model) = delete;
 		Model& getModel() = delete;
 
+		/// @brief This override of setScale takes into account letter model height, so that a scale of 10 means a height of 10 pixels.
+		void setScale(float scale) override;
+		/// @brief This override of getScale takes into account letter model height, so that a scale of 10 means a height of 10 pixels.
+		float getScale() override;
+
 	private:
 		std::string string_;
 		sf::Color color_ { sf::Color::White };

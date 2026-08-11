@@ -34,6 +34,9 @@ namespace ir::vgui {
 		if (!anyChildrenUpdated && isInArea) {
 			if (mouseInput.isPressed(sf::Mouse::Button::Left)) {
 				onClick();
+				for (auto evt : clickEvents) {
+					evt();
+				}
 			}
 			else {
 				onHover();
@@ -120,5 +123,9 @@ namespace ir::vgui {
 
 	void Element::onClick() {
 		LOG_INFO("UI element clicked");
+	}
+
+	void Element::registerClickEvent(ir::vgui::ClickEvent event) {
+		clickEvents.push_back(std::move(event));
 	}
 }

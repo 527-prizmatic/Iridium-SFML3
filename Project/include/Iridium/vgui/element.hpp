@@ -16,6 +16,7 @@ namespace ir {
 	}
 
 	namespace vgui {
+		using ClickEvent = std::function<void(void)>;
 		
 		class Element {
 		public:
@@ -41,21 +42,22 @@ namespace ir {
 		//	void removeChildElement(ir::vgui::Element* child);
 		//	void removeParent();
 
-		/// @brief Function to execute every frame when the item is not being hovered by the mouse.
-		virtual void onIdle();
-
-		/// @brief Function to execute every frame when the item is being hovered by the mouse.
-		virtual void onHover();
-
-		/// @brief Function to execute at the frame the item is being clicked on.
-		virtual void onClick();
-
+		void registerClickEvent(ir::vgui::ClickEvent event);
 			
 		protected:
 			void renderFrame(ir::render::VertexRenderer& renderer) const;
 			void resizeRectangle() const;
 
 			static void createRect(); 
+
+			/// @brief Internal function defining behavior when not hovered by the mouse.
+			virtual void onIdle();
+
+			/// @brief Internal function defining behavior while hovered by the mouse.
+			virtual void onHover();
+
+			/// @brief Internal function defining behavior when clicked.
+			virtual void onClick();
 
 			static std::unique_ptr<ir::render::Rectangle> rect_;
 
@@ -67,6 +69,9 @@ namespace ir {
 
 			sf::Color clrBorder_ { sf::Color::White };
 			sf::Color clrBackground_ { sf::Color::Blue };
+
+			/// @brief Additional user-defined click events.
+			std::vector<ir::vgui::ClickEvent> clickEvents {};
 		};
 	}
 }

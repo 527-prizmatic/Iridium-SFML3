@@ -21,7 +21,7 @@ public:
 		text_->setColor(sf::Color::Green);
 		text_->setString("abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789");
 		text_->setPosition(ir::Vector{ 10.f, 10.f });
-		text_->setScale(3.f);
+		text_->setScale(25.f);
 
 		root_ = std::make_unique<ir::vgui::Element>();
 		root_->setPosition(ir::Vector { 100.f, 100.f });
@@ -33,6 +33,8 @@ public:
 		root_->addChildElement("checkbox", std::make_unique<ir::vgui::Checkbox>());
 		(*root_)["checkbox"]->setPosition(ir::Vector { 40.f, 40.f });
 		(*root_)["checkbox"]->setSize(ir::Vector { 25.f, 25.f });
+
+		(*root_)["checkbox"]->registerClickEvent([&]() { text_->setScale(text_->getScale() + .5f); });
 	}
 	
 	void onReceiveEvent(const sf::Event& event) {
