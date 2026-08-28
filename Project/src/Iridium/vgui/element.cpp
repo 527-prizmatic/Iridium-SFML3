@@ -77,6 +77,7 @@ namespace ir::vgui {
 		if (child) {
 			child->parent_ = this;
 			children_[key] = std::move(child);
+			// return children_[key];
 		}
 	}
 	
@@ -89,7 +90,7 @@ namespace ir::vgui {
 
 	ir::Vector Element::getPosition() const { return pos_; }
 	ir::Vector Element::getSize() const { return size_; }
-	ir::Vector Element::getAbsolutePosition() const { return parent_ != nullptr ? pos_ + parent_->pos_ : pos_; }
+	ir::Vector Element::getAbsolutePosition() const { return parent_ != nullptr ? pos_ + parent_->getAbsolutePosition() : pos_; }
 
 	void Element::resizeRectangle() const {
 		if (rect_) {

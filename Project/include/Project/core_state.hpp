@@ -11,6 +11,7 @@
 
 #include "Iridium/vgui/element.hpp"
 #include "Iridium/vgui/checkbox.hpp"
+#include "Iridium/vgui/label.hpp"
 
 class CoreState : public ir::StateBase<CoreState> {
 public:
@@ -35,6 +36,26 @@ public:
 		(*root_)["checkbox"]->setSize(ir::Vector { 25.f, 25.f });
 
 		(*root_)["checkbox"]->registerClickEvent([&]() { text_->setScale(text_->getScale() + .5f); });
+		
+		root_->addChildElement("label1", std::make_unique<ir::vgui::Label>("Label 1"));
+		auto* label1 = root_->getElement<ir::vgui::Label>("label1");
+		label1->setAnchor(ir::vgui::Label::Anchor::TOP);
+		
+		root_->addChildElement("label2", std::make_unique<ir::vgui::Label>("Label 2"));
+		auto* label2 = root_->getElement<ir::vgui::Label>("label2");
+		label2->setAnchor(ir::vgui::Label::Anchor::LEFT);
+
+		root_->addChildElement("label3", std::make_unique<ir::vgui::Label>("Label 3"));
+		auto* label3 = root_->getElement<ir::vgui::Label>("label3");
+		label3->setAnchor(ir::vgui::Label::Anchor::RIGHT);
+
+		root_->addChildElement("label4", std::make_unique<ir::vgui::Label>("Label 4"));
+		auto* label4 = root_->getElement<ir::vgui::Label>("label4");
+		label4->setAnchor(ir::vgui::Label::Anchor::BOTTOM);
+
+		root_->addChildElement("label5", std::make_unique<ir::vgui::Label>("Label 5"));
+		auto* label5 = root_->getElement<ir::vgui::Label>("label5");
+		label5->setAnchor(ir::vgui::Label::Anchor::OVER);
 	}
 	
 	void onReceiveEvent(const sf::Event& event) {

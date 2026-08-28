@@ -23,15 +23,23 @@ namespace ir {
 			Element();
 
 			virtual bool update(ir::input::Mouse& mouseInput);
-
 			virtual void render(ir::render::VertexRenderer& renderer) const;
 
 			Element* getElement(std::string key) const;
 			Element* operator[](std::string key) const;
 			Element* operator[](const char* key) const;
 
-			void setPosition(ir::Vector pos);
-			void setSize(ir::Vector size);
+			template <typename T>
+			T* getElement(std::string key) const {
+				ir::vgui::Element* elt { getElement(key) };
+				if (elt) {
+					return dynamic_cast<T*>(elt);
+				}
+				return nullptr;
+			}
+
+			virtual void setPosition(ir::Vector pos);
+			virtual void setSize(ir::Vector size);
 
 			ir::Vector getPosition() const;
 			ir::Vector getSize() const;
