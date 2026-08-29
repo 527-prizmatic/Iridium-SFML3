@@ -135,7 +135,19 @@ namespace ir::vgui {
 	//	LOG_INFO("UI element clicked");
 	}
 
+	void Element::onSfEvent(const sf::Event& evt) {
+	//	LOG_INFO("UI element clicked");
+	}
+
 	void Element::registerClickEvent(ir::vgui::ClickEvent event) {
 		clickEvents.push_back(std::move(event));
 	}
+	
+	void Element::processEvent(const sf::Event& evt) {
+		onSfEvent(evt);
+		for (auto& child : children_) {
+			child.second->processEvent(evt);
+		}
+	}
+			
 }

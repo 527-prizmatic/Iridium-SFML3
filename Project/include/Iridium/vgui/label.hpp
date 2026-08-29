@@ -40,7 +40,7 @@ namespace ir {
 			
 			virtual void setPosition(ir::Vector pos) override;
 
-		private:
+		protected:
 			std::unique_ptr<ir::render::Text> label_;
 			Anchor anchor_;
 		};

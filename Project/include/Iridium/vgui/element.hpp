@@ -50,7 +50,9 @@ namespace ir {
 		//	void removeChildElement(ir::vgui::Element* child);
 		//	void removeParent();
 
-		void registerClickEvent(ir::vgui::ClickEvent event);
+			void registerClickEvent(ir::vgui::ClickEvent event);
+
+			void processEvent(const sf::Event& evt);
 			
 		protected:
 			void renderFrame(ir::render::VertexRenderer& renderer) const;
@@ -69,6 +71,9 @@ namespace ir {
 
 			/// @brief Internal function defining behavior when clicking away.
 			virtual void onDeselect();
+
+			/// @brief Internal function defining behavior when receiving a SFML window event.
+			virtual void onSfEvent(const sf::Event& evt);
 
 			static std::unique_ptr<ir::render::Rectangle> rect_;
 

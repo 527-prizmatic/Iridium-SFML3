@@ -12,6 +12,7 @@
 #include "Iridium/vgui/element.hpp"
 #include "Iridium/vgui/checkbox.hpp"
 #include "Iridium/vgui/label.hpp"
+#include "Iridium/vgui/input_field.hpp"
 
 class CoreState : public ir::StateBase<CoreState> {
 public:
@@ -53,12 +54,15 @@ public:
 		auto* label4 = root_->getElement<ir::vgui::Label>("label4");
 		label4->setAnchor(ir::vgui::Label::Anchor::BOTTOM);
 
-		root_->addChildElement("label5", std::make_unique<ir::vgui::Label>("Label 5"));
-		auto* label5 = root_->getElement<ir::vgui::Label>("label5");
-		label5->setAnchor(ir::vgui::Label::Anchor::OVER);
+		root_->addChildElement("label5", std::make_unique<ir::vgui::TextField>("Label 5"));
+		auto* label5 = root_->getElement<ir::vgui::TextField>("label5");
+		label5->setPosition(ir::Vector { 100.f, 100.f });
+		label5->setSize(ir::Vector { 100.f, 25.f });
+	//	label5->setAnchor(ir::vgui::Label::Anchor::OVER);
 	}
 	
 	void onReceiveEvent(const sf::Event& event) {
+		root_->processEvent(event);
 		if (event.is<sf::Event::KeyReleased>()) {
 			auto code = event.getIf<sf::Event::KeyReleased>()->code;
 			if (code == sf::Keyboard::Key::Escape) {
@@ -69,6 +73,14 @@ public:
 
 	void onUpdate() {
 		root_->update(*context_->mouseInput);
+
+		auto* label5 = root_->getElement<ir::vgui::TextField>("label5");
+		if (label5->hasFocus()) {
+			label5->setMaxChars(20);
+		}
+		else {
+			label5->setMaxChars(10);
+		}
 
 		if (dynamic_cast<ir::vgui::Checkbox*>((*root_)["checkbox"])->isEnabled()) {
 			text_->setColor(sf::Color::Cyan);
