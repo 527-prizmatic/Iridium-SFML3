@@ -1,29 +1,17 @@
-target_sources(${PROJECT_NAME} PRIVATE "vector.cpp")
-target_sources(${PROJECT_NAME} PRIVATE "render_target.cpp")
-target_sources(${PROJECT_NAME} PRIVATE "application_window.cpp")
-target_sources(${PROJECT_NAME} PRIVATE "sub_window.cpp")
-target_sources(${PROJECT_NAME} PRIVATE "random.cpp")
-target_sources(${PROJECT_NAME} PRIVATE "time.cpp")
-target_sources(${PROJECT_NAME} PRIVATE "state_machine.cpp")
-target_sources(${PROJECT_NAME} PRIVATE "application.cpp")
-target_sources(${PROJECT_NAME} PRIVATE "log.cpp")
-# target_sources(${PROJECT_NAME} PRIVATE "resources.cpp")
+target_sources(${PROJECT_NAME} PRIVATE
+	vector.cpp
+	render_target.cpp
+	application_window.cpp
+	sub_window.cpp
+	random.cpp
+	time.cpp
+	state_machine.cpp
+	application.cpp
+	log.cpp
+	# resources.cpp
+)
 
-target_sources(${PROJECT_NAME} PRIVATE "rendering/shape.cpp")
-target_sources(${PROJECT_NAME} PRIVATE "rendering/rectangle.cpp")
-target_sources(${PROJECT_NAME} PRIVATE "rendering/circle.cpp")
-target_sources(${PROJECT_NAME} PRIVATE "rendering/quad.cpp")
-target_sources(${PROJECT_NAME} PRIVATE "rendering/model.cpp")
-target_sources(${PROJECT_NAME} PRIVATE "rendering/model_renderer.cpp")
-target_sources(${PROJECT_NAME} PRIVATE "rendering/vertex_renderer.cpp")
-target_sources(${PROJECT_NAME} PRIVATE "rendering/text.cpp")
-
-target_sources(${PROJECT_NAME} PRIVATE "input/mouse.cpp")
-
-target_sources(${PROJECT_NAME} PRIVATE "assets/asset_manager.cpp")
-target_sources(${PROJECT_NAME} PRIVATE "assets/sound_manager.cpp")
-
-target_sources(${PROJECT_NAME} PRIVATE "vgui/element.cpp")
-target_sources(${PROJECT_NAME} PRIVATE "vgui/checkbox.cpp")
-target_sources(${PROJECT_NAME} PRIVATE "vgui/label.cpp")
-target_sources(${PROJECT_NAME} PRIVATE "vgui/slider.cpp")
+add_subdirectory(rendering)
+add_subdirectory(input)
+add_subdirectory(assets)
+add_subdirectory(vgui)
