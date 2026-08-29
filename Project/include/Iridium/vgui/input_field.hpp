@@ -17,10 +17,10 @@ namespace ir {
 
 			InputField(T defaultValue);
 
-		//	virtual bool update(ir::input::Mouse& mouseInput) override;
+			virtual bool update(ir::input::Mouse& mouseInput) override;
 			virtual void render(ir::render::VertexRenderer& renderer) const override;
 
-			virtual void onIdle() override;
+		//	virtual void onIdle() override;
 			virtual void onClick() override;
 			virtual void onDeselect() override;
 			virtual void onSfEvent(const sf::Event& e) override;

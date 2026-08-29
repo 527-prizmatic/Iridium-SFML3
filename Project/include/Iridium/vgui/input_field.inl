@@ -23,6 +23,13 @@ namespace ir::vgui {
 	}
 
 	template <typename T>
+	bool InputField<T>::update(ir::input::Mouse& mouseInput) {
+		clrBackground_ = focused_ ? clrFocused_ : clrUnfocused_;
+
+		return ir::vgui::Element::update(mouseInput);
+	}
+
+	template <typename T>
 	void InputField<T>::render(ir::render::VertexRenderer& renderer) const {
 		renderFrame(renderer);
 
@@ -46,11 +53,6 @@ namespace ir::vgui {
 #pragma endregion
 
 #pragma region Event hooks
-	template <typename T>
-	void InputField<T>::onIdle() {
-		clrBackground_ = focused_ ? clrFocused_ : clrUnfocused_;
-	}
-
 	template <typename T>
 	void InputField<T>::onClick() {
 		focused_ = true;

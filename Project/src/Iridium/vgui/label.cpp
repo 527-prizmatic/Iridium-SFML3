@@ -49,16 +49,21 @@ namespace ir::vgui {
 				}
 			}
 			pos_ = relativePos;
+			size_ = boundingBoxSize;
 		}
 
 		return Element::update(mouseInput);
 	}
 
 	void Label::render(ir::render::VertexRenderer& renderer) const {
+		renderDebugFrame(renderer);
+
 		if (label_) {
 			label_->setPosition(getAbsolutePosition());
 			label_->render(renderer);
 		}
+		
+		renderChildren(renderer);
 	}
 
 	void Label::setScale(float scale) {

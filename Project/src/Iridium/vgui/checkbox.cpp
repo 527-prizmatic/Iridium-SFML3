@@ -19,10 +19,11 @@ namespace ir::vgui {
 	}
 
 	void Checkbox::render(ir::render::VertexRenderer& renderer) const {
-		Element::render(renderer);
+		renderFrame(renderer);
 		if (enabled_) {
 			renderCheckbox(renderer);
 		}
+		renderChildren(renderer);
 	}
 
 	void Checkbox::renderCheckbox(ir::render::VertexRenderer& renderer) const {

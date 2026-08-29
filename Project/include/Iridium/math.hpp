@@ -50,6 +50,11 @@ namespace ir {
 			return val;
 		}
 
+		/// @brief Interpolates linearly between two values.
+		template <Number T> [[nodiscard]] constexpr T interpolate(const T a, const T b, const float t) noexcept {
+			return t * (b - a) + a;
+		}
+
 		/// @brief Compares two numbers of the same type and returns the smallest one.
 		template <Number T> [[nodiscard]] constexpr T min(const T a, const T b) noexcept { return std::min(a, b); }
 		/// @brief Compares a set of numbers of the same type and returns the smallest one.

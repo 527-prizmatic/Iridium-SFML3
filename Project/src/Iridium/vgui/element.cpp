@@ -5,6 +5,7 @@
 #include "Iridium/input/mouse.hpp"
 
 namespace ir::vgui {
+#pragma region Core functions
 	std::unique_ptr<ir::render::Rectangle> Element::rect_;
 
 	void Element::createRect() {
@@ -34,6 +35,7 @@ namespace ir::vgui {
 		if (!anyChildrenUpdated && isInArea) {
 			if (mouseInput.isPressed(sf::Mouse::Button::Left)) {
 				onClick();
+				clickHeld_ = true;
 				for (auto evt : clickEvents) {
 					evt();
 				}
@@ -51,18 +53,22 @@ namespace ir::vgui {
 			}
 		}
 
+		if (mouseInput.isReleased(sf::Mouse::Button::Left) && clickHeld_) {
+			onRelease();
+			clickHeld_ = false;
+		}
+
 		return anyChildrenUpdated || isInArea;
 	}
 
 	void Element::render(ir::render::VertexRenderer& renderer) const {
-		renderFrame(renderer);
-		for (auto& child : children_) {
-			child.second->render(renderer);
-		}
+		renderDebugFrame(renderer);
+		renderChildren(renderer);
 	}
+#pragma endregion
 
-
-	Element* Element::getElement(std::string key) const {
+#pragma region Child management
+	Element* Element::getChild(std::string key) const {
 		auto it = children_.find(key);
 		if (it != children_.end()) {
 			return it->second.get();
@@ -71,21 +77,43 @@ namespace ir::vgui {
 	}
 
 	Element* Element::operator[](std::string key) const {
-		return getElement(key);
+		return getChild(key);
 	}
 
 	Element* Element::operator[](const char* key) const {
-		return getElement(std::string(key));
+		return getChild(std::string(key));
 	}
 
 	void Element::addChildElement(std::string key, std::unique_ptr<ir::vgui::Element> child) {
 		if (child) {
 			child->parent_ = this;
 			children_[key] = std::move(child);
+			children_[key]->resizeRectangle();
 			// return children_[key];
 		}
 	}
+
+	void Element::renderChildren(ir::render::VertexRenderer& renderer) const {
+		for (auto& child : children_) {
+			child.second->render(renderer);
+		}
+	}
+#pragma endregion
 	
+#pragma region Event management
+	void Element::registerClickEvent(ir::vgui::ClickEvent event) {
+		clickEvents.push_back(std::move(event));
+	}
+	
+	void Element::processEvent(const sf::Event& evt) {
+		onSfEvent(evt);
+		for (auto& child : children_) {
+			child.second->processEvent(evt);
+		}
+	}
+#pragma endregion
+
+#pragma region Mutators and accessors
 	void Element::setPosition(ir::Vector pos) {
 		pos_ = pos;
 	}
@@ -96,16 +124,29 @@ namespace ir::vgui {
 	ir::Vector Element::getPosition() const { return pos_; }
 	ir::Vector Element::getSize() const { return size_; }
 	ir::Vector Element::getAbsolutePosition() const { return parent_ != nullptr ? pos_ + parent_->getAbsolutePosition() : pos_; }
+	
+	void Element::setDebugMode(bool debug) {
+		debugMode = debug;
+	}
+#pragma endregion
 
+#pragma region Internal utilities
 	void Element::resizeRectangle() const {
 		if (rect_) {
-			rect_->setPosition(parent_ ? parent_->getPosition() + pos_ : pos_);
+			rect_->setPosition(getAbsolutePosition());
 			rect_->setSize(size_);
+		}
+	}
+
+	void Element::renderDebugFrame(ir::render::VertexRenderer& renderer) const {
+		if (debugMode) {
+			renderFrame(renderer);
 		}
 	}
 
 	void Element::renderFrame(ir::render::VertexRenderer& renderer) const {
 		createRect();
+
 		if (rect_) {
 			resizeRectangle();
 
@@ -118,36 +159,5 @@ namespace ir::vgui {
 			rect_->render(renderer);
 		}
 	}
-
-	void Element::onIdle() {
-		clrBackground_ = sf::Color::Blue;
-	}
-	
-	void Element::onHover() {
-		clrBackground_ = sf::Color::Red;
-	}
-
-	void Element::onClick() {
-	//	LOG_INFO("UI element clicked");
-	}
-
-	void Element::onDeselect() {
-	//	LOG_INFO("UI element clicked");
-	}
-
-	void Element::onSfEvent(const sf::Event& evt) {
-	//	LOG_INFO("UI element clicked");
-	}
-
-	void Element::registerClickEvent(ir::vgui::ClickEvent event) {
-		clickEvents.push_back(std::move(event));
-	}
-	
-	void Element::processEvent(const sf::Event& evt) {
-		onSfEvent(evt);
-		for (auto& child : children_) {
-			child.second->processEvent(evt);
-		}
-	}
-			
+#pragma endregion
 }
