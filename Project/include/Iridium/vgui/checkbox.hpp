@@ -10,6 +10,7 @@ namespace ir::vgui {
 		virtual void onIdle() override;
 		virtual void onHover() override;
 		virtual void onClick() override;
+		virtual void onDeselect() override;
 
 		void setEnabled(bool enabled) { enabled_= enabled; }
 		bool isEnabled() { return enabled_; }

@@ -43,7 +43,12 @@ namespace ir::vgui {
 			}
 		}
 		else {
-			onIdle();
+			if (mouseInput.isPressed(sf::Mouse::Button::Left)) {
+				onDeselect();
+			}
+			else {
+				onIdle();
+			}
 		}
 
 		return anyChildrenUpdated || isInArea;
@@ -123,7 +128,11 @@ namespace ir::vgui {
 	}
 
 	void Element::onClick() {
-		LOG_INFO("UI element clicked");
+	//	LOG_INFO("UI element clicked");
+	}
+
+	void Element::onDeselect() {
+	//	LOG_INFO("UI element clicked");
 	}
 
 	void Element::registerClickEvent(ir::vgui::ClickEvent event) {

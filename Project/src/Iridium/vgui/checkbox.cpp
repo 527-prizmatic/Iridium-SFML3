@@ -14,6 +14,10 @@ namespace ir::vgui {
 		enabled_ = !enabled_;
 	}
 
+	void Checkbox::onDeselect() {
+	//	enabled_ = false;
+	}
+
 	void Checkbox::render(ir::render::VertexRenderer& renderer) const {
 		Element::render(renderer);
 		if (enabled_) {

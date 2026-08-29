@@ -67,6 +67,9 @@ namespace ir {
 			/// @brief Internal function defining behavior when clicked.
 			virtual void onClick();
 
+			/// @brief Internal function defining behavior when clicking away.
+			virtual void onDeselect();
+
 			static std::unique_ptr<ir::render::Rectangle> rect_;
 
 			std::unordered_map<std::string, std::unique_ptr<ir::vgui::Element>> children_;
