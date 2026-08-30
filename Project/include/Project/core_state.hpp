@@ -21,7 +21,7 @@ public:
 		ir::render::Text::loadModels();
 
 		text_ = std::make_unique<ir::render::Text>();
-		text_->setColor(sf::Color::Green);
+		text_->setColor(ir::HSLColor(82u, 255u, 127u).toRGB().toSfColor());
 		text_->setString("abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789");
 		text_->setPosition(ir::Vector{ 10.f, 10.f });
 		text_->setScale(25.f);
@@ -99,10 +99,10 @@ public:
 		e->getChild<ir::vgui::Label>("sliderLabel")->setLabel(std::to_string(e->getValue()));
 
 		if (dynamic_cast<ir::vgui::Checkbox*>((*root_)["checkbox"])->isEnabled()) {
-			text_->setColor(sf::Color::Cyan);
+			text_->setColor(ir::HSLColor(164u, 255u, 127u).toRGB().toSfColor());
 		}
 		else {
-			text_->setColor(sf::Color::Green);
+			text_->setColor(ir::HSLColor(82u, 255u, 127u).toRGB().toSfColor());
 		}
 
 		ir::vgui::Element::setDebugMode(dynamic_cast<ir::vgui::Checkbox*>((*root_)["checkbox"])->isEnabled());

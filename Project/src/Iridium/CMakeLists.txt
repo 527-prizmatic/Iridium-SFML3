@@ -8,6 +8,7 @@ target_sources(${PROJECT_NAME} PRIVATE
 	state_machine.cpp
 	application.cpp
 	log.cpp
+	colors.cpp
 	# resources.cpp
 )
 
