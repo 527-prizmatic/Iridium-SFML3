@@ -3,6 +3,7 @@
 
 #include "Iridium/vector.hpp"
 #include "Iridium/math.hpp"
+#include "Iridium/colors.hpp"
 
 namespace ir {
 	class RenderTarget;

@@ -3,8 +3,12 @@
 #include <sstream>
 
 namespace ir::render {
-	std::unordered_map<char, std::unique_ptr<Model>> Text::modelSet_;
+	namespace {
+		constexpr float kModelHeight = 9.f; ///< Used in scale get/set functions
+	}
 
+	std::unordered_map<char, std::unique_ptr<Model>> Text::modelSet_;
+	
 	std::string charToModelName(unsigned char c);
 	unsigned char modelNameToChar(std::string name);
 	Model placeholderLetter();
@@ -54,6 +58,14 @@ namespace ir::render {
 			}
 			c++;
 		}
+	}
+
+	void Text::setScale(float scale) { 
+		scale_ = scale / kModelHeight;
+	}
+
+	float Text::getScale() {
+		return scale_ * kModelHeight;
 	}
 
 	std::string charToModelName(unsigned char c) {
