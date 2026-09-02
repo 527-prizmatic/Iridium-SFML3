@@ -60,6 +60,6 @@ namespace ir {
 	}
 }
 
-#include "Iridium/vgui/input_field.inl"
+#include "Iridium/detail/vgui/input_field.inl"
 
 #endif // IRIDIUM_VGUI_INFIELD_HPP_

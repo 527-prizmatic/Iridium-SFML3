@@ -7,7 +7,7 @@
 #include "Iridium/application_window.hpp"
 #include "Iridium/state_machine.hpp"
 
-#include "Iridium/state.inl"
+#include "Iridium/detail/state.inl"
 
 namespace ir {
 	class ApplicationContext;
