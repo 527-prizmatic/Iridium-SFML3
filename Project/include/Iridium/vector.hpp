@@ -144,6 +144,14 @@ namespace ir {
 			return (*this - other).isZero();
 		}
 
+		[[nodiscard]] inline bool isInArea(const ir::Vector& corner1, const ir::Vector& corner2) const {
+			ir::Vector topLeft { std::min(corner1.x, corner2.x), std::min(corner1.y, corner2.y) };
+			ir::Vector bottomRight { std::max(corner1.x, corner2.x), std::max(corner1.y, corner2.y) };
+
+			return x >= topLeft.x && x <= bottomRight.x
+			&& y >= topLeft.y && y <= bottomRight.y;
+		}
+
 		static const ir::Vector kZero;
 		static const ir::Vector kUnit;
 	};
