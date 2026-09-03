@@ -4,8 +4,12 @@
 #include "Iridium/state.hpp"
 
 #include "Iridium/rendering/rectangle.hpp"
+#include "Iridium/rendering/model.hpp"
 #include "Iridium/rendering/model_renderer.hpp"
 #include "Iridium/rendering/text.hpp"
+
+#include "Iridium/vgui/element.hpp"
+#include "Iridium/vgui/label.hpp"
 
 #include "Project/vmf_editor/draw_area.hpp"
 #include "Project/vmf_editor/text_button.hpp"
@@ -26,14 +30,46 @@ public:
 		drawArea_ = std::make_unique<vmf::DrawArea>(&*vmfContext_);
 		vmfContext_->posOffset = context_->appWindow->getSize() * .5f / vmfContext_->zoomFactor;
 
-		toolbarTop_ = std::make_unique<vmf::Toolbar>(&*vmfContext_);
-		toolbarTop_->setPosition(ir::Vector { 2.f, 2.f });
-		toolbarTop_->setSize(ir::Vector { 1276.f, 36.f });
-		toolbarTop_->setButtonSize(120.f);
+		titleBar_ = std::make_unique<ir::vgui::FramedElement>();
+		titleBar_->setPosition(ir::Vector { 2.f, 2.f });
+		titleBar_->setSize(ir::Vector { 1276.f, 36.f });
+		titleBar_->setFrameColor(sf::Color::White);
+		titleBar_->setBackgroundColor(sf::Color::Black);
 
-		toolbarTop_->addButton(std::move(vmf::produceTextButton(&*vmfContext_, "Discard", vmf::UserEvent::MODEL_DISCARD, sf::Color::Red)));
-		toolbarTop_->addButton(std::move(vmf::produceTextButton(&*vmfContext_, "Save", vmf::UserEvent::MODEL_SAVE, sf::Color::Green)));
-		
+		{
+			auto buttonSave = std::make_unique<ir::vgui::FramedElement>();
+			buttonSave->setPosition(ir::Vector { 2.f, 2.f });
+			buttonSave->setSize(ir::Vector { 120.f, 32.f });
+			buttonSave->registerClickEvent([&](){ vmfContext_->registerEvent(vmf::UserEvent::MODEL_SAVE); });
+			buttonSave->setFrameColor(sf::Color::Green);
+			buttonSave->setBackgroundColor(sf::Color::Transparent);
+
+			auto labelSave = std::make_unique<ir::vgui::Label>("Save");
+			labelSave->setColor(sf::Color::Green);
+			labelSave->setAnchor(ir::vgui::Label::Anchor::OVER);
+			labelSave->setScale(16.f);
+
+			buttonSave->addChildElement("label", std::move(labelSave));
+			titleBar_->addChildElement("ButtonSave", std::move(buttonSave));
+		}
+
+		{
+			auto buttonDiscard = std::make_unique<ir::vgui::FramedElement>();
+			buttonDiscard->setPosition(ir::Vector { 126.f, 2.f });
+			buttonDiscard->setSize(ir::Vector { 120.f, 32.f });
+			buttonDiscard->registerClickEvent([&](){ vmfContext_->registerEvent(vmf::UserEvent::MODEL_DISCARD); });
+			buttonDiscard->setFrameColor(sf::Color::Red);
+			buttonDiscard->setBackgroundColor(sf::Color::Transparent);
+
+			auto labelDiscard = std::make_unique<ir::vgui::Label>("Discard");
+			labelDiscard->setColor(sf::Color::Red);
+			labelDiscard->setAnchor(ir::vgui::Label::Anchor::OVER);
+			labelDiscard->setScale(16.f);
+
+			buttonDiscard->addChildElement("label", std::move(labelDiscard));
+			titleBar_->addChildElement("ButtonDiscard", std::move(buttonDiscard));
+		}
+
 		toolbarBottom_ = std::make_unique<vmf::Toolbar>(&*vmfContext_);
 		toolbarBottom_->setPosition(ir::Vector { 2.f, 672.f });
 		toolbarBottom_->setSize(ir::Vector { 1276.f, 46.f });
@@ -58,7 +94,7 @@ public:
 		rectOverlay_->setMode(ir::render::Mode::SOLID);
 
 		colorPicker_ = std::make_unique<vmf::ColorPicker>(&*vmfContext_);
-		colorPicker_->setPosition(ir::Vector{ 2.f, 572.f });
+		colorPicker_->setPosition(ir::Vector{ 2.f, 552.f });
 	}
 	
 	void onReceiveEvent(const sf::Event& event) {
@@ -115,7 +151,7 @@ public:
 	void onUpdate() {
 		if (!vmfContext_->saveMode) {
 			bool canDraw = true;
-			if (toolbarTop_->processMouseInput(context_->mouseInput) ||
+			if (titleBar_->update(*context_->mouseInput) ||
 				toolbarBottom_->processMouseInput(context_->mouseInput) ||
 				colorPicker_->processMouseInput(context_->mouseInput)) {
 				canDraw = false;
@@ -195,7 +231,7 @@ public:
 	void onRender() {
 		drawArea_->render(*context_->vertexRenderer, context_->mouseInput->getCursorPosition());
 		editorModel_->render(*context_->vertexRenderer);
-		toolbarTop_->render(*context_->vertexRenderer);
+		titleBar_->render(*context_->vertexRenderer);
 		toolbarBottom_->render(*context_->vertexRenderer);
 		colorPicker_->render(*context_->vertexRenderer);
 
@@ -218,9 +254,10 @@ private:
 	std::unique_ptr<vmf::DrawArea> drawArea_;
 	std::unique_ptr<vmf::EditorModel> editorModel_;
 
-	std::unique_ptr<vmf::Toolbar> toolbarTop_;
 	std::unique_ptr<vmf::Toolbar> toolbarBottom_;
 	std::unique_ptr<vmf::Toolbar> toolbarSave_;
+
+	std::unique_ptr<ir::vgui::Element> titleBar_;
 
 	std::unique_ptr<vmf::ColorPicker> colorPicker_;
 

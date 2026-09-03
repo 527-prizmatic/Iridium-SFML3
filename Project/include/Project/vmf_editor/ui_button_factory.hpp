@@ -26,7 +26,7 @@ namespace vmf {
 		auto button = std::make_unique<vmf::TextButton>(context, label);
 		button->setColors(color, sf::Color::White);
 		button->setFunction(func);
-		button->setLabelScale(2.f);
+		button->setLabelScale(16.f);
 		return button;
 	}
 
@@ -34,7 +34,7 @@ namespace vmf {
 		auto button = std::make_unique<vmf::TextButton>(context, label);
 		button->setColors(color, sf::Color::White);
 		button->setEvent(event);
-		button->setLabelScale(2.f);
+		button->setLabelScale(16.f);
 		return button;
 	}
 }

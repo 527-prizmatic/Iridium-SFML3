@@ -7,141 +7,111 @@
 #include "Iridium/input/mouse.hpp"
 #include "Iridium/math.hpp"
 
+#include "Iridium/vgui/label.hpp"
+
 namespace vmf {
-	namespace {
-		float charToSliderPos(unsigned char val) {
-			return static_cast<float>(val) * 88.f / 255.f;
-		}
-
-		unsigned char sliderPosToChar(float pos) {
-			return static_cast<unsigned char>(pos * 255.f / 88.f);
-		}
-	}
-
 	ColorPicker::ColorPicker(vmf::Context* context) : context_(context) {
 		rect_ = std::make_unique<ir::render::Rectangle>();
-		text_ = std::make_unique<ir::render::Text>();
-		setPosition(ir::Vector{ 0.f, 50.f });
 
 		addToPalette(sf::Color::White);
 		addToPalette(sf::Color{ 255u, 255u, 255u, 64u });
+
+		frame_ = std::make_unique<ir::vgui::FramedElement>();
+		frame_->setSize(ir::Vector { 100.f, 120.f });
+		frame_->setBackgroundColor(sf::Color::Black);
+		frame_->setFrameColor(sf::Color::White);
+
+		for (size_t i = 0; i < 4; i++) {
+			std::string rgba { "RGBA" };
+			std::array<sf::Color, 4> clr { sf::Color::Red, sf::Color::Green, sf::Color::Blue, sf::Color{ 255u, 255u, 255u, 64u } };
+
+			auto s = std::make_unique<ir::vgui::Slider>(0, 255);
+			s->setPosition(ir::Vector { 0.f, i * 24.f });
+			s->setSize(ir::Vector { 100.f, 24.f });
+			s->setFrameColor(sf::Color::White);
+			s->setValue(255);
+			s->setBackgroundColor(clr[i]);
+
+			auto l = std::make_unique<ir::vgui::Label>("0");
+			l->setScale(15.f);
+			l->setAnchor(ir::vgui::Label::Anchor::RIGHT);
+			l->setColor(clr[i]);
+
+			s->addChildElement("label", std::move(l));
+			frame_->addChildElement(std::string { "Slider" } + rgba.at(i), std::move(s));
+		}
+
+		{
+			auto f = std::make_unique<ir::vgui::FramedElement>();
+			f->setPosition(ir::Vector { 2.f, 98.f });
+			f->setSize(ir::Vector { 96.f, 20.f });
+			f->setFrameColor(sf::Color::White);
+
+			frame_->addChildElement("ColorField", std::move(f));
+		}
+
+		sliderR_ = frame_->getChild<ir::vgui::Slider>("SliderR");
+		sliderG_ = frame_->getChild<ir::vgui::Slider>("SliderG");
+		sliderB_ = frame_->getChild<ir::vgui::Slider>("SliderB");
+		sliderA_ = frame_->getChild<ir::vgui::Slider>("SliderA");
+
+		setPosition(ir::Vector{ 0.f, 50.f });
 	}
 
 	bool ColorPicker::processMouseInput(ir::input::Mouse* mouseInput) {
-		using namespace sf::Mouse;
-
 		const ir::Vector mousePos = mouseInput->getCursorPosition();
-		const ir::Vector sliderSize { 8.f, 16.f };
 
-		computeKnobPositions();
-
-		auto isOnKnob = [&](ir::Vector pos, size_t id) {
-			return	pos.x >= knobPos_[id].x &&
-					pos.y >= knobPos_[id].y &&
-					pos.x <= (knobPos_[id] + sliderSize_).x &&
-					pos.y <= (knobPos_[id] + sliderSize_).y;
-		};
-
+		/// Checks whether the mouse cursor is within the palette cell with given ID
 		auto isOnPalette = [&](ir::Vector pos, size_t id) {
-			ir::Vector offset { position_ + ir::Vector { 100.f + id * 20.f, 80.f }};
+			ir::Vector offset { frame_->getAbsolutePosition() + ir::Vector { frame_->getSize().x + id * 20.f, frame_->getSize().y - 20.f }};
 			return  pos.x >= offset.x &&
 					pos.y >= offset.y &&
 					pos.x < offset.x + 20.f &&
 					pos.y < offset.y + 20.f;
 		};
 
-		if (mouseInput->isPressed(Button::Left)) {
+		/// Detection of palette clicks
+		if (mouseInput->isPressed(sf::Mouse::Button::Left)) {
 			for (size_t i = 0; i < palette_.size(); i++) {
 				if (isOnPalette(mousePos, i)) {
 					context_->drawColor = palette_[i];
+
+					sliderR_->setValue(context_->drawColor.r);
+					sliderG_->setValue(context_->drawColor.g);
+					sliderB_->setValue(context_->drawColor.b);
+					sliderA_->setValue(context_->drawColor.a);
+
 					return true;
 				}
 			}
-
-			selected = -1;
-			for (size_t i = 0; i < 4; i++) {
-				if (isOnKnob(mousePos, i)) {
-					selected = static_cast<char>(i);
-					break;
-				}
-			}
 		}
 
-		if (mouseInput->isActive(Button::Left)) {
-			for (char i = 0; i < 4; i++) {
-				if (selected == i) {
-					knobPos_[i].x = ir::math::clamp(mousePos.x, position_.x + 6.f, position_.x + 94.f) - sliderSize_.x * .5f;
-				}
-			}
-		}
+		/// Main UI updating
+		bool ret { frame_->update(*mouseInput) };
 
-		context_->drawColor.r = ir::math::clamp(static_cast<unsigned int>(sliderPosToChar(knobPos_[0].x - 6.f + sliderSize_.x * .5f - position_.x)), 0u, 255u);
-		context_->drawColor.g = ir::math::clamp(static_cast<unsigned int>(sliderPosToChar(knobPos_[1].x - 6.f + sliderSize_.x * .5f - position_.x)), 0u, 255u);
-		context_->drawColor.b = ir::math::clamp(static_cast<unsigned int>(sliderPosToChar(knobPos_[2].x - 6.f + sliderSize_.x * .5f - position_.x)), 0u, 255u);
-		context_->drawColor.a = ir::math::clamp(static_cast<unsigned int>(sliderPosToChar(knobPos_[3].x - 6.f + sliderSize_.x * .5f - position_.x)), 0u, 255u);
+		auto updateLabel = [&](ir::vgui::Slider* s) { s->getChild<ir::vgui::Label>("label")->setLabel(std::to_string(s->getValue())); };
+		updateLabel(sliderR_);
+		updateLabel(sliderG_);
+		updateLabel(sliderB_);
+		updateLabel(sliderA_);
 
-		return	mousePos.x >= position_.x &&
-				mousePos.y >= position_.y &&
-				mousePos.x <= position_.x + 100.f &&
-				mousePos.y <= position_.y + 100.f;
+		context_->drawColor.r = sliderR_->getValue();
+		context_->drawColor.g = sliderG_->getValue();
+		context_->drawColor.b = sliderB_->getValue();
+		context_->drawColor.a = sliderA_->getValue();
+
+		frame_->getChild<ir::vgui::FramedElement>("ColorField")->setBackgroundColor(context_->drawColor);
+
+		return ret;
 	}
 
 	void ColorPicker::render(ir::render::VertexRenderer& renderer) {
-		// Render base
-		rect_->setPosition(position_);
-		rect_->setSize(100.f, 100.f);
-		rect_->setColor(sf::Color::Black);
-		rect_->setMode(ir::render::Mode::SOLID);
-		rect_->render(renderer);
-
-		rect_->setColor(sf::Color::White);
-		rect_->setMode(ir::render::Mode::WIREFRAME);
-		rect_->render(renderer);
-
-		// Render color sliders
-		renderer.reset();
-		renderer.addPoint(position_ + ir::Vector{ 6.f, 10.f }, sf::Color::Black);
-		renderer.addPoint(position_ + ir::Vector{ 94.f, 10.f }, sf::Color::Red);
-		renderer.addPoint(position_ + ir::Vector{ 6.f, 30.f }, sf::Color::Black);
-		renderer.addPoint(position_ + ir::Vector{ 94.f, 30.f }, sf::Color::Green);
-		renderer.addPoint(position_ + ir::Vector{ 6.f, 50.f }, sf::Color::Black);
-		renderer.addPoint(position_ + ir::Vector{ 94.f, 50.f }, sf::Color::Blue);
-		renderer.addPoint(position_ + ir::Vector{ 6.f, 70.f }, sf::Color::Black);
-		renderer.addPoint(position_ + ir::Vector{ 94.f, 70.f }, sf::Color::White);
-		renderer.flush();
-
-		// Render color slider knobs
-		rect_->setSize(sliderSize_);
-
-		rect_->setPosition(knobPos_[0]);
-		rect_->setColor(sf::Color::Red);
-		rect_->render(renderer);
-		rect_->setPosition(knobPos_[1]);
-		rect_->setColor(sf::Color::Green);
-		rect_->render(renderer);
-		rect_->setPosition(knobPos_[2]);
-		rect_->setColor(sf::Color::Blue);
-		rect_->render(renderer);
-		rect_->setPosition(knobPos_[3]);
-		rect_->setColor(sf::Color::White);
-		rect_->render(renderer);
-
-		// Render color field
-		rect_->setPosition(position_ + ir::Vector{ 2.f, 82.f });
-		rect_->setSize(ir::Vector{ 96.f, 16.f });
-		rect_->setColor(context_->drawColor);
-		rect_->setMode(ir::render::Mode::SOLID);
-		rect_->render(renderer);
-		
-		rect_->setColor(sf::Color::White);
-		rect_->setMode(ir::render::Mode::WIREFRAME);
-		rect_->render(renderer);
-
+		frame_->render(renderer);
 		drawPalette(renderer);
 	}
 
 	void ColorPicker::setPosition(ir::Vector topLeftCorner) {
-		position_ = topLeftCorner;
+		frame_->setPosition(topLeftCorner);
 	}
 
 	void ColorPicker::addToPalette() { 
@@ -165,13 +135,6 @@ namespace vmf {
 		}
 	}
 
-	void ColorPicker::computeKnobPositions() {
-		knobPos_[0] = position_ + ir::Vector{ 6.f + charToSliderPos(context_->drawColor.r), 10.f } - sliderSize_ * .5f;
-		knobPos_[1] = position_ + ir::Vector{ 6.f + charToSliderPos(context_->drawColor.g), 30.f } - sliderSize_ * .5f;
-		knobPos_[2] = position_ + ir::Vector{ 6.f + charToSliderPos(context_->drawColor.b), 50.f } - sliderSize_ * .5f;
-		knobPos_[3] = position_ + ir::Vector{ 6.f + charToSliderPos(context_->drawColor.a), 70.f } - sliderSize_ * .5f;
-	}
-
 	void ColorPicker::drawPalette(ir::render::VertexRenderer& renderer) {
 		for (size_t pos = 0; pos < palette_.size(); pos++) {
 			drawPaletteColor(renderer, palette_[pos], pos);
@@ -179,12 +142,12 @@ namespace vmf {
 	}
 
 	void ColorPicker::drawPaletteColor(ir::render::VertexRenderer& renderer, sf::Color clr, unsigned int pos) {
-		ir::Vector offset { 100.f + pos * 20.f, 80.f };
+		ir::Vector offset { frame_->getSize().x + pos * 20.f, frame_->getSize().y - 20.f };
 		rect_->setMode(ir::render::Mode::SOLID);
 
 		if (clr.a != 255u) {
 			// Base background rect
-			rect_->setPosition(position_ + ir::Vector { 2.f, 2.f } + offset);
+			rect_->setPosition(frame_->getAbsolutePosition() + ir::Vector { 2.f, 2.f } + offset);
 			rect_->setSize(ir::Vector { 16.f, 16.f });
 			rect_->setColor(sf::Color { 160u, 160u, 160u, 255u });
 			rect_->render(renderer);
@@ -195,12 +158,12 @@ namespace vmf {
 			rect_->render(renderer);
 			
 			// Checkered background 2
-			rect_->setPosition(position_ + ir::Vector { 10.f, 10.f } + offset);
+			rect_->setPosition(frame_->getAbsolutePosition() + ir::Vector { 10.f, 10.f } + offset);
 			rect_->render(renderer);
 		}
 
 		// Color
-		rect_->setPosition(position_ + ir::Vector { 2.f, 2.f } + offset);
+		rect_->setPosition(frame_->getAbsolutePosition() + ir::Vector { 2.f, 2.f } + offset);
 		rect_->setSize(ir::Vector { 16.f, 16.f });
 		rect_->setColor(clr);
 		rect_->render(renderer);

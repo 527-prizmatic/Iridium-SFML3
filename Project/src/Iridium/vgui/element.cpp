@@ -125,6 +125,12 @@ namespace ir::vgui {
 	ir::Vector Element::getSize() const { return size_; }
 	ir::Vector Element::getAbsolutePosition() const { return parent_ != nullptr ? pos_ + parent_->getAbsolutePosition() : pos_; }
 	
+	void Element::setBackgroundColor(sf::Color clr) { clrBackground_ = clr; }
+	sf::Color Element::getBackgroundColor() const { return clrBackground_; }
+		
+	void Element::setFrameColor(sf::Color clr) { clrFrame_ = clr; }
+	sf::Color Element::getFrameColor() const { return clrFrame_; }
+
 	void Element::setDebugMode(bool debug) {
 		debugMode = debug;
 	}
@@ -155,9 +161,14 @@ namespace ir::vgui {
 			rect_->render(renderer);
 
 			rect_->setMode(ir::render::Mode::WIREFRAME);
-			rect_->setColor(clrBorder_);
+			rect_->setColor(clrFrame_);
 			rect_->render(renderer);
 		}
 	}
 #pragma endregion
+
+	void FramedElement::render(ir::render::VertexRenderer& renderer) const {
+		renderFrame(renderer);
+		renderChildren(renderer);
+	}
 }

@@ -48,7 +48,7 @@ namespace ir::vgui {
 			/// Bar frame
 			rect_->setMode(ir::render::Mode::WIREFRAME);
 			rect_->setSize(ir::Vector { size_.x - kBarMargin * 2.f, kBarWidth });
-			rect_->setColor(clrBorder_);
+			rect_->setColor(clrFrame_);
 			rect_->render(renderer);
 
 			/// Cursor background
@@ -60,7 +60,7 @@ namespace ir::vgui {
 
 			/// Cursor frame
 			rect_->setMode(ir::render::Mode::WIREFRAME);
-			rect_->setColor(clrBorder_);
+			rect_->setColor(clrFrame_);
 			rect_->render(renderer);
 		}
 

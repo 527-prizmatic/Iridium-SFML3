@@ -19,8 +19,6 @@ namespace ir {
 
 			ir::Vector getBoundingBoxSize();
 
-			ir::Vector getBoundingBoxSize();
-
 		protected:
 			float scale_ { 1.f };
 			/// @todo Find a way to replace this with a reference or pointer

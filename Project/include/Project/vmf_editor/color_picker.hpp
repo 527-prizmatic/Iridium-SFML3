@@ -3,6 +3,8 @@
 
 #include "Project/vmf_editor/context.hpp"
 
+#include "Iridium/vgui/slider.hpp"
+
 namespace vmf {
 	class ColorPicker {
 	public:
@@ -22,19 +24,16 @@ namespace vmf {
 
 		std::vector<sf::Color> palette_;
 
-		std::array<ir::Vector, 4> knobPos_ { };
+		std::unique_ptr<ir::vgui::FramedElement> frame_ { };
+
+		ir::vgui::Slider* sliderR_;
+		ir::vgui::Slider* sliderG_;
+		ir::vgui::Slider* sliderB_;
+		ir::vgui::Slider* sliderA_;
 		
 		std::unique_ptr<ir::render::Rectangle> rect_;
-		std::unique_ptr<ir::render::Text> text_;
 
 		vmf::Context* context_;
-
-		ir::Vector position_;
-		const ir::Vector sliderSize_ { 8.f, 16.f };
-
-		char selected { -1 };
-
-		void computeKnobPositions();
 
 		void drawPalette(ir::render::VertexRenderer& renderer);
 		void drawPaletteColor(ir::render::VertexRenderer& renderer, sf::Color clr, unsigned int pos);
