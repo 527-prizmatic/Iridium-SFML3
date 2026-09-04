@@ -203,5 +203,8 @@ namespace ir::vgui {
 
 	template <typename T>
 	bool InputField<T>::hasFocus() const { return focused_; }
+
+	template <typename T>
+	void InputField<T>::focus() { focused_ = true; }
 #pragma endregion
 }

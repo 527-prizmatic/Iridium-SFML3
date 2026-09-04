@@ -10,6 +10,7 @@
 
 #include "Iridium/vgui/element.hpp"
 #include "Iridium/vgui/label.hpp"
+#include "Iridium/vgui/input_field.hpp"
 
 #include "Project/vmf_editor/draw_area.hpp"
 #include "Project/vmf_editor/text_button.hpp"
@@ -17,6 +18,9 @@
 #include "Project/vmf_editor/toolbar.hpp"
 #include "Project/vmf_editor/editor_model.hpp"
 #include "Project/vmf_editor/color_picker.hpp"
+
+#include "Project/vmf_editor/title_bar.hpp"
+#include "Project/vmf_editor/save_popup.hpp"
 
 #include "Project/vmf_editor/ui_button_factory.hpp"
 
@@ -29,46 +33,9 @@ public:
 		
 		drawArea_ = std::make_unique<vmf::DrawArea>(&*vmfContext_);
 		vmfContext_->posOffset = context_->appWindow->getSize() * .5f / vmfContext_->zoomFactor;
-
-		titleBar_ = std::make_unique<ir::vgui::FramedElement>();
-		titleBar_->setPosition(ir::Vector { 2.f, 2.f });
-		titleBar_->setSize(ir::Vector { 1276.f, 36.f });
-		titleBar_->setFrameColor(sf::Color::White);
-		titleBar_->setBackgroundColor(sf::Color::Black);
-
-		{
-			auto buttonSave = std::make_unique<ir::vgui::FramedElement>();
-			buttonSave->setPosition(ir::Vector { 2.f, 2.f });
-			buttonSave->setSize(ir::Vector { 120.f, 32.f });
-			buttonSave->registerClickEvent([&](){ vmfContext_->registerEvent(vmf::UserEvent::MODEL_SAVE); });
-			buttonSave->setFrameColor(sf::Color::Green);
-			buttonSave->setBackgroundColor(sf::Color::Transparent);
-
-			auto labelSave = std::make_unique<ir::vgui::Label>("Save");
-			labelSave->setColor(sf::Color::Green);
-			labelSave->setAnchor(ir::vgui::Label::Anchor::OVER);
-			labelSave->setScale(16.f);
-
-			buttonSave->addChildElement("label", std::move(labelSave));
-			titleBar_->addChildElement("ButtonSave", std::move(buttonSave));
-		}
-
-		{
-			auto buttonDiscard = std::make_unique<ir::vgui::FramedElement>();
-			buttonDiscard->setPosition(ir::Vector { 126.f, 2.f });
-			buttonDiscard->setSize(ir::Vector { 120.f, 32.f });
-			buttonDiscard->registerClickEvent([&](){ vmfContext_->registerEvent(vmf::UserEvent::MODEL_DISCARD); });
-			buttonDiscard->setFrameColor(sf::Color::Red);
-			buttonDiscard->setBackgroundColor(sf::Color::Transparent);
-
-			auto labelDiscard = std::make_unique<ir::vgui::Label>("Discard");
-			labelDiscard->setColor(sf::Color::Red);
-			labelDiscard->setAnchor(ir::vgui::Label::Anchor::OVER);
-			labelDiscard->setScale(16.f);
-
-			buttonDiscard->addChildElement("label", std::move(labelDiscard));
-			titleBar_->addChildElement("ButtonDiscard", std::move(buttonDiscard));
-		}
+		
+		titleBar_ = std::make_unique<vmf::TitleBar>(&*vmfContext_, ir::Vector { 2.f, 2.f });
+		savePopup_ = std::make_unique<vmf::SavePopup>(&*vmfContext_, ir::Vector { 2.f, 42.f });
 
 		toolbarBottom_ = std::make_unique<vmf::Toolbar>(&*vmfContext_);
 		toolbarBottom_->setPosition(ir::Vector { 2.f, 672.f });
@@ -79,15 +46,6 @@ public:
 		toolbarBottom_->addButton(std::move(vmf::produceToolButton(&*vmfContext_, "ui_line", [&](vmf::Context* context){ context->drawingType = ir::render::Component::Type::LINE; }, sf::Color::Cyan)));
 		toolbarBottom_->addButton(std::move(vmf::produceToolButton(&*vmfContext_, "ui_tri", [&](vmf::Context* context){ context->drawingType = ir::render::Component::Type::TRIANGLE; }, sf::Color::Blue)));
 
-		toolbarSave_ = std::make_unique<vmf::Toolbar>(&*vmfContext_);
-		toolbarSave_->setPosition(ir::Vector { 2.f, 42.f });
-		toolbarSave_->setSize(ir::Vector { 512.f, 36.f });
-		toolbarSave_->setButtonSize(80.f);
-
-		toolbarSave_->addButton(std::move(vmf::produceTextButton(&*vmfContext_, std::string{}, [](vmf::Context* context){}, sf::Color(192u, 192u, 192u))), 340.f);
-		toolbarSave_->addButton(std::move(vmf::produceTextButton(&*vmfContext_, "Save", vmf::UserEvent::CONFIRM_MODEL_SAVE, sf::Color::Green)));
-		toolbarSave_->addButton(std::move(vmf::produceTextButton(&*vmfContext_, "Cancel", vmf::UserEvent::CANCEL_MODEL_SAVE, sf::Color::Red)));
-
 		rectOverlay_ = std::make_unique<ir::render::Rectangle>();
 		rectOverlay_->setSize(1280.f, 720.f);
 		rectOverlay_->setColor(sf::Color(0u, 0u, 0u, 64u));
@@ -95,9 +53,14 @@ public:
 
 		colorPicker_ = std::make_unique<vmf::ColorPicker>(&*vmfContext_);
 		colorPicker_->setPosition(ir::Vector{ 2.f, 552.f });
+
+		editorModel_->load("clang");
 	}
 	
 	void onReceiveEvent(const sf::Event& event) {
+		titleBar_->processEvent(event);
+		savePopup_->processEvent(event);
+
 		if (event.is<sf::Event::KeyReleased>()) {
 	//		auto e = event.getIf<sf::Event::KeyReleased>();
 
@@ -123,24 +86,7 @@ public:
 			editorModel_->processKeyboardInput(e);
 		}
 		else if (event.is<sf::Event::TextEntered>()) {
-			auto e = event.getIf<sf::Event::TextEntered>();
-			vmf::TextButton* saveTextField_ = dynamic_cast<vmf::TextButton*>(toolbarSave_->getButton(0));
-			std::string current = saveTextField_->getLabel();
 
-			if (e->unicode == 13) {
-				vmfContext_->registerEvent(vmf::UserEvent::CONFIRM_MODEL_SAVE);
-			} else if (e->unicode == 8) {
-				if (current.size() > 0) {
-					current.pop_back();
-				}
-			}
-			else {
-				if (current.size() < 32) {
-					current.push_back(e->unicode);
-				}
-			}
-
-			saveTextField_->setLabel(current);
 		}
 		else if (event.is<sf::Event::MouseWheelScrolled>()) {
 			auto e = event.getIf<sf::Event::MouseWheelScrolled>();
@@ -151,7 +97,7 @@ public:
 	void onUpdate() {
 		if (!vmfContext_->saveMode) {
 			bool canDraw = true;
-			if (titleBar_->update(*context_->mouseInput) ||
+			if (titleBar_->update(context_->mouseInput) ||
 				toolbarBottom_->processMouseInput(context_->mouseInput) ||
 				colorPicker_->processMouseInput(context_->mouseInput)) {
 				canDraw = false;
@@ -162,7 +108,7 @@ public:
 			}
 		}
 		else {
-			toolbarSave_->processMouseInput(context_->mouseInput);
+			savePopup_->update(context_->mouseInput);
 		}
 
 		while (vmfContext_->events.size() != 0) {
@@ -179,7 +125,8 @@ public:
 			LOG_WARN("Model save not yet implemented, debugging purposes only");
 
 			vmfContext_->saveMode = true;
-			dynamic_cast<vmf::TextButton*>(toolbarSave_->getButton(0))->setLabel("");
+			savePopup_->setValue("");
+			savePopup_->focus();
 
 			LOG_INFO("Entering model save mode");
 
@@ -202,7 +149,7 @@ public:
 			LOG_INFO("Component input validated");
 		}
 		else if (evt == vmf::UserEvent::CONFIRM_MODEL_SAVE) {
-			std::string_view filename = dynamic_cast<vmf::TextButton*>(toolbarSave_->getButton(0))->getLabel();
+			std::string_view filename = savePopup_->getValue();
 			if (filename.size() == 0) {
 				filename = "model";
 			}
@@ -237,7 +184,7 @@ public:
 
 		if (vmfContext_->saveMode) {
 			rectOverlay_->render(*context_->vertexRenderer);
-			toolbarSave_->render(*context_->vertexRenderer);
+			savePopup_->render(*context_->vertexRenderer);
 		}
 	}
 		
@@ -255,9 +202,9 @@ private:
 	std::unique_ptr<vmf::EditorModel> editorModel_;
 
 	std::unique_ptr<vmf::Toolbar> toolbarBottom_;
-	std::unique_ptr<vmf::Toolbar> toolbarSave_;
 
-	std::unique_ptr<ir::vgui::Element> titleBar_;
+	std::unique_ptr<vmf::TitleBar> titleBar_;
+	std::unique_ptr<vmf::SavePopup> savePopup_;
 
 	std::unique_ptr<vmf::ColorPicker> colorPicker_;
 

@@ -131,6 +131,11 @@ namespace ir::vgui {
 	void Element::setFrameColor(sf::Color clr) { clrFrame_ = clr; }
 	sf::Color Element::getFrameColor() const { return clrFrame_; }
 
+	void Element::setColors(sf::Color frame, sf::Color background) {
+		clrBackground_ = background;
+		clrFrame_ = frame;
+	}
+
 	void Element::setDebugMode(bool debug) {
 		debugMode = debug;
 	}

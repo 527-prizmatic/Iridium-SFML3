@@ -3,6 +3,9 @@
 
 #include "Project/vmf_editor/context.hpp"
 
+#include "Iridium/rendering/rectangle.hpp"
+#include "Iridium/rendering/text.hpp"
+
 namespace vmf {
 	class UiButton {
 	public:

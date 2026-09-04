@@ -56,6 +56,7 @@ namespace ir {
 			void setFrameColor(sf::Color clr);
 			sf::Color getFrameColor() const;
 
+			void setColors(sf::Color frame, sf::Color background);
 			static void setDebugMode(bool debug);
 			
 			void registerClickEvent(ir::vgui::ClickEvent event);

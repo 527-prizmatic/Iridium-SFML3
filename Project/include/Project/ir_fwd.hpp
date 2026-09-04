@@ -12,6 +12,14 @@ namespace ir {
 		class ModelRenderer;
 		class VertexRenderer;
 	}
+
+	namespace vgui {
+		class Element;
+		class FramedElement;
+		class Checkbox;
+		class Label;
+		class Slider;
+	}
 }
 
 #endif // PROJECT_IR_FWD_HPP_
