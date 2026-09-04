@@ -30,17 +30,17 @@ namespace ir::vgui {
 		ir::Vector absPos { getAbsolutePosition() };
 
 		renderer.reset();
-		renderer.addPoint(absPos + ir::Vector { 0.f, size_.y * .5f }, clrBorder_);
-		renderer.addPoint(absPos + ir::Vector { size_.x * .5f, size_.y }, clrBorder_);
+		renderer.addPoint(absPos + ir::Vector { 0.f, size_.y * .5f }, clrFrame_);
+		renderer.addPoint(absPos + ir::Vector { size_.x * .5f, size_.y }, clrFrame_);
 
-		renderer.addPoint(absPos + ir::Vector { size_.x * .5f, size_.y }, clrBorder_);
-		renderer.addPoint(absPos + ir::Vector { size_.x, size_.y * .5f }, clrBorder_);
+		renderer.addPoint(absPos + ir::Vector { size_.x * .5f, size_.y }, clrFrame_);
+		renderer.addPoint(absPos + ir::Vector { size_.x, size_.y * .5f }, clrFrame_);
 
-		renderer.addPoint(absPos + ir::Vector { size_.x, size_.y * .5f }, clrBorder_);
-		renderer.addPoint(absPos + ir::Vector { size_.x * .5f, 0.f }, clrBorder_);
+		renderer.addPoint(absPos + ir::Vector { size_.x, size_.y * .5f }, clrFrame_);
+		renderer.addPoint(absPos + ir::Vector { size_.x * .5f, 0.f }, clrFrame_);
 
-		renderer.addPoint(absPos + ir::Vector { size_.x * .5f, 0.f }, clrBorder_);
-		renderer.addPoint(absPos + ir::Vector { 0.f, size_.y * .5f }, clrBorder_);
+		renderer.addPoint(absPos + ir::Vector { size_.x * .5f, 0.f }, clrFrame_);
+		renderer.addPoint(absPos + ir::Vector { 0.f, size_.y * .5f }, clrFrame_);
 
 		renderer.flush();
 	}

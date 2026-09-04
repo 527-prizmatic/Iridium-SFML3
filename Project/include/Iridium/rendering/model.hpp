@@ -55,7 +55,8 @@ namespace ir {
 			
 			void addComponent(Component&& cmp);
 
-			static Model loadFromFile(std::string file);
+			static Model loadFromFile(std::string_view file);
+			bool saveToFile(std::string_view file);
 			static Model testTriangle();
 
 			/// @todo Implement saving-to-file static function directly in ir::render::Model

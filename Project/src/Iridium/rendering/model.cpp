@@ -32,13 +32,13 @@ namespace ir {
 			components_.push_back(cmp);
 		}
 
-		Model Model::loadFromFile(std::string file) {
-			std::filesystem::path path = "..\\resources\\models\\" + file + ".vmf";
+		Model Model::loadFromFile(std::string_view file) {
+			std::filesystem::path path = "..\\resources\\models\\" + std::string(file.data()) + ".vmf";
 
 			std::ifstream stream(path, std::ios::binary);
 			LOG_INFO(path.string());
 			if (stream.fail()) {
-				throw ir::Exceptions::BadModelName(file);
+				throw ir::Exceptions::BadModelName(file.data());
 			}
 
 			Model model;
@@ -69,6 +69,21 @@ namespace ir {
 			stream.close();
 
 			return model;
+		}
+
+		bool Model::saveToFile(std::string_view file) {
+			std::ofstream stream(file.data() + std::string(".vmf"), std::ios::binary);
+			if (!stream.fail()) {
+				for (auto& cmp : components_) {
+					stream.write(reinterpret_cast<char*>(&cmp.type), 1);
+					for (int j = 0; j <= static_cast<int>(cmp.type); j++) {
+						stream.write(reinterpret_cast<char*>(&cmp.vertices[j]), sizeof(ir::render::Vertex));
+					}
+				}
+				stream.close();
+				return true;
+			}
+			return false;
 		}
 
 		Model Model::testTriangle() {

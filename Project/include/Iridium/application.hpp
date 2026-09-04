@@ -5,6 +5,8 @@
 #include "Iridium/time.hpp"
 #include "Iridium/input/mouse.hpp"
 #include "Iridium/rendering/vertex_renderer.hpp"
+#include "Iridium/assets/asset_manager.hpp"
+#include "Iridium/assets/sound_manager.hpp"
 #include "Iridium/exceptions.hpp"
 
 namespace ir {

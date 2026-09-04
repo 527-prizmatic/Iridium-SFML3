@@ -52,7 +52,8 @@ namespace ir::vgui {
 			size_ = boundingBoxSize;
 		}
 
-		return Element::update(mouseInput);
+	//	return Element::update(mouseInput);
+		return false;
 	}
 
 	void Label::render(ir::render::VertexRenderer& renderer) const {

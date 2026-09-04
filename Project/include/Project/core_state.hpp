@@ -6,9 +6,6 @@
 #include "Iridium/rendering/model_renderer.hpp"
 #include "Iridium/rendering/text.hpp"
 
-#include "Iridium/assets/asset_manager.hpp"
-#include "Iridium/assets/sound_manager.hpp"
-
 #include "Iridium/vgui/element.hpp"
 #include "Iridium/vgui/checkbox.hpp"
 #include "Iridium/vgui/label.hpp"

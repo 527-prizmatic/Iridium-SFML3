@@ -44,6 +44,7 @@ namespace ir {
 			sf::Color getColorFocused() const;
 
 			bool hasFocus() const;
+			void focus();
 
 		private:
 			std::unique_ptr<ir::render::Text> label_;

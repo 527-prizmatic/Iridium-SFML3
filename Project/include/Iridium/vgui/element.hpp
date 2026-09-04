@@ -50,10 +50,18 @@ namespace ir {
 			ir::Vector getSize() const;
 			ir::Vector getAbsolutePosition() const;
 
+			void setBackgroundColor(sf::Color clr);
+			sf::Color getBackgroundColor() const;
+			
+			void setFrameColor(sf::Color clr);
+			sf::Color getFrameColor() const;
+
+			void setColors(sf::Color frame, sf::Color background);
 			static void setDebugMode(bool debug);
 			
 			void registerClickEvent(ir::vgui::ClickEvent event);
 			void processEvent(const sf::Event& evt);
+
 
 		protected:
 			void renderFrame(ir::render::VertexRenderer& renderer) const;
@@ -89,7 +97,7 @@ namespace ir {
 			ir::Vector pos_ { 0.f, 0.f };
 			ir::Vector size_ { 100.f, 100.f };
 
-			sf::Color clrBorder_ { sf::Color::White };
+			sf::Color clrFrame_ { sf::Color::White };
 			sf::Color clrBackground_ { sf::Color::Blue };
 
 			/// @brief Additional user-defined click events.
@@ -97,7 +105,12 @@ namespace ir {
 
 			bool clickHeld_ { false };
 
-			inline static bool debugMode { true };
+			inline static bool debugMode { false };
+		};
+
+		class FramedElement : public Element {
+		public:
+			virtual void render(ir::render::VertexRenderer& renderer) const override;
 		};
 	}
 }
