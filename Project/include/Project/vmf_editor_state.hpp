@@ -231,6 +231,20 @@ public:
 				LOG_INFO("Added current color to palette");
 				break;
 			}
+
+			case vmf::UserEvent::WINDOW_MINIMIZE: {
+				context_->appWindow->minimize();
+
+				LOG_INFO("Minimizing");
+				break;
+			}
+
+			case vmf::UserEvent::WINDOW_CLOSE: {
+				meta_exit();
+
+				LOG_INFO("Exiting");
+				break;
+			}
 		}
 	}
 

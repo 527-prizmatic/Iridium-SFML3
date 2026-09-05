@@ -120,7 +120,7 @@ namespace ir {
 		}
 
 		float Model::getHeight() {
-			short min { 32767 }, max { -32768 };
+			int min { 32767 }, max { -32768 };
 
 			for (auto& c : components_) {
 				for (auto& v : c) {

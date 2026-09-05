@@ -17,6 +17,9 @@ namespace vmf {
 		CONFIRM_MODEL_LOAD,
 		CANCEL_MODEL_LOAD,
 		ADD_CURRENT_TO_PALETTE,
+
+		WINDOW_MINIMIZE,
+		WINDOW_CLOSE,
 	};
 
 	struct Context {

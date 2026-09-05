@@ -2,7 +2,7 @@
 #define IRIDIUM_LOG_HPP_
 
 /// Comment out to disable logging
-#define IRIDIUM_ENABLE_LOGGING
+ #define IRIDIUM_ENABLE_LOGGING
 
 #ifdef IRIDIUM_ENABLE_LOGGING
 	#define LOG_INFO(msg) ir::log::info(msg)

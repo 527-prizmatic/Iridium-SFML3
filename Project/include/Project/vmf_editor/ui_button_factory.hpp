@@ -6,6 +6,7 @@
 #include "Project/vmf_editor/toolbar.hpp"
 
 #include "Iridium/vgui/label.hpp"
+#include "Iridium/vgui/icon.hpp"
 
 namespace vmf {
 	inline std::unique_ptr<vmf::IconButton> produceToolButton(vmf::Context* context, std::string_view modelPath, std::function<void(vmf::Context*)> func, sf::Color color = sf::Color::Cyan) {
@@ -53,6 +54,23 @@ namespace vmf {
 		label->setScale(16.f);
 
 		button->addChildElement("label", std::move(label));
+		return button;
+	};
+
+	/// Quick button factory for VGUI building
+	inline auto makeIconButton = [](ir::Vector pos, ir::Vector size, sf::Color clr, float scale, std::string text) -> std::unique_ptr<ir::vgui::FramedElement> {
+		auto button { std::make_unique<ir::vgui::FramedElement>() };
+		button->setPosition(pos);
+		button->setSize(size);
+		button->setColors(clr, sf::Color::Transparent);
+		
+		auto icon { std::make_unique<ir::vgui::Icon>(text) };
+		icon->setIcon(text);
+		icon->setFrameColor(clr);
+		icon->setScale(scale);
+		icon->setPosition((size - ir::Vector { scale, scale }) * .5f);
+
+		button->addChildElement("icon", std::move(icon));
 		return button;
 	};
 }
