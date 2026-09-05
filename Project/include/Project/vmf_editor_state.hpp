@@ -13,12 +13,10 @@
 #include "Iridium/vgui/input_field.hpp"
 
 #include "Project/vmf_editor/draw_area.hpp"
-#include "Project/vmf_editor/text_button.hpp"
-#include "Project/vmf_editor/icon_button.hpp"
-#include "Project/vmf_editor/toolbar.hpp"
 #include "Project/vmf_editor/editor_model.hpp"
 
 #include "Project/vmf_editor/title_bar.hpp"
+#include "Project/vmf_editor/tools_bar.hpp"
 #include "Project/vmf_editor/color_picker.hpp"
 #include "Project/vmf_editor/save_popup.hpp"
 #include "Project/vmf_editor/load_popup.hpp"
@@ -36,29 +34,22 @@ public:
 		vmfContext_->posOffset = context_->appWindow->getSize() * .5f / vmfContext_->zoomFactor;
 		
 		titleBar_ = std::make_unique<vmf::TitleBar>(&*vmfContext_, ir::Vector { 2.f, 2.f });
+		toolsBar_ = std::make_unique<vmf::ToolsBar>(&*vmfContext_, ir::Vector { 2.f, 682.f });
 		savePopup_ = std::make_unique<vmf::SavePopup>(&*vmfContext_, ir::Vector { 2.f, 42.f });
 		loadPopup_ = std::make_unique<vmf::LoadPopup>(&*vmfContext_, ir::Vector { 2.f, 42.f });
 
-		toolbarBottom_ = std::make_unique<vmf::Toolbar>(&*vmfContext_);
-		toolbarBottom_->setPosition(ir::Vector { 2.f, 672.f });
-		toolbarBottom_->setSize(ir::Vector { 1276.f, 46.f });
-		toolbarBottom_->setButtonSize(42.f);
-
-		toolbarBottom_->addButton(std::move(vmf::produceToolButton(&*vmfContext_, "ui_point", [&](vmf::Context* context){ context->drawingType = ir::render::Component::Type::POINT; }, sf::Color::Green)));
-		toolbarBottom_->addButton(std::move(vmf::produceToolButton(&*vmfContext_, "ui_line", [&](vmf::Context* context){ context->drawingType = ir::render::Component::Type::LINE; }, sf::Color::Cyan)));
-		toolbarBottom_->addButton(std::move(vmf::produceToolButton(&*vmfContext_, "ui_tri", [&](vmf::Context* context){ context->drawingType = ir::render::Component::Type::TRIANGLE; }, sf::Color::Blue)));
+		colorPicker_ = std::make_unique<vmf::ColorPicker>(&*vmfContext_);
+		colorPicker_->setPosition(ir::Vector{ 2.f, 562.f });
 
 		rectOverlay_ = std::make_unique<ir::render::Rectangle>();
-		rectOverlay_->setSize(1280.f, 720.f);
+		rectOverlay_->setSize(context_->appWindow->getSize());
 		rectOverlay_->setColor(sf::Color(0u, 0u, 0u, 64u));
 		rectOverlay_->setMode(ir::render::Mode::SOLID);
-
-		colorPicker_ = std::make_unique<vmf::ColorPicker>(&*vmfContext_);
-		colorPicker_->setPosition(ir::Vector{ 2.f, 552.f });
 	}
 	
 	void onReceiveEvent(const sf::Event& event) {
 		titleBar_->processEvent(event);
+		toolsBar_->processEvent(event);
 		savePopup_->processEvent(event);
 		loadPopup_->processEvent(event);
 
@@ -105,7 +96,7 @@ public:
 		if (!vmfContext_->saveMode && !vmfContext_->loadMode) {
 			bool canDraw = true;
 			if (titleBar_->update(context_->mouseInput) ||
-				toolbarBottom_->processMouseInput(context_->mouseInput) ||
+				toolsBar_->update(context_->mouseInput) ||
 				colorPicker_->processMouseInput(context_->mouseInput)) {
 				canDraw = false;
 			}
@@ -252,7 +243,7 @@ public:
 		drawArea_->render(*context_->vertexRenderer, context_->mouseInput->getCursorPosition());
 		editorModel_->render(*context_->vertexRenderer);
 		titleBar_->render(*context_->vertexRenderer);
-		toolbarBottom_->render(*context_->vertexRenderer);
+		toolsBar_->render(*context_->vertexRenderer);
 		colorPicker_->render(*context_->vertexRenderer);
 
 		if (vmfContext_->saveMode) {
@@ -278,12 +269,11 @@ private:
 	std::unique_ptr<vmf::DrawArea> drawArea_;
 	std::unique_ptr<vmf::EditorModel> editorModel_;
 
-	std::unique_ptr<vmf::Toolbar> toolbarBottom_;
-
+	
 	std::unique_ptr<vmf::TitleBar> titleBar_;
+	std::unique_ptr<vmf::ToolsBar> toolsBar_;
 	std::unique_ptr<vmf::SavePopup> savePopup_;
 	std::unique_ptr<vmf::LoadPopup> loadPopup_;
-
 	std::unique_ptr<vmf::ColorPicker> colorPicker_;
 
 	std::unique_ptr<ir::render::Rectangle> rectOverlay_;

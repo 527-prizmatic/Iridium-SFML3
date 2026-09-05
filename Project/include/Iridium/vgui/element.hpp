@@ -60,8 +60,9 @@ namespace ir {
 			static void setDebugMode(bool debug);
 			
 			void registerClickEvent(ir::vgui::ClickEvent event);
+			void registerHoverEvent(ir::vgui::ClickEvent event);
+			void registerReleaseEvent(ir::vgui::ClickEvent event);
 			void processEvent(const sf::Event& evt);
-
 
 		protected:
 			void renderFrame(ir::render::VertexRenderer& renderer) const;
@@ -102,6 +103,8 @@ namespace ir {
 
 			/// @brief Additional user-defined click events.
 			std::vector<ir::vgui::ClickEvent> clickEvents {};
+			std::vector<ir::vgui::ClickEvent> hoverEvents {};
+			std::vector<ir::vgui::ClickEvent> releaseEvents {};
 
 			bool clickHeld_ { false };
 

@@ -42,6 +42,9 @@ namespace ir::vgui {
 			}
 			else {
 				onHover();
+				for (auto evt : hoverEvents) {
+					evt();
+				}
 			}
 		}
 		else {
@@ -55,6 +58,9 @@ namespace ir::vgui {
 
 		if (mouseInput.isReleased(sf::Mouse::Button::Left) && clickHeld_) {
 			onRelease();
+			for (auto evt : releaseEvents) {
+				evt();
+			}
 			clickHeld_ = false;
 		}
 
@@ -103,6 +109,14 @@ namespace ir::vgui {
 #pragma region Event management
 	void Element::registerClickEvent(ir::vgui::ClickEvent event) {
 		clickEvents.push_back(std::move(event));
+	}
+	
+	void Element::registerHoverEvent(ir::vgui::ClickEvent event) {
+		hoverEvents.push_back(std::move(event));
+	}
+	
+	void Element::registerReleaseEvent(ir::vgui::ClickEvent event) {
+		releaseEvents.push_back(std::move(event));
 	}
 	
 	void Element::processEvent(const sf::Event& evt) {

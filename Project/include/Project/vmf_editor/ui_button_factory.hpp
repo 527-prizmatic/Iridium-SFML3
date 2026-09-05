@@ -1,14 +1,21 @@
 #ifndef PROJECT_EDITOR_TOOL_FACTORY_HPP_
 #define PROJECT_EDITOR_TOOL_FACTORY_HPP_
 
+/*
 #include "Project/vmf_editor/text_button.hpp"
 #include "Project/vmf_editor/icon_button.hpp"
 #include "Project/vmf_editor/toolbar.hpp"
+*/
+
+#include "Project/vmf_editor/context.hpp"
+
+#include "Iridium/rendering/text.hpp"
 
 #include "Iridium/vgui/label.hpp"
 #include "Iridium/vgui/icon.hpp"
 
 namespace vmf {
+	/*
 	inline std::unique_ptr<vmf::IconButton> produceToolButton(vmf::Context* context, std::string_view modelPath, std::function<void(vmf::Context*)> func, sf::Color color = sf::Color::Cyan) {
 		auto button = std::make_unique<vmf::IconButton>(context, modelPath);
 		button->setColors(color, sf::Color::White);
@@ -40,6 +47,7 @@ namespace vmf {
 		button->setLabelScale(16.f);
 		return button;
 	}
+		*/
 
 	/// Quick button factory for VGUI building
 	inline auto makeButton = [](ir::Vector pos, ir::Vector size, sf::Color clr, std::string text) -> std::unique_ptr<ir::vgui::FramedElement> {
