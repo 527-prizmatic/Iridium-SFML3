@@ -5,8 +5,11 @@
  #define IRIDIUM_ENABLE_LOGGING
 
 #ifdef IRIDIUM_ENABLE_LOGGING
+	/// @brief Logs info messages to output stream
 	#define LOG_INFO(msg) ir::log::info(msg)
+	/// @brief Logs warning messages to output stream
 	#define LOG_WARN(msg) ir::log::warn(msg)
+	/// @brief Logs error messages to output stream
 	#define LOG_ERROR(msg) ir::log::error(msg)
 #else
 	#define LOG_INFO(msg) ((void)0)
@@ -19,9 +22,9 @@
 namespace ir::log {
 	void startSession();
 
-	void info(std::string_view msg);
-	void warn(std::string_view msg);
-	void error(std::string_view msg);
+	void info(std::string_view msg); ///< @brief Logs info messages to output stream
+	void warn(std::string_view msg); ///< @brief Logs warning messages to output stream
+	void error(std::string_view msg); ///< @brief Logs error messages to output stream
 
 	void endSession();
 }

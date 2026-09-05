@@ -10,10 +10,12 @@ namespace ir {
 	}
 
 	namespace vgui {
+		/// @brief VGUI element for rendering VMF models as UI icons.
+		/// @note Icons block updates, and do not prevent their parent from updating.
 		class Icon : public Element {
 		public:
 			Icon();
-			Icon(std::string filename);
+			Icon(std::filesystem::path filename);
 
 			virtual bool update(ir::input::Mouse& mouseInput) override;
 			virtual void render(ir::render::VertexRenderer& renderer) const override;
@@ -21,7 +23,7 @@ namespace ir {
 			void setScale(float scale);
 			float getScale();
 
-			void setIcon(std::string text);
+			void setIcon(std::filesystem::path text);
 
 		private:
 			std::unique_ptr<ir::render::ModelRenderer> modelRenderer_;

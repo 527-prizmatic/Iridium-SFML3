@@ -114,18 +114,18 @@ namespace vmf {
 		frame_->setPosition(topLeftCorner);
 	}
 
-	void ColorPicker::addToPalette() { 
-		addToPalette(context_->drawColor);
+	bool ColorPicker::addToPalette() { 
+		return addToPalette(context_->drawColor);
 	}
 
-	void ColorPicker::addToPalette(sf::Color clr) {
+	bool ColorPicker::addToPalette(sf::Color clr) {
 		for (size_t i = 0; i < palette_.size(); i++) {
 			if (palette_[i] == clr) {
 				while (i > 0) {
 					std::swap(palette_[i], palette_[i-1]);
 					i--;
 				}
-				return;
+				return false;
 			}
 		}
 
@@ -133,6 +133,7 @@ namespace vmf {
 		while (palette_.size() > 10) {
 			palette_.pop_back();
 		}
+		return true;
 	}
 
 	void ColorPicker::drawPalette(ir::render::VertexRenderer& renderer) {

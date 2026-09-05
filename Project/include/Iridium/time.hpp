@@ -7,6 +7,7 @@ namespace ir {
 	using ClockType = std::chrono::steady_clock;
 	using Timestamp = std::chrono::time_point<std::chrono::steady_clock>;
 
+	/// @brief Time management subsystem.
 	class GameClock {
 	public:
 		GameClock();
@@ -16,8 +17,8 @@ namespace ir {
 
 		void setTimeScale(float timeScale);
 
-		float getDeltaTime();
-		float getDeltaTimeUnscaled();
+		float getDeltaTime(); ///< @return Scaled time elapsed during last frame, in seconds
+		float getDeltaTimeUnscaled(); ///< @return Unscaled time elapsed during last frame, in seconds
 		float getTimeScale();
 
 	private:

@@ -180,12 +180,8 @@ public:
 					filename = "model";
 				}
 				
-				if (editorModel_->save(std::string { "..\\resources\\" } + filename.data())) {
-					LOG_INFO(std::string{"Model saved as "} + filename.data() + std::string{".vmf"});
+				if (editorModel_->save(filename.data())) {
 					context_->appWindow->setTitle(std::string { filename.data() } + ".vmf - Iridium VMF Editor");
-				}
-				else {
-					LOG_ERROR(std::string{"Error trying to save model as "} + filename.data() + std::string{".vmf"});
 				}
 
 				vmfContext_->saveMode = false;
@@ -200,12 +196,10 @@ public:
 				
 				try {
 					editorModel_->load(filename.data());
-					LOG_INFO(std::string{"Loaded model "} + filename.data() + std::string{".vmf"});
 					context_->appWindow->setTitle(std::string { filename.data() } + ".vmf - Iridium VMF Editor");
 					vmfContext_->loadMode = false;
 				}
 				catch (ir::Exceptions::BadModelName& e) {
-					LOG_ERROR(std::string{"Error trying to load model "} + filename.data() + std::string{".vmf"});
 					loadPopup_->setColor(sf::Color::Red);
 				}
 
@@ -227,9 +221,10 @@ public:
 			}
 
 			case vmf::UserEvent::ADD_CURRENT_TO_PALETTE: {
-				colorPicker_->addToPalette();
+				if (colorPicker_->addToPalette()) {
+					LOG_INFO("Added current color to palette");
+				}
 
-				LOG_INFO("Added current color to palette");
 				break;
 			}
 

@@ -27,9 +27,9 @@ namespace vmf {
 			toolsBar_->addChildElement(name, std::move(button));
 		};
 
-		newButton(2.f, 8.f, "tool_point", sf::Color(96, 224u, 64u, 255u), ir::render::Component::Type::POINT);
-		newButton(36.f, 26.f, "tool_line", sf::Color(48u, 224u, 160u, 255u), ir::render::Component::Type::LINE);
-		newButton(70.f, 26.f, "tool_triangle", sf::Color(64u, 128u, 224u, 255u), ir::render::Component::Type::TRIANGLE);
+		newButton(2.f, 8.f, "tools\\vmf_editor\\tool_point", sf::Color(96, 224u, 64u, 255u), ir::render::Component::Type::POINT);
+		newButton(36.f, 26.f, "tools\\vmf_editor\\tool_line", sf::Color(48u, 224u, 160u, 255u), ir::render::Component::Type::LINE);
+		newButton(70.f, 26.f, "tools\\vmf_editor\\tool_triangle", sf::Color(64u, 128u, 224u, 255u), ir::render::Component::Type::TRIANGLE);
 	}
 
 	void ToolsBar::processEvent(const sf::Event& event) {

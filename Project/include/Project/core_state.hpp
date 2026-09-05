@@ -29,6 +29,7 @@ public:
 		root_ = std::make_unique<ir::vgui::Element>();
 		root_->setPosition(ir::Vector { 100.f, 100.f });
 
+		/*
 		root_->addChildElement("child1", std::make_unique<ir::vgui::Element>());
 		(*root_)["child1"]->setPosition(ir::Vector { 10.f, 10.f });
 		(*root_)["child1"]->setSize(ir::Vector { 20.f, 80.f });
@@ -36,6 +37,7 @@ public:
 		root_->addChildElement("checkbox", std::make_unique<ir::vgui::Checkbox>());
 		(*root_)["checkbox"]->setPosition(ir::Vector { 40.f, 40.f });
 		(*root_)["checkbox"]->setSize(ir::Vector { 25.f, 25.f });
+		*/
 		
 		/*
 		(*root_)["checkbox"]->registerClickEvent([&]() { text_->setScale(text_->getScale() + .5f); });
@@ -98,14 +100,14 @@ public:
 		auto* e = root_->getChild<ir::vgui::Slider>("slider");
 		e->getChild<ir::vgui::Label>("sliderLabel")->setLabel(std::to_string(e->getValue()));
 
-		if (dynamic_cast<ir::vgui::Checkbox*>((*root_)["checkbox"])->isEnabled()) {
+		if (root_->getChild<ir::vgui::Checkbox>("checkbox")->isEnabled()) {
 			text_->setColor(ir::HSLColor(164u, 255u, 127u).toRGB().toSfColor());
 		}
 		else {
 			text_->setColor(ir::HSLColor(82u, 255u, 127u).toRGB().toSfColor());
 		}
 
-		ir::vgui::Element::setDebugMode(dynamic_cast<ir::vgui::Checkbox*>((*root_)["checkbox"])->isEnabled());
+		ir::vgui::Element::setDebugMode(root_->getChild<ir::vgui::Checkbox>("checkbox")->isEnabled());
 	}
 
 	void onRender() {

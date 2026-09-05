@@ -43,9 +43,16 @@ namespace ir::log {
 				}
 			}
 		}
+
+		std::unique_ptr<std::ofstream> file;
 	}
 
 	void startSession() {
+		ir::log::file = std::make_unique<std::ofstream>("EditorLog.txt");
+		if (file && !file->fail()) {
+			std::cout.rdbuf(ir::log::file->rdbuf());
+		}
+
 		ir::log::gThread = std::thread(ir::log::update);
 	}
 
@@ -67,5 +74,6 @@ namespace ir::log {
 	void endSession() {
 		ir::log::gIsRunning = false;
 		ir::log::gThread.join();
+		ir::log::file->close();
 	}
 }

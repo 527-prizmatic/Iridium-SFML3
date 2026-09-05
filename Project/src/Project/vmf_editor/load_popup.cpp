@@ -9,7 +9,7 @@ namespace vmf {
 		context_ = context;
 		loadPopup_ = std::make_unique<ir::vgui::FramedElement>();
 		if (!loadPopup_) {
-			LOG_ERROR("Could not create save popup!!");
+			LOG_ERROR("Could not create load popup!!");
 			return;
 		}
 
@@ -29,9 +29,9 @@ namespace vmf {
 		filename->setScale(16.f);
 		loadPopup_->addChildElement("FilenameField", std::move(filename));
 
-		auto buttonSave { vmf::makeButton(ir::Vector { 346.f, 2.f }, ir::Vector { 80.f, 32.f }, sf::Color(64u, 64u, 192u, 255u), "Load") };
-		buttonSave->registerClickEvent([&](){ context_->registerEvent(vmf::UserEvent::CONFIRM_MODEL_LOAD); });
-		loadPopup_->addChildElement("ButtonSave", std::move(buttonSave));
+		auto buttonLoad { vmf::makeButton(ir::Vector { 346.f, 2.f }, ir::Vector { 80.f, 32.f }, sf::Color(64u, 64u, 192u, 255u), "Load") };
+		buttonLoad->registerClickEvent([&](){ context_->registerEvent(vmf::UserEvent::CONFIRM_MODEL_LOAD); });
+		loadPopup_->addChildElement("ButtonLoad", std::move(buttonLoad));
 		
 		auto buttonDiscard { vmf::makeButton(ir::Vector { 430.f, 2.f }, ir::Vector { 80.f, 32.f }, sf::Color::Red, "Cancel") };
 		buttonDiscard->registerClickEvent([&](){ context_->registerEvent(vmf::UserEvent::CANCEL_MODEL_LOAD); });

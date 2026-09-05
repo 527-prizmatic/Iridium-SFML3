@@ -49,7 +49,7 @@ namespace vmf {
 		if (event.is<sf::Event::TextEntered>() && context_->saveMode) {
 			auto c = event.getIf<sf::Event::TextEntered>()->unicode;
 			if (c == '\r') {
-				context_->registerEvent(vmf::UserEvent::CONFIRM_MODEL_LOAD);
+				context_->registerEvent(vmf::UserEvent::CONFIRM_MODEL_SAVE);
 				confirm = true;
 			}
 		}

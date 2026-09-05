@@ -82,6 +82,7 @@ namespace ir::vgui {
 		return nullptr;
 	}
 
+	/*
 	Element* Element::operator[](std::string key) const {
 		return getChild(key);
 	}
@@ -89,6 +90,7 @@ namespace ir::vgui {
 	Element* Element::operator[](const char* key) const {
 		return getChild(std::string(key));
 	}
+	*/
 
 	void Element::addChildElement(std::string key, std::unique_ptr<ir::vgui::Element> child) {
 		if (child) {

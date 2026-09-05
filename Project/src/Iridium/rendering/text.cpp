@@ -42,26 +42,35 @@ namespace ir::render {
 	}
 
 	void Text::loadModels() {
-		std::string folder { "..\\text\\" };
-		unsigned char c = ' ';
-		while (c != 255u) {
-			std::string name = charToModelName(c);
-			if (name != "none") {
-				try {
-					Model model { Model::loadFromFile(folder + name) };
-					modelSet_.emplace(c, std::make_unique<ir::render::Model>(std::move(model)));
+		static bool done { false };
+		if (!done) {
+			std::string folder { "..\\text\\" };
+			unsigned char c = ' ';
+			while (c != 255u) {
+				std::string name = charToModelName(c);
+				if (name != "none") {
+					try {
+						Model model { Model::loadFromFile(folder + name) };
+						modelSet_.emplace(c, std::make_unique<ir::render::Model>(std::move(model)));
+					}
+					catch (ir::Exceptions::BadModelName& exc) {
+						LOG_ERROR(exc.what());
+						modelSet_.emplace(c, std::make_unique<ir::render::Model>(std::move(placeholderLetter())));
+					}
 				}
-				catch (ir::Exceptions::BadModelName& exc) {
-					LOG_ERROR(exc.what());
-					modelSet_.emplace(c, std::make_unique<ir::render::Model>(std::move(placeholderLetter())));
-				}
+				c++;
 			}
-			c++;
+
+			done = true;
+		}
+		else {
+			LOG_WARN("Attempted to load text models multiple times");
 		}
 	}
 
-	void Text::setScale(float scale) { 
+	Text& Text::setScale(float scale) { 
 		scale_ = scale / kModelHeight;
+		return *this;
 	}
 
 	float Text::getScale() {

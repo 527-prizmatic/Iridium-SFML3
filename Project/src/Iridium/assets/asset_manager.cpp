@@ -7,12 +7,12 @@ namespace ir {
 
 	#pragma region sf::Texture
 	template <>
-	ir::TextureHandle AssetManager::registerAsset<ir::TextureAsset, ir::TextureHandle>(std::string_view name) {
-		ir::TextureHandle handle = std::hash<std::string>{}(name.data());
+	ir::TextureHandle AssetManager::registerAsset<ir::TextureAsset, ir::TextureHandle>(std::filesystem::path name) {
+		ir::TextureHandle handle = std::hash<std::string>{}(name.string());
 		if (textures_.find(handle) != textures_.end()) {
-			throw name.data();
+			throw name.string();
 		}
-		textures_[handle] = std::make_unique<ir::TextureAsset>("..\\resources\\textures\\" + std::string(name.data()));
+		textures_[handle] = std::make_unique<ir::TextureAsset>("..\\resources\\textures\\" + std::string(name.string()));
 		return handle;
 	}
 
@@ -24,18 +24,18 @@ namespace ir {
 		return &*textures_.at(handle);
 	}
 	
-	ir::TextureHandle AssetManager::registerTexture(std::string_view name) { return registerAsset<ir::TextureAsset, ir::TextureHandle>(name); }
+	ir::TextureHandle AssetManager::registerTexture(std::filesystem::path name) { return registerAsset<ir::TextureAsset, ir::TextureHandle>(name); }
 	ir::TextureAsset* AssetManager::getTexture(ir::TextureHandle handle) { return getAsset<ir::TextureAsset, ir::TextureHandle>(handle); }
 #pragma endregion
 
 #pragma region sf::SoundBuffer
 	template <>
-	ir::SoundHandle AssetManager::registerAsset<ir::SoundAsset, ir::SoundHandle>(std::string_view name) {
-		ir::SoundHandle handle = std::hash<std::string>{}(name.data());
+	ir::SoundHandle AssetManager::registerAsset<ir::SoundAsset, ir::SoundHandle>(std::filesystem::path name) {
+		ir::SoundHandle handle = std::hash<std::string>{}(name.string());
 		if (sounds_.find(handle) != sounds_.end()) {
-			throw name.data();
+			throw name.string();
 		}
-		sounds_[handle] = std::make_unique<ir::SoundAsset>("..\\resources\\sounds\\" + std::string(name.data()));
+		sounds_[handle] = std::make_unique<ir::SoundAsset>("..\\resources\\sounds\\" + std::string(name.string()));
 		return handle;
 	}
 
@@ -47,18 +47,18 @@ namespace ir {
 		return &*sounds_.at(handle);
 	}
 	
-	ir::SoundHandle AssetManager::registerSound(std::string_view name) { return registerAsset<ir::SoundAsset, ir::SoundHandle>(name); }
+	ir::SoundHandle AssetManager::registerSound(std::filesystem::path name) { return registerAsset<ir::SoundAsset, ir::SoundHandle>(name); }
 	ir::SoundAsset* AssetManager::getSound(ir::SoundHandle handle) { return getAsset<ir::SoundAsset, ir::SoundHandle>(handle); }
 #pragma endregion
 
 #pragma region sf::Music
 	template <>
-	ir::MusicHandle AssetManager::registerAsset<ir::MusicAsset, ir::MusicHandle>(std::string_view name) {
-		ir::MusicHandle handle = std::hash<std::string>{}(name.data());
+	ir::MusicHandle AssetManager::registerAsset<ir::MusicAsset, ir::MusicHandle>(std::filesystem::path name) {
+		ir::MusicHandle handle = std::hash<std::string>{}(name.string());
 		if (musics_.find(handle) != musics_.end()) {
-			throw name.data();
+			throw name.string();
 		}
-		musics_[handle] = std::make_unique<ir::MusicAsset>("..\\resources\\music\\" + std::string(name.data()));
+		musics_[handle] = std::make_unique<ir::MusicAsset>("..\\resources\\music\\" + std::string(name.string()));
 		return handle;
 	}
 
@@ -70,7 +70,7 @@ namespace ir {
 		return &*musics_.at(handle);
 	}
 	
-	ir::MusicHandle AssetManager::registerMusic(std::string_view name) { return registerAsset<ir::MusicAsset, ir::MusicHandle>(name); }
+	ir::MusicHandle AssetManager::registerMusic(std::filesystem::path name) { return registerAsset<ir::MusicAsset, ir::MusicHandle>(name); }
 	ir::MusicAsset* AssetManager::getMusic(ir::MusicHandle handle) { return getAsset<ir::MusicAsset, ir::MusicHandle>(handle); }
 #pragma endregion
 

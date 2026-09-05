@@ -6,18 +6,22 @@
 
 namespace ir {
 	namespace render {
+		/// @brief Utility class for rendering VMF models.
 		class ModelRenderer : public Shape {
 		public:
 			virtual void render(ir::render::VertexRenderer& renderer) const;
 
-			void setModel(Model& model) { model_ = model; }
-			void setModel(Model&& model) { model_ = model; }
+			ModelRenderer& setModel(Model& model);
+			ModelRenderer& setModel(Model&& model);
 			Model& getModel() { return model_; }
 
-			virtual void setScale(float scale) { scale_ = scale; }
+			/// @attention At a scale of 1, one grid unit in the model corresponds to one screen pixel.
+			virtual ModelRenderer& setScale(float scale);
+
+			/// @attention At a scale of 1, one grid unit in the model corresponds to one screen pixel.
 			virtual float getScale() { return scale_; }
 
-			ir::Vector getBoundingBoxSize();
+			ir::Vector getBoundingBoxSize(); ///< @return Scale-adjusted size of the model's bounding box
 
 		protected:
 			float scale_ { 1.f };

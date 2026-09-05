@@ -18,7 +18,7 @@ namespace ir::render {
 		Model& getModel() = delete;
 
 		/// @brief This override of setScale takes into account letter model height, so that a scale of 10 means a height of 10 pixels.
-		void setScale(float scale) override;
+		Text& setScale(float scale) override;
 		/// @brief This override of getScale takes into account letter model height, so that a scale of 10 means a height of 10 pixels.
 		float getScale() override;
 
@@ -26,6 +26,7 @@ namespace ir::render {
 		std::string string_;
 		sf::Color color_ { sf::Color::White };
 
+		/// @todo This may be a good starting point for a VMF font format.
 		static std::unordered_map<char, std::unique_ptr<Model>> modelSet_;
 
 		void addVertexToBuffer(const Vertex& v, ir::render::VertexRenderer& renderer) const override;

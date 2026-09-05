@@ -28,17 +28,18 @@ namespace ir {
 			vertices[2] = v3;
 		}
 
-		void Model::addComponent(Component&& cmp) {
+		size_t Model::addComponent(Component&& cmp) {
 			components_.push_back(cmp);
+			return components_.size() - 1;
 		}
 
-		Model Model::loadFromFile(std::string_view file) {
-			std::filesystem::path path = "..\\resources\\models\\" + std::string(file.data()) + ".vmf";
+		Model Model::loadFromFile(std::filesystem::path file) {
+			std::filesystem::path path { "..\\resources\\models\\" + file.string() + ".vmf" };
+			path = path.lexically_normal();
 
 			std::ifstream stream(path, std::ios::binary);
-			LOG_INFO(path.string());
 			if (stream.fail()) {
-				throw ir::Exceptions::BadModelName(file.data());
+				throw ir::Exceptions::BadModelName(file.string());
 			}
 
 			Model model;
@@ -68,11 +69,15 @@ namespace ir {
 			}
 			stream.close();
 
+			LOG_INFO("Loaded model " + path.string());
 			return model;
 		}
 
-		bool Model::saveToFile(std::string_view file) {
-			std::ofstream stream(file.data() + std::string(".vmf"), std::ios::binary);
+		bool Model::saveToFile(std::filesystem::path file) {
+			std::filesystem::path path { "..\\resources\\models\\" + file.string() + ".vmf" };
+			path = path.lexically_normal();
+
+			std::ofstream stream(path, std::ios::binary);
 			if (!stream.fail()) {
 				for (auto& cmp : components_) {
 					stream.write(reinterpret_cast<char*>(&cmp.type), 1);
@@ -81,8 +86,12 @@ namespace ir {
 					}
 				}
 				stream.close();
+				
+				LOG_INFO("Saved model " + path.string());
 				return true;
 			}
+			
+			LOG_WARN("Error while trying to save model " + path.string());
 			return false;
 		}
 
@@ -101,8 +110,8 @@ namespace ir {
 			return model;
 		}
 		
-		float Model::getWidth() {
-			short min { 32767 }, max { -32768 };
+		unsigned int Model::getWidth() {
+			int min { 32767 }, max { -32768 };
 			
 			for (auto& c : components_) {
 				for (auto& v : c) {
@@ -119,7 +128,7 @@ namespace ir {
 
 		}
 
-		float Model::getHeight() {
+		unsigned int Model::getHeight() {
 			int min { 32767 }, max { -32768 };
 
 			for (auto& c : components_) {

@@ -30,12 +30,12 @@ namespace vmf {
 		buttonDiscard->registerClickEvent([&](){ context_->registerEvent(vmf::UserEvent::MODEL_DISCARD); });
 		titleBar_->addChildElement("ButtonDiscard", std::move(buttonDiscard));
 
-		auto buttonMin { vmf::makeIconButton(ir::Vector { 1208.f, 2.f }, ir::Vector { 32.f, 32.f }, sf::Color(32u, 224u, 192u, 255u), 24.f, "line") };
+		auto buttonMin { vmf::makeIconButton(ir::Vector { 1208.f, 2.f }, ir::Vector { 32.f, 32.f }, sf::Color(32u, 224u, 192u, 255u), 24.f, "tools\\line") };
 		buttonMin->registerClickEvent([&](){ context_->registerEvent(vmf::UserEvent::WINDOW_MINIMIZE); });
 		buttonMin->getChild<ir::vgui::Icon>("icon")->setPosition(ir::Vector { 4.f, 22.f });
 		titleBar_->addChildElement("ButtonMin", std::move(buttonMin));
 
-		auto buttonClose { vmf::makeIconButton(ir::Vector { 1242.f, 2.f }, ir::Vector { 32.f, 32.f }, sf::Color(224u, 48u, 92u, 255u), 26.f, "cross") };
+		auto buttonClose { vmf::makeIconButton(ir::Vector { 1242.f, 2.f }, ir::Vector { 32.f, 32.f }, sf::Color(224u, 48u, 92u, 255u), 26.f, "tools\\cross") };
 		buttonClose->registerClickEvent([&](){ context_->registerEvent(vmf::UserEvent::WINDOW_CLOSE); });
 		titleBar_->addChildElement("ButtonClose", std::move(buttonClose));
 

@@ -6,7 +6,7 @@ namespace ir::vgui {
 		modelRenderer_ = std::make_unique<ir::render::ModelRenderer>();
 	}
 
-	Icon::Icon(std::string filename) {
+	Icon::Icon(std::filesystem::path filename) {
 		modelRenderer_ = std::make_unique<ir::render::ModelRenderer>();
 		setIcon(filename);
 	}
@@ -26,16 +26,16 @@ namespace ir::vgui {
 	void Icon::setScale(float scale) {
 		scale_ = scale;
 		if (modelRenderer_) {
-			float modelSize { std::max(modelRenderer_->getModel().getHeight(), modelRenderer_->getModel().getWidth()) };
-			modelRenderer_->setScale(scale_ / modelSize);
+			unsigned int modelSize { std::max(modelRenderer_->getModel().getHeight(), modelRenderer_->getModel().getWidth()) };
+			modelRenderer_->setScale(scale_ / static_cast<float>(modelSize));
 		}
 	}
 
 	float Icon::getScale() { return scale_; }
 
-	void Icon::setIcon(std::string text) {
+	void Icon::setIcon(std::filesystem::path filename) {
 		if (modelRenderer_) {
-			modelRenderer_->setModel(ir::render::Model::loadFromFile(text));
+			modelRenderer_->setModel(ir::render::Model::loadFromFile(filename));
 			setScale(scale_);
 		}
 	}

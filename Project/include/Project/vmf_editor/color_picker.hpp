@@ -17,8 +17,8 @@ namespace vmf {
 
 		void setPosition(ir::Vector topLeftCorner);
 
-		void addToPalette();
-		void addToPalette(sf::Color clr);
+		bool addToPalette();
+		bool addToPalette(sf::Color clr);
 
 	private:
 
