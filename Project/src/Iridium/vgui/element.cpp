@@ -42,6 +42,9 @@ namespace ir::vgui {
 			}
 			else {
 				onHover();
+				for (auto evt : hoverEvents) {
+					evt();
+				}
 			}
 		}
 		else {
@@ -55,6 +58,9 @@ namespace ir::vgui {
 
 		if (mouseInput.isReleased(sf::Mouse::Button::Left) && clickHeld_) {
 			onRelease();
+			for (auto evt : releaseEvents) {
+				evt();
+			}
 			clickHeld_ = false;
 		}
 
@@ -76,6 +82,7 @@ namespace ir::vgui {
 		return nullptr;
 	}
 
+	/*
 	Element* Element::operator[](std::string key) const {
 		return getChild(key);
 	}
@@ -83,6 +90,7 @@ namespace ir::vgui {
 	Element* Element::operator[](const char* key) const {
 		return getChild(std::string(key));
 	}
+	*/
 
 	void Element::addChildElement(std::string key, std::unique_ptr<ir::vgui::Element> child) {
 		if (child) {
@@ -103,6 +111,14 @@ namespace ir::vgui {
 #pragma region Event management
 	void Element::registerClickEvent(ir::vgui::ClickEvent event) {
 		clickEvents.push_back(std::move(event));
+	}
+	
+	void Element::registerHoverEvent(ir::vgui::ClickEvent event) {
+		hoverEvents.push_back(std::move(event));
+	}
+	
+	void Element::registerReleaseEvent(ir::vgui::ClickEvent event) {
+		releaseEvents.push_back(std::move(event));
 	}
 	
 	void Element::processEvent(const sf::Event& evt) {

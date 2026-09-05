@@ -3,4 +3,5 @@ target_sources(${PROJECT_NAME} PRIVATE
 	checkbox.cpp
 	label.cpp
 	slider.cpp
+	icon.cpp
 )

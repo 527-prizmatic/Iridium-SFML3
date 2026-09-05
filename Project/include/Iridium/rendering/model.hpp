@@ -49,20 +49,36 @@ namespace ir {
 			auto end() const { return vertices.end(); }
 		};
 
+		/// @brief Data storage for VMF models.
+		/// 
+		/// VMF (Vector Model Format) is a file format designed for use in Iridium. It stores OpenGL vector graphics data
+		/// under the form of groups of coordinate-color pairs. Each such group corresponds to a single graphical element
+		/// (a line, a point, or a triangle). Coordinates are stored on a discrete pixel grid, rather than floating-point.
+		/// 
+		/// Models must be passed to an instance of ir::render::ModelRenderer for on-screen drawing. This utility class
+		/// comes with farious functions to change orientation, scale, add a global color filter, and more.
 		class Model {
 		public:
 			Model() = default;
 			
-			void addComponent(Component&& cmp);
+			/// @brief Appends a component at the end of the component list.
+			/// @return Index of the newly added component
+			size_t addComponent(Component&& cmp);
 
-			static Model loadFromFile(std::string_view file);
-			bool saveToFile(std::string_view file);
+			/// @brief Attempts to load a VMF model from a .vmf file placed in resources\models.
+			/// @param file File name
+			static Model loadFromFile(std::filesystem::path file);
+
+			/// @brief Saves VMF model data into a .vmf file. The saved file is placed in resources\models.
+			/// @param file File path
+			/// @return Whether the model was saved successfully
+			bool saveToFile(std::filesystem::path file);
+
+			/// @return Dummy model for testing VMF APIs
 			static Model testTriangle();
 
-			/// @todo Implement saving-to-file static function directly in ir::render::Model
-
-			size_t getComponentCount() const { return components_.size(); }
-			const Component& getComponent(size_t index) const { return components_[index]; }
+			size_t getComponentCount() const { return components_.size(); } ///< @return Number of components (points, lines and triangles) in the model
+			const Component& getComponent(size_t index) const { return components_[index]; } ///< @return Component data of the component with requested index
 
 			void removeLastComponent() {
 				if (components_.size() > 0) {
@@ -70,13 +86,13 @@ namespace ir {
 				}
 			}
 			
-			auto begin() { return components_.begin(); }
-			auto begin() const { return components_.begin(); }
-			auto end() { return components_.end(); }
-			auto end() const { return components_.end(); }
+			auto begin() { return components_.begin(); } ///< @brief For iterating over component list
+			auto begin() const { return components_.begin(); } ///< @brief For iterating over component list
+			auto end() { return components_.end(); } ///< @brief For iterating over component list
+			auto end() const { return components_.end(); } ///< @brief For iterating over component list
 
-			float getWidth();
-			float getHeight();
+			unsigned int getWidth(); ///< @return Width of the model in grid units
+			unsigned int getHeight(); ///< @return Height of the model in grid units
 
 		private:
 			std::vector<Component> components_;

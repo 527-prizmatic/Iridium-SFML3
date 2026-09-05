@@ -10,6 +10,8 @@ namespace ir {
 	}
 
 	namespace vgui {
+		/// @brief VGUI input field, allowing the user to type in values as text.
+		/// @tparam T What data type the user will be able to input (text or numbers, most likely)
 		template <typename T>
 		class InputField : public Element {
 		public:
@@ -28,21 +30,23 @@ namespace ir {
 			void setValue(T value);
 			T getValue() const;
 
-			void setMaxChars(unsigned int max);
-			unsigned int getMaxChars() const;
+			void setMaxChars(unsigned int max); ///< @brief Sets how long the input can be
+			unsigned int getMaxChars() const; ///< @return How long the input can be
 
-			void setScale(float scale);
-			float getScale() const;
+			void setScale(float scale); ///< @brief Sets label scale. As with ir::render::Text, scale equals pixel height.
+			float getScale() const; ///< @return Label scale. As with ir::render::Text, scale equals pixel height.
 
 			void setLabelColor(sf::Color clr);
 			sf::Color getLabelColor() const;
 
-			void setColorUnfocused(sf::Color clr);
+			void setColorUnfocused(sf::Color clr); ///< @brief Sets a background color to use when not focused.
 			sf::Color getColorUnfocused() const;
 
-			void setColorFocused(sf::Color clr);
+			void setColorFocused(sf::Color clr); ///< @brief Sets a background color to use when focused.
 			sf::Color getColorFocused() const;
 
+			/// @return Whether the input field is being focused. Only one input field can be focused at a time.
+			/// It is only possible to type in values in a focused input field.
 			bool hasFocus() const;
 			void focus();
 

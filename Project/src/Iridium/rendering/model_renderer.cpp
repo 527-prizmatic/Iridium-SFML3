@@ -46,5 +46,20 @@ namespace ir {
 
 			return (posMax - posMin) * scale_;
 		}
+
+		ModelRenderer& ModelRenderer::setScale(float scale) {
+			scale_ = scale;
+			return *this;
+		}
+
+		ModelRenderer& ModelRenderer::setModel(Model& model) {
+			model_ = model;
+			return *this;
+		}
+
+		ModelRenderer& ModelRenderer::setModel(Model&& model) {
+			model_ = model;
+			return *this;
+		}
 	}
 }

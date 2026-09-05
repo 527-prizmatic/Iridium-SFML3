@@ -3,7 +3,13 @@
 
 int main() {
 	ir::log::startSession();
-	ir::Application app;
-	app.run<CoreState>();
+	try {
+		ir::render::Text::loadModels();
+		ir::Application app;
+		app.run<CoreState>();
+	}
+	catch (...) {
+		LOG_ERROR("Something terrible happened (caught unhandled exception, exiting)");
+	}
 	ir::log::endSession();
 }

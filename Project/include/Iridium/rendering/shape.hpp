@@ -31,8 +31,7 @@ namespace ir {
 			SOLID
 		};
 
-		/// @brief Generic base class for vertex-based drawable objects.
-		/// Can be freely derived by the user.
+		/// @brief Generic base class for vertex-based drawable objects. Can be freely derived by the user.
 		/// All mutators should return a reference to this, allowing for chaining mutators.
 		class Shape {
 		public:

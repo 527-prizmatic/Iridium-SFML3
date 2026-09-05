@@ -11,6 +11,8 @@ namespace ir {
 	}
 
 	namespace vgui {
+		/// @brief VGUI element for rendering VMF-based text as UI labels.
+		/// @note Labels block updates, and do not prevent their parent from updating.
 		class Label : public Element {
 		public:
 			enum class Anchor : unsigned char {

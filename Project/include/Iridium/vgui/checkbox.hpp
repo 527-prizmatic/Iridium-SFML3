@@ -4,6 +4,7 @@
 #include "Iridium/vgui/element.hpp"
 
 namespace ir::vgui {
+	/// @brief VGUI checkbox, toggleable with a left mouse click.
 	class Checkbox : public Element {
 	public:
 		virtual void render(ir::render::VertexRenderer& renderer) const override;
@@ -13,7 +14,7 @@ namespace ir::vgui {
 		virtual void onDeselect() override;
 
 		void setEnabled(bool enabled) { enabled_= enabled; }
-		bool isEnabled() { return enabled_; }
+		bool isEnabled() { return enabled_; } ///< @return Whether the checkbox is ticked
 
 	private:
 		void renderCheckbox(ir::render::VertexRenderer& renderer) const;

@@ -12,13 +12,13 @@ namespace ir {
 		template <typename T>
 		void deleteAsset(T handle) {}
 
-		ir::TextureHandle registerTexture(std::string_view name);
+		ir::TextureHandle registerTexture(std::filesystem::path name);
 		ir::TextureAsset* getTexture(ir::TextureHandle handle);
 
-		ir::SoundHandle registerSound(std::string_view name);
+		ir::SoundHandle registerSound(std::filesystem::path name);
 		ir::SoundAsset* getSound(ir::SoundHandle handle);
 		
-		ir::MusicHandle registerMusic(std::string_view name);
+		ir::MusicHandle registerMusic(std::filesystem::path name);
 		ir::MusicAsset* getMusic(ir::MusicHandle handle);
 
 		void playMusic(ir::MusicHandle handle);
@@ -32,7 +32,7 @@ namespace ir {
 		/// @tparam T Asset type (ir::___Asset type)
 		/// @tparam U Handle type (ir::___Handle type)
 		template <typename T, typename U>
-		U registerAsset(std::string_view name) {
+		U registerAsset(std::filesystem::path name) {
 			throw ir::Exceptions::BadAssetType(typeid(T).name());
 		}
 
@@ -48,13 +48,13 @@ namespace ir {
 		std::unordered_map<MusicHandle, std::unique_ptr<ir::MusicAsset>> musics_;
 	};
 
-	template <>	ir::TextureHandle AssetManager::registerAsset<ir::TextureAsset, ir::TextureHandle>(std::string_view name);
+	template <>	ir::TextureHandle AssetManager::registerAsset<ir::TextureAsset, ir::TextureHandle>(std::filesystem::path name);
 	template <>	ir::TextureAsset* AssetManager::getAsset<ir::TextureAsset, ir::TextureHandle>(ir::TextureHandle handle) ;
 	
-	template <> ir::SoundHandle AssetManager::registerAsset<ir::SoundAsset, ir::SoundHandle>(std::string_view name);
+	template <> ir::SoundHandle AssetManager::registerAsset<ir::SoundAsset, ir::SoundHandle>(std::filesystem::path name);
 	template <> ir::SoundAsset* AssetManager::getAsset<ir::SoundAsset, ir::SoundHandle>(ir::SoundHandle handle);
 
-	template <> ir::MusicHandle AssetManager::registerAsset<ir::MusicAsset, ir::MusicHandle>(std::string_view name);
+	template <> ir::MusicHandle AssetManager::registerAsset<ir::MusicAsset, ir::MusicHandle>(std::filesystem::path name);
 	template <> ir::MusicAsset* AssetManager::getAsset<ir::MusicAsset, ir::MusicHandle>(ir::MusicHandle handle);
 }
 

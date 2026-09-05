@@ -4,6 +4,7 @@
 #include "Iridium/vgui/element.hpp"
 
 namespace ir::vgui {
+	/// @brief VGUI slider, for selecting numerical values by moving a cursor along a horizontal line.
 	class Slider : public Element {
 	public:
 		Slider(int lowerBound = 0, int upperBound = 10);
@@ -22,7 +23,7 @@ namespace ir::vgui {
 
 	private:
 		void clampValue();
-		[[nodiscard]] float getValueRatio() const;
+		[[nodiscard]] float getValueRatio() const; ///< @brief Reverse-interpolates the current value along the slider's interval
 
 		struct {
 			int upper_ { 0 };
