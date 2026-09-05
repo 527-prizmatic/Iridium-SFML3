@@ -22,7 +22,11 @@ namespace vmf {
 		buttonSave->registerClickEvent([&](){ context_->registerEvent(vmf::UserEvent::MODEL_SAVE); });
 		titleBar_->addChildElement("ButtonSave", std::move(buttonSave));
 
-		auto buttonDiscard { vmf::makeButton(ir::Vector { 126.f, 2.f }, ir::Vector { 120.f, 32.f }, sf::Color::Red, "Discard") };
+		auto buttonLoad { vmf::makeButton(ir::Vector { 126.f, 2.f }, ir::Vector { 120.f, 32.f }, sf::Color(64u, 64u, 192u, 255u), "Load") };
+		buttonLoad->registerClickEvent([&](){ context_->registerEvent(vmf::UserEvent::MODEL_LOAD); });
+		titleBar_->addChildElement("ButtonLoad", std::move(buttonLoad));
+
+		auto buttonDiscard { vmf::makeButton(ir::Vector { 250.f, 2.f }, ir::Vector { 120.f, 32.f }, sf::Color::Red, "Discard") };
 		buttonDiscard->registerClickEvent([&](){ context_->registerEvent(vmf::UserEvent::MODEL_DISCARD); });
 		titleBar_->addChildElement("ButtonDiscard", std::move(buttonDiscard));
 	}

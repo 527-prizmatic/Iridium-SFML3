@@ -17,10 +17,11 @@
 #include "Project/vmf_editor/icon_button.hpp"
 #include "Project/vmf_editor/toolbar.hpp"
 #include "Project/vmf_editor/editor_model.hpp"
-#include "Project/vmf_editor/color_picker.hpp"
 
 #include "Project/vmf_editor/title_bar.hpp"
+#include "Project/vmf_editor/color_picker.hpp"
 #include "Project/vmf_editor/save_popup.hpp"
+#include "Project/vmf_editor/load_popup.hpp"
 
 #include "Project/vmf_editor/ui_button_factory.hpp"
 
@@ -36,6 +37,7 @@ public:
 		
 		titleBar_ = std::make_unique<vmf::TitleBar>(&*vmfContext_, ir::Vector { 2.f, 2.f });
 		savePopup_ = std::make_unique<vmf::SavePopup>(&*vmfContext_, ir::Vector { 2.f, 42.f });
+		loadPopup_ = std::make_unique<vmf::LoadPopup>(&*vmfContext_, ir::Vector { 2.f, 42.f });
 
 		toolbarBottom_ = std::make_unique<vmf::Toolbar>(&*vmfContext_);
 		toolbarBottom_->setPosition(ir::Vector { 2.f, 672.f });
@@ -53,13 +55,12 @@ public:
 
 		colorPicker_ = std::make_unique<vmf::ColorPicker>(&*vmfContext_);
 		colorPicker_->setPosition(ir::Vector{ 2.f, 552.f });
-
-		editorModel_->load("clang");
 	}
 	
 	void onReceiveEvent(const sf::Event& event) {
 		titleBar_->processEvent(event);
 		savePopup_->processEvent(event);
+		loadPopup_->processEvent(event);
 
 		if (event.is<sf::Event::KeyReleased>()) {
 	//		auto e = event.getIf<sf::Event::KeyReleased>();
@@ -76,6 +77,12 @@ public:
 			if (e->control) {
 				if (e->code == sf::Keyboard::Key::S) {
 					vmfContext_->registerEvent(vmf::UserEvent::MODEL_SAVE);
+				}
+				if (e->code == sf::Keyboard::Key::O) {
+					vmfContext_->registerEvent(vmf::UserEvent::MODEL_LOAD);
+				}
+				if (e->code == sf::Keyboard::Key::N) {
+					vmfContext_->registerEvent(vmf::UserEvent::MODEL_DISCARD);
 				}
 			}
 			if (e->code == sf::Keyboard::Key::Escape && e->shift) {
@@ -95,7 +102,7 @@ public:
 	}
 
 	void onUpdate() {
-		if (!vmfContext_->saveMode) {
+		if (!vmfContext_->saveMode && !vmfContext_->loadMode) {
 			bool canDraw = true;
 			if (titleBar_->update(context_->mouseInput) ||
 				toolbarBottom_->processMouseInput(context_->mouseInput) ||
@@ -108,7 +115,12 @@ public:
 			}
 		}
 		else {
-			savePopup_->update(context_->mouseInput);
+			if (vmfContext_->saveMode) {
+				savePopup_->update(context_->mouseInput);
+			}
+			else if (vmfContext_->loadMode) {
+				loadPopup_->update(context_->mouseInput);
+			}
 		}
 
 		while (vmfContext_->events.size() != 0) {
@@ -117,61 +129,108 @@ public:
 	}
 
 	void processUserEvent(vmf::UserEvent evt) {
-		if (evt == vmf::UserEvent::DEBUG) {
-			LOG_INFO("Button debug");
-
-		}
-		else if (evt == vmf::UserEvent::MODEL_SAVE) {
-			LOG_WARN("Model save not yet implemented, debugging purposes only");
-
-			vmfContext_->saveMode = true;
-			savePopup_->setValue("");
-			savePopup_->focus();
-
-			LOG_INFO("Entering model save mode");
-
-		}
-		else if (evt == vmf::UserEvent::MODEL_DISCARD) {
-			editorModel_->clear();
-				vmfContext_->vertexList.clear();
-
-			LOG_INFO("Discarded model");
-		}
-		else if (evt == vmf::UserEvent::COMPONENT_VALIDATE) {
-			editorModel_->addComponent(vmfContext_->inputToComponent());
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift)) {
-				vmfContext_->vertexList.erase(vmfContext_->vertexList.begin());
-			}
-			else {
-				vmfContext_->vertexList.clear();
+		switch (evt) {
+			case vmf::UserEvent::DEBUG: {
+				LOG_INFO("Button debug");
+				break;
 			}
 
-			LOG_INFO("Component input validated");
-		}
-		else if (evt == vmf::UserEvent::CONFIRM_MODEL_SAVE) {
-			std::string_view filename = savePopup_->getValue();
-			if (filename.size() == 0) {
-				filename = "model";
+			case vmf::UserEvent::MODEL_SAVE: {
+				vmfContext_->saveMode = true;
+				savePopup_->setValue("");
+				savePopup_->focus();
+
+				LOG_INFO("Entering model save mode");
+				break;
+			}
+
+			case vmf::UserEvent::MODEL_LOAD: {
+				vmfContext_->loadMode = true;
+				loadPopup_->setValue("");
+				loadPopup_->focus();
+				loadPopup_->setColor(sf::Color::White);
+
+				LOG_INFO("Entering model load mode");
+				break;
+			}
+
+			case vmf::UserEvent::MODEL_DISCARD: {
+				editorModel_->clear();
+				vmfContext_->vertexList.clear();
+
+				LOG_INFO("Discarded model");
+				break;
+			}
+
+			case vmf::UserEvent::COMPONENT_VALIDATE: {
+				editorModel_->addComponent(vmfContext_->inputToComponent());
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift)) {
+					vmfContext_->vertexList.erase(vmfContext_->vertexList.begin());
+				}
+				else {
+					vmfContext_->vertexList.clear();
+				}
+
+				LOG_INFO("Component input validated");
+				break;
+			}
+
+			case vmf::UserEvent::CONFIRM_MODEL_SAVE: {
+				std::string_view filename = savePopup_->getValue();
+				if (filename.size() == 0) {
+					filename = "model";
+				}
+				
+				if (editorModel_->save(filename.data())) {
+					LOG_INFO(std::string{"Model saved as "} + filename.data() + std::string{".vmf"});
+				}
+				else {
+					LOG_ERROR(std::string{"Error trying to save model as "} + filename.data() + std::string{".vmf"});
+				}
+
+				vmfContext_->saveMode = false;
+				break;
+			}
+
+			case vmf::UserEvent::CONFIRM_MODEL_LOAD: {
+				std::string_view filename = loadPopup_->getValue();
+				if (filename.size() == 0) {
+					filename = "model";
+				}
+				
+				try {
+					editorModel_->load(filename.data());
+					LOG_INFO(std::string{"Loaded model "} + filename.data() + std::string{".vmf"});
+					vmfContext_->loadMode = false;
+				}
+				catch (ir::Exceptions::BadModelName& e) {
+					LOG_ERROR(std::string{"Error trying to load model "} + filename.data() + std::string{".vmf"});
+					loadPopup_->setColor(sf::Color::Red);
+				}
+
+				break;
 			}
 			
-			if (editorModel_->save(filename.data())) {
-				LOG_INFO(std::string{"Model saved as "} + filename.data() + std::string{".vmf"});
+			case vmf::UserEvent::CANCEL_MODEL_SAVE: {
+				vmfContext_->saveMode = false;
+
+				LOG_INFO("File saving canceled");
+				break;
 			}
-			else {
-				LOG_ERROR(std::string{"Error trying to save model as "} + filename.data() + std::string{".vmf"});
+
+			case vmf::UserEvent::CANCEL_MODEL_LOAD: {
+				vmfContext_->loadMode = false;
+
+				LOG_INFO("File loading canceled");
+				break;
 			}
 
-			vmfContext_->saveMode = false;
-		}
-		else if (evt == vmf::UserEvent::CANCEL_MODEL_SAVE) {
-			vmfContext_->saveMode = false;
+			case vmf::UserEvent::ADD_CURRENT_TO_PALETTE: {
+				colorPicker_->addToPalette();
 
-			LOG_INFO("File saving canceled");
-		}
-		else if (evt == vmf::UserEvent::ADD_CURRENT_TO_PALETTE) {
-			colorPicker_->addToPalette();
-
-			LOG_INFO("Added current color to palette");
+				LOG_INFO("Added current color to palette");
+				break;
+			}
 		}
 	}
 
@@ -185,6 +244,10 @@ public:
 		if (vmfContext_->saveMode) {
 			rectOverlay_->render(*context_->vertexRenderer);
 			savePopup_->render(*context_->vertexRenderer);
+		}
+		if (vmfContext_->loadMode) {
+			rectOverlay_->render(*context_->vertexRenderer);
+			loadPopup_->render(*context_->vertexRenderer);
 		}
 	}
 		
@@ -205,6 +268,7 @@ private:
 
 	std::unique_ptr<vmf::TitleBar> titleBar_;
 	std::unique_ptr<vmf::SavePopup> savePopup_;
+	std::unique_ptr<vmf::LoadPopup> loadPopup_;
 
 	std::unique_ptr<vmf::ColorPicker> colorPicker_;
 

@@ -10,9 +10,12 @@ namespace vmf {
 		DEBUG,
 		MODEL_SAVE,
 		MODEL_DISCARD,
+		MODEL_LOAD,
 		COMPONENT_VALIDATE,
 		CONFIRM_MODEL_SAVE,
 		CANCEL_MODEL_SAVE,
+		CONFIRM_MODEL_LOAD,
+		CANCEL_MODEL_LOAD,
 		ADD_CURRENT_TO_PALETTE,
 	};
 
@@ -28,6 +31,7 @@ namespace vmf {
 		sf::Color drawColor { sf::Color::White };
 
 		bool saveMode { false };
+		bool loadMode { false };
 
 		void registerEvent(vmf::UserEvent evt) { events.push_back(evt); }
 
