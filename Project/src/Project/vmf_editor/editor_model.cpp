@@ -31,11 +31,15 @@ namespace vmf {
 	}
 
 	bool EditorModel::load(std::string_view filename) {
-		model_ = std::make_unique<ir::render::Model>();
-		if (model_) {
-			*model_ = ir::render::Model::loadFromFile(filename);
+		std::unique_ptr newModel { std::make_unique<ir::render::Model>() };
+		if (newModel) {
+			*newModel = ir::render::Model::loadFromFile(filename);
+			model_ = std::move(newModel);
+			return model_ != nullptr;
 		}
-		return model_ != nullptr;
+		else {
+			return false;
+		}
 	}
 
 	bool EditorModel::save(std::string_view filename) {

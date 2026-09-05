@@ -38,6 +38,15 @@ namespace vmf {
 		auto buttonClose { vmf::makeIconButton(ir::Vector { 1242.f, 2.f }, ir::Vector { 32.f, 32.f }, sf::Color(224u, 48u, 92u, 255u), 26.f, "cross") };
 		buttonClose->registerClickEvent([&](){ context_->registerEvent(vmf::UserEvent::WINDOW_CLOSE); });
 		titleBar_->addChildElement("ButtonClose", std::move(buttonClose));
+
+		auto min { titleBar_->getChild<ir::vgui::FramedElement>("ButtonMin") };
+		if (min) {
+			auto label { std::make_unique<ir::vgui::Label>() };
+			label->setScale(20.f);
+			label->setAnchor(ir::vgui::Label::Anchor::LEFT);
+			min->addChildElement("Title", std::move(label));
+			title_ = min->getChild<ir::vgui::Label>("Title");
+		}
 	}
 
 	void TitleBar::processEvent(const sf::Event& event) {
@@ -62,5 +71,13 @@ namespace vmf {
 		}
 
 		titleBar_->render(renderer);
+	}
+
+	void TitleBar::setTitle(std::string title) {
+		if (!title_) {
+			return;
+		}
+
+		title_->setLabel(title);
 	}
 }

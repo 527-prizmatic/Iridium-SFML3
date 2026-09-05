@@ -46,7 +46,7 @@ namespace vmf {
 		}
 
 		bool confirm { false };
-		if (event.is<sf::Event::TextEntered>()) {
+		if (event.is<sf::Event::TextEntered>() && context_->loadMode) {
 			auto c = event.getIf<sf::Event::TextEntered>()->unicode;
 			if (c == '\r') {
 				context_->registerEvent(vmf::UserEvent::CONFIRM_MODEL_LOAD);

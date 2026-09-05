@@ -26,6 +26,7 @@
 class VmfEditorState : public ir::StateBase<VmfEditorState> {
 public:
 	void onInitialize() {
+		context_->appWindow->setTitle("Iridium VMF Editor");
 		vmfContext_ = std::make_unique<vmf::Context>();
 
 		editorModel_ = std::make_unique<vmf::EditorModel>(&*vmfContext_);
@@ -76,8 +77,12 @@ public:
 					vmfContext_->registerEvent(vmf::UserEvent::MODEL_DISCARD);
 				}
 			}
-			if (e->code == sf::Keyboard::Key::Escape && e->shift) {
-				meta_exit();
+
+			if (e->shift) {
+				/// Disabled for now, to avoid happy accidents
+		//		if (e->code == sf::Keyboard::Key::Escape) {
+		//			vmfContext_->registerEvent(vmf::UserEvent::WINDOW_CLOSE);
+		//		}
 			}
 
 			drawArea_->processKeyboardInput(e);
@@ -113,6 +118,8 @@ public:
 				loadPopup_->update(context_->mouseInput);
 			}
 		}
+
+		titleBar_->setTitle(context_->appWindow->getTitle());
 
 		while (vmfContext_->events.size() != 0) {
 			processUserEvent(vmfContext_->popFirstEvent());
@@ -150,6 +157,7 @@ public:
 				vmfContext_->vertexList.clear();
 
 				LOG_INFO("Discarded model");
+				context_->appWindow->setTitle("Iridium VMF Editor");
 				break;
 			}
 
@@ -172,8 +180,9 @@ public:
 					filename = "model";
 				}
 				
-				if (editorModel_->save(filename.data())) {
+				if (editorModel_->save(std::string { "..\\resources\\" } + filename.data())) {
 					LOG_INFO(std::string{"Model saved as "} + filename.data() + std::string{".vmf"});
+					context_->appWindow->setTitle(std::string { filename.data() } + ".vmf - Iridium VMF Editor");
 				}
 				else {
 					LOG_ERROR(std::string{"Error trying to save model as "} + filename.data() + std::string{".vmf"});
@@ -192,6 +201,7 @@ public:
 				try {
 					editorModel_->load(filename.data());
 					LOG_INFO(std::string{"Loaded model "} + filename.data() + std::string{".vmf"});
+					context_->appWindow->setTitle(std::string { filename.data() } + ".vmf - Iridium VMF Editor");
 					vmfContext_->loadMode = false;
 				}
 				catch (ir::Exceptions::BadModelName& e) {
@@ -269,7 +279,6 @@ private:
 	std::unique_ptr<vmf::DrawArea> drawArea_;
 	std::unique_ptr<vmf::EditorModel> editorModel_;
 
-	
 	std::unique_ptr<vmf::TitleBar> titleBar_;
 	std::unique_ptr<vmf::ToolsBar> toolsBar_;
 	std::unique_ptr<vmf::SavePopup> savePopup_;

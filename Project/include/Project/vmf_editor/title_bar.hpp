@@ -12,9 +12,12 @@ namespace vmf {
 		bool update(ir::input::Mouse* mouseInput);
 		void render(ir::render::VertexRenderer& renderer);
 
+		void setTitle(std::string title);
+
 	private:
 		std::unique_ptr<ir::vgui::FramedElement> titleBar_;
 		vmf::Context* context_;
+		ir::vgui::Label* title_;
 	};
 }
 

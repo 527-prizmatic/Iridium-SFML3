@@ -13,7 +13,7 @@ CPMAddPackage("gh:nlohmann/json@3.12.0")
 # Misc dependency config jobs
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build SFML as static libraries" FORCE)
 
-project("Iridium")
+project("VmfEditor")
 add_subdirectory("Project")
 
 file(REMOVE "${CMAKE_CURRENT_BINARY_DIR}/resources")
